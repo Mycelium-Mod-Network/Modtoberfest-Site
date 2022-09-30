@@ -115,7 +115,7 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<{ repos: Re
 
     const sorted = [];
     for (let repo of fullRepos) {
-        if (sorted.length <= 3 && repo.sponsored) {
+        if (sorted.length < 3 && repo.sponsored) {
             sorted.push(repo);
         }
     }

@@ -54,7 +54,8 @@ function Sponsor({ sponsorDetails, setCurrentSponsors }: { sponsorDetails: Spons
             await axios.post(`/api/admin/sponsors/update`, values);
             formikHelpers.setSubmitting(false);
             formikHelpers.resetForm({ values: values });
-        }
+        },
+        validateOnMount: true
     });
 
     return <form onSubmit = {formik.handleSubmit} className = "flex flex-col sm:flex-row gap-y-2 sm:gap-y-0 sm:gap-x-2 rounded border-2 border-cyan-400 even:bg-black even:bg-opacity-10">

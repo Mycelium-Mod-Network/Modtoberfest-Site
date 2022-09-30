@@ -157,7 +157,6 @@ export default function Repositories({ repositories, sponsors }: { repositories:
     const [currentRepositories, setCurrentRepositories] = useState<Repository[]>(repositories);
     const [addingRepo, setAddingRepo] = useState<boolean>(false);
 
-    console.log(repositories);
     return <Layout canonical = "/admin/sponsors" title = "Sponsors" description = "Sponsors">
 
         <PageTitle> Repositories (Total: {currentRepositories.length}) </PageTitle>

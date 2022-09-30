@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: modtoberfest_dev_db
+    image: mariadb:10.9.2
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3310:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "docker"

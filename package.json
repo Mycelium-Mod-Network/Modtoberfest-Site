@@ -10,7 +10,8 @@
     "lint": "next lint",
     "rustywind": "rustywind --write .",
     "migrate": "prisma migrate dev",
-    "deploy-db": "prisma migrate deploy"
+    "deploy-db": "prisma migrate deploy",
+    "start-dev-db": "docker-compose -f docker-compose-dev.yml up -d"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.11",

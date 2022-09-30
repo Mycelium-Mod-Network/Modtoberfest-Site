@@ -69,7 +69,7 @@ export default function Home({ sponsors }: { sponsors: Sponsor[] }) {
         <Layout title = "Sponsored Repositories" description = {"Information about Sponsored Repositories"} canonical = "/sponsored">
 
             <PageTitle>Sponsors</PageTitle>
-            <div className = "flex flex-wrap gap-8">
+            <div className = "flex flex-wrap gap-8 justify-between">
 
                 {sponsors.map(value => <Sponsor sponsor = {value} key = {value.id}/>)}
             </div>

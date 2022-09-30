@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  modtoberfest:
+    build:
+      context: .
+      args:
+        - DATABASE_URL=${DATABASE_URL:-default}
+    ports:
+      - "127.0.0.1:2902:3000"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL
+      - NEXTAUTH_SECRET
+      - GITHUB_ID
+      - GITHUB_SECRET
+      - ADMIN_SECRET
+      - DISCORD_WEBHOOK_URL
+    container_name: modtoberfest
+networks:
+  default:
+      name: mariadb

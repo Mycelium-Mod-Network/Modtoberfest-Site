@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Viga&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.navlink {
+  @apply no-underline font-bold text-orange-400 transition duration-200 ease-in-out transform hover:text-orange-600 hover:-translate-y-px;
+}
+
+h1 {
+  @apply text-3xl;
+}
+
+h2 {
+  @apply text-xl;
+}
+
+nav .nav-content {
+  @apply flex items-center justify-between flex-wrap max-w-6xl w-full;
+}
+
+main {
+  @apply text-neutral-200 flex-1 w-full max-w-4xl p-4 mx-auto min-h-full;
+}
+
+.participate {
+  @apply grid;
+  grid-template-areas: "tl" "bl" "tr" "br";
+}
+
+@screen sm {
+  .participate {
+    grid-template-areas: "tl tr" "bl br";
+  }
+
+}
+
+.rules ol {
+  list-style-type: decimal;
+}
+
+.rules li {
+  display:             list-item;
+  list-style-position: inside;
+  @apply my-2;
+}
+
+a {
+  overflow-wrap: anywhere;
+  @apply underline transition duration-200 ease-in-out transform hover:text-orange-600;
+}
+
+
+.social-icon {
+  @apply transition-transform ease-in-out hover:scale-110 w-8 h-8;
+}

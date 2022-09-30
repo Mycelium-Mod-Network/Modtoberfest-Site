@@ -6,6 +6,21 @@ export interface Account {
     image: string
 }
 
+export interface BasicSponsor {
+    id: string,
+    name: string,
+}
+
+export interface Sponsor extends BasicSponsor {
+    image_url: string,
+    summary: string,
+    website_url?: string,
+    github_user?: string,
+    twitter_handle?: string,
+    subreddit?: string,
+    discord?: string
+}
+
 export interface Repository {
     id: string;
     repository_id: string;

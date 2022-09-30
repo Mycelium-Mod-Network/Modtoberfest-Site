@@ -6,26 +6,12 @@ import prisma from "../../lib/db";
 import classNames from "classnames";
 import PageTitle from "../../components/ui/PageTitle";
 import { Dispatch, SetStateAction, useState } from "react";
-import { useFormik } from "formik";
+import { Field, useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
 import { TrashIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/outline";
-
-interface Sponsor {
-    id: string,
-    name: string,
-    image_url: string,
-    summary: string,
-    website_url?: string,
-    github_user?: string,
-    twitter_handle?: string,
-    subreddit?: string,
-    discord?: string
-}
-
-function maybe(value: string) {
-    return value || "Not Provided";
-}
+import { Sponsor } from "../../lib/Types";
+import { FormInput } from "../../components/form/FormInput";
 
 const validationSchema = yup.object({
     name: yup.string()
@@ -45,7 +31,6 @@ const validationSchema = yup.object({
 
 function Sponsor({ sponsorDetails, setCurrentSponsors }: { sponsorDetails: Sponsor, setCurrentSponsors: Dispatch<SetStateAction<Sponsor[]>> }) {
     const [sponsor] = useState<Sponsor>(sponsorDetails);
-
     const formik = useFormik({
         initialValues: sponsor,
         validationSchema: validationSchema,
@@ -126,36 +111,6 @@ function Sponsor({ sponsorDetails, setCurrentSponsors }: { sponsorDetails: Spons
     </form>;
 }
 
-
-function FormInput({
-    formik,
-    label,
-    id,
-    required = false,
-    inputClassName
-}: { formik: any, label: string, id: string, required?: boolean, inputClassName?: string }): JSX.Element {
-    return <div className = "flex gap-x-2">
-        <label htmlFor = {id} className = "flex-none">{label}: {required && <span className = "text-red-500">*</span>}</label>
-
-        <div className = "flex gap-x-2 ml-auto">
-            {formik.touched[id] && formik.errors[id] ? (
-                <div className = "text-red-400">{formik.errors[id]}</div>
-            ) : null}
-
-            <input
-                id = {id}
-                name = {id}
-                type = "text"
-                onChange = {formik.handleChange}
-                onBlur = {formik.handleBlur}
-                value = {formik.values[id]}
-                className = {classNames("bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-cyan-400 focus:outline-cyan-300", inputClassName)}
-            />
-
-        </div>
-
-    </div>;
-}
 
 function AddSponsorForm({
     setAddingSponsor,

@@ -20,7 +20,7 @@ interface Sponsor {
 function Sponsor({ sponsor }: { sponsor: Sponsor }) {
     return <div className = "flex flex-col gap-y-2 p-4 w-64 border-2">
         <div className = "mx-auto">
-            <img src = {sponsor.image_url} className = "w-28 h-28 rounded-full transition-transform ease-in-out hover:scale-110" alt = {sponsor.name + " image"}/>
+            <img src = {sponsor.image_url} className = "w-28 h-28  transition-transform ease-in-out hover:scale-110" alt = {sponsor.name + " image"}/>
         </div>
         <p className = "text-3xl text-center">{sponsor.name}</p>
         <p className="flex-grow">{sponsor.summary}</p>

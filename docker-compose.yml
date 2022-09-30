@@ -25,6 +25,23 @@ services:
       - DISCORD_WEBHOOK_URL
       - NEXTAUTH_URL
     container_name: modtoberfest
+  modtoberfest_tasks:
+    image: strm/tasker
+    container_name: modtoberfest_tasks
+    restart: unless-stopped
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      configuration: |
+        schedule:
+            - every: 5 minutes
+              task: updatePrs
+        tasks:
+            docker:
+                - name: updatePrs
+                  image: curlimages/curl:latest
+                  script:
+                      - "curl --request POST --url https://modtoberfest.com/api/admin/collectPrs --header 'Content-Type: application/json' --data '{\"secret\": \"${ADMIN_SECRET}\"}'"
 networks:
   default:
       name: mariadb

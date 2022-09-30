@@ -220,7 +220,7 @@ function AddSponsorForm({
             <FormInput formik = {formik} id = {"discord"} label = {"Discord"}/>
 
             <div className = "flex gap-x-2">
-                <button className = "w-1/2 bg-green-800 bg-opacity-30 border-2 border-green-400 hover:bg-opacity-50">
+                <button className = "w-1/2 bg-green-800 bg-opacity-30 border-2 border-green-400 hover:bg-opacity-50" type = "submit">
                     Add Sponsor
                 </button>
                 <button className = "w-1/2 bg-red-800 bg-opacity-30 border-2 border-red-400 hover:bg-opacity-50" onClick = {(e) => setAddingSponsor(false)}>

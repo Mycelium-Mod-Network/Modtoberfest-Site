@@ -23,7 +23,7 @@ function Sponsor({ sponsor }: { sponsor: Sponsor }) {
             <img src = {sponsor.image_url} className = "w-28 h-28 rounded-full transition-transform ease-in-out hover:scale-110" alt = {sponsor.name + " image"}/>
         </div>
         <p className = "text-3xl text-center">{sponsor.name}</p>
-        <p>{sponsor.summary}</p>
+        <p className="flex-grow">{sponsor.summary}</p>
 
         <div className = "flex flex-wrap gap-2 mx-auto">
 

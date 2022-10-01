@@ -84,6 +84,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     {
                         name: "Link",
                         value: prData.html_url
+                    },
+                    {
+                        name: "Author",
+                        value: prData.author
                     }
                 ]);
             } else {

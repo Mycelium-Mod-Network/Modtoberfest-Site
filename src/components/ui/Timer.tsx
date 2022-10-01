@@ -56,6 +56,7 @@ export default function Timer(props: Props) {
 
     return (
         <div className = "flex flex-col text-6xl text-center">
+            {!timer.completed && <>
             <span className = "mb-4">
                 Event starts in
             </span>
@@ -65,6 +66,10 @@ export default function Timer(props: Props) {
                 <p className = "pb-2 md:pb-0 md:pr-2 border-b md:border-b-0 md:border-r minutes">{pluralize("minute", timer.minutes)}</p>
                 <p className = "seconds">{pluralize("second", timer.seconds)}</p>
             </div>
+            </>}
+            {timer.completed && <div className="text-5xl">
+                The event has started, you can now submit pull requests!
+            </div>}
         </div>
     );
 

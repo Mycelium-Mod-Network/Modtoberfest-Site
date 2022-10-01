@@ -3,6 +3,7 @@ import prisma from "../../../lib/db";
 import { Octokit } from "octokit";
 import { createOAuthAppAuth } from "@octokit/auth-oauth-app";
 import { PullRequest } from "@octokit/webhooks-types";
+import { info } from "../../../lib/discord-notifier";
 
 function getRepoData(data) {
 
@@ -67,6 +68,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 await prisma.pullRequest.create({
                     data: prData
                 });
+                await info("New PR!", null, [
+                    {
+                        name: "Owner",
+                        value: prData.owner
+                    },
+                    {
+                        name: "Repo",
+                        value: prData.repo_name
+                    },
+                    {
+                        name: "Title",
+                        value: prData.title
+                    },
+                    {
+                        name: "Link",
+                        value: prData.html_url
+                    }
+                ]);
             } else {
                 await prisma.pullRequest.update({
                     data: {

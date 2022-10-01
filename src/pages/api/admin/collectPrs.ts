@@ -62,16 +62,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         for (let pull of octoberPulls) {
             const prData = getRepoData(pull);
             const existingId = existingIds[prData.pr_id];
-            await prisma.pullRequest.upsert({
-                create: prData,
-                update: {
-                    id: existingId,
-                    ...prData
-                },
-                where: {
-                    id: existingId
-                }
-            });
+
+            if (!existingId) {
+                await prisma.pullRequest.create({
+                    data: prData
+                });
+            } else {
+                await prisma.pullRequest.update({
+                    data: {
+                        id: existingId,
+                        ...prData
+                    },
+                    where: {
+                        id: existingId
+                    }
+                });
+            }
         }
     }
 

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 import LoginLink from "../components/LoginLink";
 import GridArea from "../components/ui/GridArea";
+import LinkTo from "../components/ui/LinkTo";
 
 const Timer = dynamic(() => import("../components/ui/Timer"), {
     ssr: false
@@ -31,6 +32,9 @@ export default function Home() {
                     </p>
                     <p className = "text-2xl">
                         Participants who complete our challenge will be eligible to receive a prize pack in the mail including stickers and pins!
+                    </p>
+                    <p className="text-2xl">
+                        This year we are also starting the Modtoberforest environmental initiative! You can learn more about the initiative <LinkTo href = "/modtoberforest">here.</LinkTo>
                     </p>
                 </div>
 

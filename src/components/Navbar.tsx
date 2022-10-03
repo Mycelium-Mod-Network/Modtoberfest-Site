@@ -16,8 +16,8 @@ export default function Navbar() {
         fetch("/api/isAdmin").then(value => Promise.resolve(value.text())).then(value => setAdmin(value === "true"));
     }, [session]);
 
-    return <header className = "min-h-[4rem] px-6 py-4 bg-gradient-to-b from-brand-800 via-brand-800 to-brand-900 flex">
-        <div className = "my-auto flex flex-col flex-wrap gap-x-6 justify-between mx-auto max-w-6xl flex-grow h-full lg:flex-row lg:justify-start">
+    return <header className = "flex py-4 px-6 bg-gradient-to-b min-h-[4rem] from-brand-800 via-brand-800 to-brand-900">
+        <div className = "flex flex-col flex-wrap flex-grow gap-x-6 justify-between my-auto mx-auto max-w-6xl h-full lg:flex-row lg:justify-start">
 
             <div className = {`h-full w-full lg:w-auto flex flex-row justify-between items-center`}>
                 <LinkTo href = "/" className = "my-auto no-underline"><Image src = {"/logo/badge.svg"} alt = "logo" width = {88} height = {50} className = "w-full h-full" layout = "fixed"/></LinkTo>
@@ -40,7 +40,7 @@ export default function Navbar() {
                 "hidden": !isExpanded
             }, "w-full lg:w-auto lg:flex-grow flex flex-col lg:flex-row justify-between lg:flex")}>
 
-                <div className = "lg:gap-y-0 gap-y-2 gap-x-6 flex flex-col flex-wrap justify-center items-center text-base text-center lg:flex-row lg:pl-4 lg:-ml-4 lg:border-l lg:border-brand-700 lg:py-auto lg:flex-grow">
+                <div className = "flex flex-col flex-wrap gap-y-2 gap-x-6 justify-center items-center text-base text-center lg:flex-row lg:flex-grow lg:gap-y-0 lg:pl-4 lg:-ml-4 lg:border-l lg:border-brand-700 lg:py-auto">
                     <LinkTo href = "/" className = "navlink">Home</LinkTo>
 
                     <LinkTo href = "/faq" className = "navlink">FAQ </LinkTo>

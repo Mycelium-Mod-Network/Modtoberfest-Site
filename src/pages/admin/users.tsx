@@ -22,7 +22,7 @@ interface User {
 function User(userDetails: User) {
     const [user, setUser] = useState<User>(userDetails);
 
-    return <div className = "flex flex-col sm:flex-row gap-x-2 rounded border-2 border-cyan-400">
+    return <div className = "flex flex-col gap-x-2 rounded border-2 border-cyan-400 sm:flex-row">
         <img src = {user.image} alt = {`${user.name} image`} className = "m-4 w-24"/>
 
         <div className = "flex flex-col gap-y-2 my-4">
@@ -31,7 +31,7 @@ function User(userDetails: User) {
             <span>Discord: <code className = "p-0.5 bg-black bg-opacity-50 select-all">{user.discord ?? "Not linked"}</code></span>
         </div>
 
-        <div className = "flex flex-row sm:flex-col sm:ml-auto sm:w-2/12 sm:border-l-2 border-cyan-400">
+        <div className = "flex flex-row border-cyan-400 sm:flex-col sm:ml-auto sm:w-2/12 sm:border-l-2">
             <div className = {classNames({
                 "bg-red-700 hover:bg-red-600": user.admin,
                 "bg-green-700 hover:bg-green-600": !user.admin
@@ -54,8 +54,8 @@ function User(userDetails: User) {
                     </div>}
                 </button>
             </div>
-            <div className = "flex w-1/3 sm:w-auto sm:flex-none flex-grow sm:h-1/3 bg-opacity-75 border-r-2 border-t-2 sm:border-r-0 sm:border-t-0 sm:border-b-2 border-cyan-400"/>
-            <div className = "flex w-1/3 sm:w-auto sm:flex-none flex-grow sm:h-1/3 bg-opacity-75 border-t-2 sm:border-t-0 sm:border-b-2 border-cyan-400"/>
+            <div className = "flex flex-grow w-1/3 bg-opacity-75 border-t-2 border-r-2 border-cyan-400 sm:flex-none sm:w-auto sm:h-1/3 sm:border-t-0 sm:border-r-0 sm:border-b-2"/>
+            <div className = "flex flex-grow w-1/3 bg-opacity-75 border-t-2 border-cyan-400 sm:flex-none sm:w-auto sm:h-1/3 sm:border-t-0 sm:border-b-2"/>
         </div>
     </div>;
 }

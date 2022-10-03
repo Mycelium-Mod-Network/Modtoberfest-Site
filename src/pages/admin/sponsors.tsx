@@ -43,7 +43,7 @@ function Sponsor({ sponsorDetails, setCurrentSponsors }: { sponsorDetails: Spons
         validateOnMount: true
     });
 
-    return <form onSubmit = {formik.handleSubmit} className = "flex flex-col sm:flex-row gap-y-2 sm:gap-y-0 sm:gap-x-2 rounded border-2 border-cyan-400 even:bg-black even:bg-opacity-10">
+    return <form onSubmit = {formik.handleSubmit} className = "flex flex-col gap-y-2 rounded border-2 border-cyan-400 sm:flex-row sm:gap-y-0 sm:gap-x-2 even:bg-black even:bg-opacity-10">
         <img src = {formik.values.image_url} alt = {`${formik.values.name} image`} className = "m-4 w-24 h-24"/>
 
         <div className = "flex flex-col flex-grow gap-y-2 my-4">

@@ -28,12 +28,12 @@ const validationSchema = yup.object({
 export function Repository({ repoDetails, setCurrentRepos }: { repoDetails: Repository, setCurrentRepos: Dispatch<SetStateAction<Repository[]>> }) {
     const [repo] = useState<Repository>(repoDetails);
 
-    return <div className = "w-full border-2 p-4 flex gap-x-4">
+    return <div className = "flex gap-x-4 p-4 w-full border-2">
         <div className = "flex-none">
             <img src = {repo.ownerAvatarUrl} alt = "avatar" className = "w-16 h-16 rounded-full"/>
         </div>
 
-        <div className = "flex-grow flex flex-col">
+        <div className = "flex flex-col flex-grow">
             <div>
                 <a className = "font-semibold" href = {repo.ownerHtmlUrl} target = "_blank" rel = "noreferrer">
                     {repo.owner}
@@ -77,13 +77,13 @@ export function Repository({ repoDetails, setCurrentRepos }: { repoDetails: Repo
                 </span>
             </div>
 
-            {repo.description && <div className = "font-mono bg-white bg-opacity-5 p-2 break-all">
+            {repo.description && <div className = "p-2 font-mono break-all bg-white bg-opacity-5">
                 {repo.description}
             </div>}
 
             <div className = "flex">
                 <div className = {classNames({}, "bg-red-700 hover:bg-red-600 flex bg-opacity-75")}>
-                    <button className = "flex w-full h-full p-1" onClick = {async event => {
+                    <button className = "flex p-1 w-full h-full" onClick = {async event => {
                         event.preventDefault();
                         axios.post(`/api/admin/repos/delete`, {
                             id: repo.id

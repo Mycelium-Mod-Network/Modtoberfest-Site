@@ -36,7 +36,7 @@ export default function Home() {
 
                 <Timer date = {Date.UTC(2022, 9, 1, 0, 0, 0)}/>
 
-                <div className = "participate gap-y-4 mb-32 w-full text-xl text-center gap-x-8">
+                <div className = "gap-y-4 gap-x-8 mb-32 w-full text-xl text-center participate">
 
                     <GridArea name = "tl" className = "text-2xl"> Participants </GridArea>
 

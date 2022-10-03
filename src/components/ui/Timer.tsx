@@ -60,10 +60,10 @@ export default function Timer(props: Props) {
             <span className = "mb-4">
                 Event starts in
             </span>
-            <div className = "flex flex-col md:flex-row gap-2 justify-items-center mx-auto text-4xl text-center">
-                <p className = "pb-2 md:pb-0 md:pr-2 border-b md:border-b-0 md:border-r days">{pluralize("day", timer.days)}</p>
-                <p className = "pb-2 md:pb-0 md:pr-2 border-b md:border-b-0 md:border-r hours">{pluralize("hour", timer.hours)}</p>
-                <p className = "pb-2 md:pb-0 md:pr-2 border-b md:border-b-0 md:border-r minutes">{pluralize("minute", timer.minutes)}</p>
+            <div className = "flex flex-col gap-2 justify-items-center mx-auto text-4xl text-center md:flex-row">
+                <p className = "pb-2 border-b md:pr-2 md:pb-0 md:border-b-0 md:border-r days">{pluralize("day", timer.days)}</p>
+                <p className = "pb-2 border-b md:pr-2 md:pb-0 md:border-b-0 md:border-r hours">{pluralize("hour", timer.hours)}</p>
+                <p className = "pb-2 border-b md:pr-2 md:pb-0 md:border-b-0 md:border-r minutes">{pluralize("minute", timer.minutes)}</p>
                 <p className = "seconds">{pluralize("second", timer.seconds)}</p>
             </div>
             </>}

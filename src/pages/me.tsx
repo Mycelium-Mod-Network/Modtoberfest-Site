@@ -62,7 +62,7 @@ export default function Me({ account, prs }: { account: Account, prs: PR[] }) {
         </PageTitle>
 
         <div className = "flex flex-col gap-y-4">
-            <h1 className = "text-center text-2xl font-semibold">
+            <h1 className = "text-2xl font-semibold text-center">
                 Here you can see your progress throughout the event
             </h1>
 

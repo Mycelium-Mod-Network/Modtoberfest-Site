@@ -16,7 +16,10 @@ const nextConfig = withPreact({
         }
 
         return config
-    }
+    },
+    images: {
+        domains: ['assets.blamejared.com'],
+    },
 })
 
 module.exports = nextConfig

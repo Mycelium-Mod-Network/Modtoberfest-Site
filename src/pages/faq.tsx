@@ -35,7 +35,7 @@ export default function Home() {
 
                     <Item title = "What is the Modtoberfest challenge?"> During October we challenge the community to participate in the open source
                         Minecraft community by submitting pull requests to participating projects. To complete our challenge you must submit a valid
-                        pull request to four different projects on our <LinkTo href = "/repositories">list of participating projects.</LinkTo> See
+                        pull request to four projects on our <LinkTo href = "/repositories">list of participating projects.</LinkTo> See
                         our <LinkTo href = "/rules">rules</LinkTo> for more information. </Item>
 
                     <Item title = "Is there a prize for participating?"> Those who complete our challenge will be eligible to receive a prize pack

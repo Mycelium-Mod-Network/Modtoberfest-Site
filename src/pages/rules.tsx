@@ -21,7 +21,7 @@ export default function Rules() {
                                 list</LinkTo> count towards your progress in the challenge.
                             </li>
                             <li>
-                                You must submit pull requests to four <LinkTo href = "/repositories">different repositories</LinkTo>
+                                You must submit pull requests to four <LinkTo href = "/repositories"> repositories</LinkTo>
                             </li>
                             <li>Pull requests must meet our quality standards.</li>
                             <li>

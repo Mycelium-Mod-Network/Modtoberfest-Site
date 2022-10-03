@@ -3,6 +3,7 @@ import { GetStaticPropsResult } from "next";
 import prisma from "../lib/db";
 import { SocialIcon } from "react-social-icons";
 import PageTitle from "../components/ui/PageTitle";
+import { shuffleArray } from "../lib/utils";
 
 
 interface Sponsor {
@@ -93,6 +94,7 @@ export async function getStaticProps(context): Promise<GetStaticPropsResult<{ sp
             twitter_handle: true
         }
     }));
+    shuffleArray(sponsors);
     return {
         props: { sponsors },
         revalidate: 60

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import LinkTo from "./ui/LinkTo";
 import classNames from "classnames";
 import { Bars2Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { LinkExternalIcon } from "@primer/octicons-react";
 
 export default function Navbar() {
     const session = useSession();
@@ -43,7 +44,7 @@ export default function Navbar() {
                 <div className = "flex flex-col flex-wrap gap-y-2 gap-x-6 justify-center items-center text-base text-center lg:flex-row lg:flex-grow lg:gap-y-0 lg:pl-4 lg:-ml-4 lg:border-l lg:border-brand-700 lg:py-auto">
                     <LinkTo href = "/" className = "navlink">Home</LinkTo>
 
-                    <LinkTo href = "/faq" className = "navlink">FAQ </LinkTo>
+                    <LinkTo href = "/faq" className = "navlink">FAQ</LinkTo>
 
                     <LinkTo href = "/rules" className = "navlink">Rules</LinkTo>
 
@@ -51,7 +52,7 @@ export default function Navbar() {
 
                     <LinkTo href = "/tips" className = "navlink">Tips</LinkTo>
 
-                    <a className = "navlink" href = "https://discord.modtoberfest.com"> Discord </a>
+                    <a className = "navlink" href = "https://discord.modtoberfest.com" target = "_blank" rel = "noreferrer">Discord <LinkExternalIcon /></a>
 
                     <LinkTo href = "/sponsors" className = "navlink">Sponsors</LinkTo>
 

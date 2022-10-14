@@ -20,7 +20,7 @@ export default function Home() {
                 </p>
 
                 <p>
-                    So far we have planted <span className='font-extrabold text-yellow-600'>1</span> tree! You can check out our forest <a href='https://tree-nation.com/profile/modtoberforest' target='_blank' rel='noreferrer'>here</a>.
+                    So far we have planted <span className='font-extrabold text-yellow-600'>151</span> tree! You can check out our forest <a href='https://tree-nation.com/profile/modtoberforest' target='_blank' rel='noreferrer'>here</a>.
                 </p>
 
                 <p>

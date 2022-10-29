@@ -77,7 +77,6 @@ model Sponsor {
   SponsoredRepository   SponsoredRepository[]
 }
 
-
 model Repository {
   id                String  @id @default(cuid())
   repository_id     String  @unique
@@ -99,7 +98,6 @@ model SponsoredRepository {
     @@unique([id])
 }
 
-
 model PullRequest {
   id String  @id @default(cuid())
   pr_id Int  @unique
@@ -116,4 +114,19 @@ model PullRequest {
   repo_id String
   repo_name String
   merged Boolean
+}
+
+model Claim {
+    id              String  @id @default(cuid())
+    account_id      String
+    firstName       String
+    lastName        String
+    address1        String
+    address2        String?
+    city            String
+    zip             String
+    state           String
+    country         String
+    email           String
+    feedback        String @db.Text
 }

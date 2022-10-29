@@ -7,6 +7,7 @@ import ProgressBar from "@ramonak/react-progress-bar";
 import prisma from "../lib/db";
 import { GetServerSidePropsResult } from "next";
 import { GitMergeIcon, GitPullRequestClosedIcon, GitPullRequestIcon } from "@primer/octicons-react";
+import LinkTo from "../components/ui/LinkTo";
 
 interface PR {
     html_url: string;
@@ -67,9 +68,15 @@ export default function Me({ account, prs }: { account: Account, prs: PR[] }) {
             </h1>
 
 
-            <h2 className = "text-2xl text-center font-semibol">
+            <h2 className = "text-2xl text-center font-semibold">
                 {prs.length} / 4 Completed PRs
             </h2>
+
+            {prs.length >= 4 && <h3 className = "text-xl text-center font-semibold flex flex-col flex-center mx-auto">
+                <span>
+                    You've completed the event!
+                </span> <LinkTo href = "/claim"> Claim your prize here! </LinkTo>
+            </h3>}
             <div className = "flex flex-col gap-y-2">
                 <span className = "text-lg font-semibold text-center">
                     {generateLabel(prs.length)}

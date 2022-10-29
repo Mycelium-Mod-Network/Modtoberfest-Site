@@ -145,7 +145,7 @@ export default function Claims({ account, claim }: { account: Account, claim: st
                 </button>
             </form>} {claim.length == 1 && <div className = "text-center text-2xl">
         <h2>
-            You've claimed your prize, your claim id is: <pre>{claim[0]}</pre>
+            You&apos;ve claimed your prize, your claim id is: <pre>{claim[0]}</pre>
         </h2>
 
         <h3>

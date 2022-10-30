@@ -112,7 +112,7 @@ export default function Claims({ account, claim }: { account: Account, claim: st
                 <ClaimInput formik = {formik} id = {"firstName"} label = {"First Name"} required = {true}/>
                 <ClaimInput formik = {formik} id = {"lastName"} label = {"Last Name"} required = {true}/>
                 <ClaimInput formik = {formik} id = {"address1"} label = {"Delivery Address"} required = {true}/>
-                <ClaimInput formik = {formik} id = {"address2"} label = {"Delivery Address Line 2 (Apt No., Suite)"} required = {true}/>
+                <ClaimInput formik = {formik} id = {"address2"} label = {"Delivery Address Line 2 (Apt No., Suite)"} required = {false}/>
                 <ClaimInput formik = {formik} id = {"zip"} label = {"Zip"} required = {true}/>
                 <ClaimInput formik = {formik} id = {"city"} label = {"City"} required = {true}/>
                 <ClaimInput formik = {formik} id = {"state"} label = {"State"} required = {true}/>

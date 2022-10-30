@@ -26,7 +26,7 @@ function getRepoData(data) {
 }
 
 const OCTOBER_START = new Date(Date.UTC(2022, 9, 1, 0, 0, 0));
-const OCTOBER_LAST = new Date(Date.UTC(2022, 9, 31, 0, 0, 0));
+const NOVEMBER_START = new Date(Date.UTC(2022, 10, 1, 0, 0, 0));
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
@@ -58,7 +58,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const pulls: PullRequest[] = (await octokit.request("GET /repositories/{repository_id}/pulls?state=all", { repository_id: repo.repository_id })).data;
         const octoberPulls = pulls.filter(value => {
             const date = new Date(value.created_at);
-            return date > OCTOBER_START && date < OCTOBER_LAST;
+            return date > OCTOBER_START && date < NOVEMBER_START;
         });
         for (let pull of octoberPulls) {
             const prData = getRepoData(pull);

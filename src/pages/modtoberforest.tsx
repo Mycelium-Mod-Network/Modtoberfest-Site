@@ -28,8 +28,7 @@ export default function Home() {
 
                 <p>
                     So far we have planted <span className='font-extrabold text-yellow-600'>201</span> trees and reforested 0.16 hectares! Over their
-                    lifetime it is estimated that these trees will capture 68.14 tonnes of CO2. You can find our digital forest
-                    <a href='https://tree-nation.com/profile/modtoberforest' target='_blank' rel='noreferrer'>here</a>.
+                    lifetime it is estimated that these trees will capture 68.14 tonnes of CO2. You can find our digital forest <a href='https://tree-nation.com/profile/modtoberforest' target='_blank' rel='noreferrer'>here</a>.
                 </p>
 
                 <h2>History</h2>

@@ -13,29 +13,29 @@ export default function Home() {
 
             <div className = "mx-auto max-w-prose text-lg prose prose-invert">
 
-                <p> 
-                    This year we are working with <a href='https://tree-nation.com/' target='_blank' rel='noreferrer'>Tree-Nation</a> 
-                    {" "} to bring you the Modtoberforest environmental initiative! In addition to the awesome prize packs that we send out, 
-                    we will also be planting 1 tree for each valid Pull Request submitted as part of the event, up to 1000 trees!
+                <p>
+                    Modtoberfest has partnered with <a href='https://tree-nation.com/' target='_blank' rel='noreferrer'>Tree-Nation</a> to start the
+                    Modtober Forest Environmental Initiative! This year we will be planting one tree for each participant who submits at least one
+                    valid pull request to a participating project.
                 </p>
 
                 <p>
-                    So far we have planted <span className='font-extrabold text-yellow-600'>151</span> tree! You can check out our forest <a href='https://tree-nation.com/profile/modtoberforest' target='_blank' rel='noreferrer'>here</a>.
+                    Tree-Nation is a registered non-profit that collects funding on behalf of tree planting and reforestation projects. The Tree-Nation
+                    team works with experts and local communities to plant trees in a non-disruptive way that benefits the environment and local
+                    communities. Their projects range from reforesting areas lost to logging or wildfires, protecting endangered species, and helping
+                    with local agriculture. So far they have planted over 34 million trees!
                 </p>
 
                 <p>
-                    Are you a mod developer interested in starting your own forest on <a href='https://tree-nation.com/' target='_blank' rel='noreferrer'>Tree-Nation</a>? Reach out to us on Discord and we will 
-                    send you a free tree via the ambassador program to get you started! There are no obligations once you have received the tree, 
-                    however we challenge you to keep your forest growing by planting at least 1 tree for every 1 million downloads your project(s) 
-                    receive.
+                    So far we have planted <span className='font-extrabold text-yellow-600'>201</span> trees and reforested 0.16 hectares! Over their
+                    lifetime it is estimated that these trees will capture 68.14 tonnes of CO2. You can find our digital forest
+                    <a href='https://tree-nation.com/profile/modtoberforest' target='_blank' rel='noreferrer'>here</a>.
                 </p>
 
-                <p>
-                    Tree-Nation is a registered non-profit that collects funding on behalf of tree planting and reforestation projects. The Tree-Nation 
-                    team works with experts and local communities to plant trees in a non-disruptive way that benefits the environment and local 
-                    communities. Their projects range from reforesting areas lost to logging or wildfires, protecting endangered species, and helping 
-                    with local agriculture. So far they have planted 27 million trees!
-                </p>
+                <h2>History</h2>
+                <ul>
+                    <li>2022 - 201 trees</li>
+                </ul>
             </div>
         </Layout>
     );

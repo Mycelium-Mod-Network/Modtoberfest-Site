@@ -28,13 +28,15 @@ export default function Home() {
                     </p>
                     <p className = "text-2xl">
                         During October we challenge the community to give back to the open source projects at the heart of our community by
-                        contributing valid pull requests to at least four different participating projects.
+                        contributing at least four valid pull requests to participating projects.
                     </p>
                     <p className = "text-2xl">
-                        Participants who complete our challenge will be eligible to receive a prize pack in the mail including stickers and pins!
+                        Those who complete our challenge will be eligible to receive a prize pack in the mail that includes stickers and pins designed
+                        by the sponsors of our event!
                     </p>
                     <p className="text-2xl">
-                        This year we are also starting the Modtoberforest environmental initiative! You can learn more about the initiative <LinkTo href = "/modtoberforest">here.</LinkTo>
+                        We will also be planting one tree for each participant who contributes at least one valid pull request. This is part of our
+                        Modtober Forest environmental initiative! You can learn more <LinkTo href="/modtoberforest">here</LinkTo>.
                     </p>
                 </div>
 

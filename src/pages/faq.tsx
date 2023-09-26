@@ -68,8 +68,7 @@ export default function Home() {
                     </Item>
 
                     <Item title = "Do pull requests made before signing up still count?">
-                        Yes we can count any pull request made during the events timeframe. We will only count pull requests that follow our
-                        <LinkTo href = "/rules">rules</LinkTo>.
+                        Yes we can count any pull request made during the events timeframe. We will only count pull requests that follow our <LinkTo href = "/rules">rules</LinkTo>.
                     </Item>
 
                     <Item title = "Do commits count?">

@@ -56,7 +56,7 @@ export default function New({ hasAccount }: PageProps) {
                         <h2 className = "text-center">Get modding and have fun!</h2>
                         <p className = "text-sm text-center">- the Modtoberfest team</p>
                     </div>
-                    <img src = "/logo/badge.svg" width = "400" alt = "logo"></img>
+                    <img src = "/logo/badge_2022.svg" width = "400" alt = "logo"></img>
                 </div>
             </div>
         </Layout>

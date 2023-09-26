@@ -19,7 +19,7 @@ export default function Home() {
             <div className = "flex flex-col gap-y-8 mx-auto md:max-w-prose">
 
                 <div className = "mx-auto mt-8 w-full">
-                    <Image src = {"/logo/badge.svg"} width = {500} height = {280} layout = "responsive" alt = "logo"/>
+                    <Image src = {"/logo/badge_2023.svg"} width = {500} height = {280} layout = "responsive" alt = "logo"/>
                 </div>
 
                 <div className = "mx-auto text-center prose prose-invert">
@@ -38,7 +38,7 @@ export default function Home() {
                     </p>
                 </div>
 
-                <Timer date = {Date.UTC(2022, 9, 1, 0, 0, 0)}/>
+                <Timer date = {Date.UTC(2023, 9, 1, 0, 0, 0)}/>
 
                 <div className = "gap-y-4 gap-x-8 mb-32 w-full text-xl text-center participate">
 

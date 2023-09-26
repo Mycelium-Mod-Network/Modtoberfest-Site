@@ -18,7 +18,7 @@ export default function Layout(props: PropsWithChildren<{ title: string, descrip
                     description: props.description,
                     images: [
                         {
-                            url: "https://modtoberfest.com/logo/badge.png",
+                            url: "https://modtoberfest.com/logo/badge_2023.png",
                             alt: props.title + " logo"
                         }
                     ],

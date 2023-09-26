@@ -14,8 +14,8 @@ export default function Rules() {
                 <div className = "mx-auto rules">
                     <Item title = {"Rules"} multi = {true}>
                         <ol>
-                            <li>You must sign up before the end of October 2022.</li>
-                            <li>Pull requests must be made during October 2022.</li>
+                            <li>You must sign up before the end of October 2023.</li>
+                            <li>Pull requests must be made during October 2023.</li>
                             <li>
                                 Only pull requests against GitHub repositories on our <LinkTo href = "/repositories">participating projects
                                 list</LinkTo> count towards your progress in the challenge.

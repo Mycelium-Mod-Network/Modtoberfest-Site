@@ -21,7 +21,7 @@ export default function Navbar() {
         <div className = "flex flex-col flex-wrap flex-grow gap-x-6 justify-between my-auto mx-auto max-w-6xl h-full lg:flex-row lg:justify-start">
 
             <div className = {`h-full w-full lg:w-auto flex flex-row justify-between items-center`}>
-                <LinkTo href = "/" className = "my-auto no-underline"><Image src = {"/logo/badge.svg"} alt = "logo" width = {88} height = {50} className = "w-full h-full" layout = "fixed"/></LinkTo>
+                <LinkTo href = "/" className = "my-auto no-underline"><Image src = {"/logo/badge_2023.svg"} alt = "logo" width = {88} height = {50} className = "w-full h-full" layout = "fixed"/></LinkTo>
 
                 <div className = "block my-auto ml-auto lg:hidden">
                     <button

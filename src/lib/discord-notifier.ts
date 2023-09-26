@@ -19,7 +19,7 @@ async function send(embeds) {
 
     const body = {
         username: "Modtoberfest",
-        avatar_url: "https://modtoberfest.com/logo/badge_bg.png",
+        avatar_url: "https://modtoberfest.com/logo/badge_bg_2023.png",
         embeds
     };
 

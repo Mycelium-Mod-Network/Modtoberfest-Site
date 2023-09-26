@@ -25,8 +25,8 @@ function getRepoData(data) {
     };
 }
 
-const OCTOBER_START = new Date(Date.UTC(2022, 9, 1, 0, 0, 0));
-const NOVEMBER_START = new Date(Date.UTC(2022, 10, 1, 0, 0, 0));
+const OCTOBER_START = new Date(Date.UTC(2023, 9, 1, 0, 0, 0));
+const NOVEMBER_START = new Date(Date.UTC(2023, 10, 1, 0, 0, 0));
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 

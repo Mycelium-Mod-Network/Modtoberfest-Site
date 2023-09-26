@@ -45,3 +45,4 @@ services:
 networks:
   default:
       name: mariadb
+      external: true

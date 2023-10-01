@@ -1,9 +1,9 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import {NextApiRequest, NextApiResponse} from "next";
 import prisma from "../../../lib/db";
-import { Octokit } from "octokit";
-import { createOAuthAppAuth } from "@octokit/auth-oauth-app";
-import { PullRequest } from "@octokit/webhooks-types";
-import { info } from "../../../lib/discord-notifier";
+import {Octokit} from "octokit";
+import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
+import {PullRequest} from "@octokit/webhooks-types";
+import {info} from "../../../lib/discord-notifier";
 
 function getRepoData(data) {
 
@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(403).send("forbidden");
     }
 
-    const repos = await prisma.repository.findMany({ select: { repository_id: true } });
+    const repos = await prisma.repository.findMany({select: {repository_id: true}});
     const octokit = new Octokit({
         authStrategy: createOAuthAppAuth,
         auth: {
@@ -55,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }, {});
 
     for (let repo of repos) {
-        const pulls: PullRequest[] = (await octokit.request("GET /repositories/{repository_id}/pulls?state=all", { repository_id: repo.repository_id })).data;
+        const pulls: PullRequest[] = (await octokit.request("GET /repositories/{repository_id}/pulls?state=all", {repository_id: repo.repository_id})).data;
         const octoberPulls = pulls.filter(value => {
             const date = new Date(value.created_at);
             return date > OCTOBER_START && date < NOVEMBER_START;
@@ -68,28 +68,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 await prisma.pullRequest.create({
                     data: prData
                 });
-                await info("New PR!", null, [
-                    {
-                        name: "Owner",
-                        value: prData.owner
-                    },
-                    {
-                        name: "Repo",
-                        value: prData.repo_name
-                    },
-                    {
-                        name: "Title",
-                        value: prData.title
-                    },
-                    {
-                        name: "Link",
-                        value: prData.html_url
-                    },
-                    {
-                        name: "Author",
-                        value: prData.author
-                    }
-                ]);
+                if (prData.author.indexOf("[bot]") == -1) {
+                    await info("New PR!", null, [
+                        {
+                            name: "Owner",
+                            value: prData.owner
+                        },
+                        {
+                            name: "Repo",
+                            value: prData.repo_name
+                        },
+                        {
+                            name: "Title",
+                            value: prData.title
+                        },
+                        {
+                            name: "Link",
+                            value: prData.html_url
+                        },
+                        {
+                            name: "Author",
+                            value: prData.author
+                        }
+                    ]);
+                }
             } else {
                 await prisma.pullRequest.update({
                     data: {

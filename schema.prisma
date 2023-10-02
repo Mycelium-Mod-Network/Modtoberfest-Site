@@ -85,7 +85,7 @@ model Repository {
 
   @@unique([id, repository_id])
   SponsoredRepository       SponsoredRepository?
-  cache                     RepositoryCache @relation(fields: [repository_id], references: [repository_id], onDelete: Cascade)
+  cache                     RepositoryCache?
 }
 
 model SponsoredRepository {
@@ -144,5 +144,5 @@ model RepositoryCache {
   stars             Int
   openIssues        Int
   @@unique([id, repository_id])
-  Repository       Repository?
+  Repository      Repository @relation(fields: [repository_id], references: [repository_id], onDelete: Cascade)
 }

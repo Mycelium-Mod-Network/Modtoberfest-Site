@@ -1,6 +1,9 @@
 import {Session} from "next-auth";
 import prisma from "./db";
-import {Account, BaseRepository, Either, Repository} from "./Types";
+import {Account, Either, Repository} from "./Types";
+import {Octokit} from "octokit";
+import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
+import {Repository as GHRepo} from "@octokit/webhooks-types";
 
 export async function isAdmin(data: Either<string, Session>) {
 
@@ -103,7 +106,15 @@ export async function getRepo(repository_id: string) {
 
 export async function getRepos(repository_ids: string[]): Promise<Repository[]> {
 
-    return (await prisma.repository.findMany({
+    const octokit = new Octokit({
+        authStrategy: createOAuthAppAuth,
+        auth: {
+            clientId: process.env.GITHUB_ID,
+            clientSecret: process.env.GITHUB_SECRET
+        }
+    });
+
+    const repos = await prisma.repository.findMany({
         select: {
             id: true,
             repository_id: true,
@@ -124,20 +135,38 @@ export async function getRepos(repository_ids: string[]): Promise<Repository[]> 
                 in: repository_ids
             }
         }
-    })).map(repo => {
+    })
+    return await Promise.all(repos.map(async repo => {
+        let cache = repo.cache;
+        if (!cache) {
+            const repoInfo = await octokit.request("GET /repositories/{repository_id}", {repository_id: repo.repository_id});
+            const repoData: GHRepo = repoInfo.data;
+            cache = {
+                name: repoData.name,
+                owner: repoData.owner.login,
+                ownerHtmlUrl: repoData.owner.html_url,
+                ownerAvatarUrl: repoData.owner.avatar_url,
+                url: repoData.html_url,
+                description: repoData.description,
+                stars: repoData.stargazers_count,
+                openIssues: repoData.open_issues_count,
+                repository_id: repo.repository_id,
+                id: repo.id
+            }
+        }
         return {
             id: repo.id,
             repository_id: repo.repository_id,
             url: repo.url,
-            description: repo.cache.description,
-            name: repo.cache.name,
-            owner: repo.cache.owner,
-            ownerHtmlUrl: repo.cache.ownerHtmlUrl,
-            ownerAvatarUrl: repo.cache.ownerAvatarUrl,
-            stars: repo.cache.stars,
-            openIssues: repo.cache.openIssues,
+            description: cache.description,
+            name: cache.name,
+            owner: cache.owner,
+            ownerHtmlUrl: cache.ownerHtmlUrl,
+            ownerAvatarUrl: cache.ownerAvatarUrl,
+            stars: cache.stars,
+            openIssues: cache.openIssues,
             sponsor: (repo.SponsoredRepository ?? {sponsor: {name: ""}}).sponsor.name,
             sponsored: !!repo.SponsoredRepository
         };
-    })
+    }));
 }

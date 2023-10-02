@@ -76,7 +76,7 @@ function RepositoryCard(repo: SubmittableRepo) {
         </div>
         <div className = "flex justify-between text-sm">
             {currentRepo.alreadySubmitted &&
-                    <button disabled = {working} className = "flex-grow w-full bg-red-700 hover:bg-red-500 disabled:hover:bg-red-700 disabled:bg-opacity-50 disabled:hover:bg-opacity-50 text-white hover:text-black disabled:hover:text-white p-2" type = "submit">
+                    <button disabled = {working || repo.sponsored} className = "flex-grow w-full bg-red-700 hover:bg-red-500 disabled:hover:bg-red-700 disabled:bg-opacity-50 disabled:hover:bg-opacity-50 text-white hover:text-black disabled:hover:text-white p-2" type = "submit">
                         {working ? <div className = "flex w-full">
                             <div className = "flex mx-auto gap-x-2">
                                 <div className = "w-4 h-4 animate-spin my-auto">

@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import LoginLink from "../components/LoginLink";
 import GridArea from "../components/ui/GridArea";
 import LinkTo from "../components/ui/LinkTo";
+import classNames from "classnames";
 
 const Timer = dynamic(() => import("../components/ui/Timer"), {
     ssr: false
@@ -60,12 +61,11 @@ export default function Home() {
 
                     <GridArea name = "br">
 
-                        <a className = {`no-underline mx-auto`} href = "https://forms.gle/Cq8VdtUURhG1pSZe7" target = "_blank" rel = "noreferrer">
+                        <LinkTo href = "/repositories/submit" className = {classNames("no-underline")}>
                             <div className = "inline-flex py-2 px-4 font-bold text-white bg-orange-400 rounded-full transition duration-200 ease-in-out transform lg:mt-0 hover:bg-orange-600 hover:scale-105">
                                 Submit your project
                             </div>
-
-                        </a>
+                        </LinkTo>
 
                     </GridArea>
 

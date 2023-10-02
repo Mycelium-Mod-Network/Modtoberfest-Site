@@ -1,15 +1,12 @@
-import Layout from "../components/Layout";
+import Layout from "../../components/Layout";
 import {GetStaticPropsResult} from "next";
-import prisma from "../lib/db";
-import {Octokit} from "octokit";
-import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
-import {Repository as GHRepo} from "@octokit/webhooks-types";
+import prisma from "../../lib/db";
 import classNames from "classnames";
-import PageTitle from "../components/ui/PageTitle";
-import {getRepos, shuffleArray} from "../lib/utils";
+import PageTitle from "../../components/ui/PageTitle";
+import {getRepos, shuffleArray} from "../../lib/utils";
 import {IssueOpenedIcon, StarIcon, VerifiedIcon} from "@primer/octicons-react";
-import LinkTo from "../components/ui/LinkTo";
-import {Repository} from "../lib/Types";
+import LinkTo from "../../components/ui/LinkTo";
+import {Repository} from "../../lib/Types";
 
 function Repository(repo: Repository) {
 
@@ -73,6 +70,11 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<{ repos: Re
     const repos: string[] = (await prisma.repository.findMany({
         select: {
             repository_id: true,
+        },
+        where: {
+            valid: {
+                equals: true
+            }
         }
     })).map(repo => repo.repository_id);
 

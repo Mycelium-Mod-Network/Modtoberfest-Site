@@ -49,44 +49,43 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
             }
         });
-        const repoData: GHRepo = (await octokit.request("GET /repositories/{repository_id}", { repository_id: addedRepo.repository_id })).data;
 
         await prisma.repositoryCache.upsert({
             where: {
                 repository_id: addedRepo.repository_id,
             },
             update: {
-                name: repoData.name,
-                owner: repoData.owner.login,
-                ownerHtmlUrl: repoData.owner.html_url,
-                ownerAvatarUrl: repoData.owner.avatar_url,
-                url: repoData.html_url,
-                description: repoData.description,
-                stars: repoData.stargazers_count,
-                openIssues: repoData.open_issues_count
+                name: data.name,
+                owner: data.owner.login,
+                ownerHtmlUrl: data.owner.html_url,
+                ownerAvatarUrl: data.owner.avatar_url,
+                url: data.html_url,
+                description: data.description,
+                stars: data.stargazers_count,
+                openIssues: data.open_issues_count
             },
             create: {
                 repository_id: addedRepo.repository_id,
-                name: repoData.name,
-                owner: repoData.owner.login,
-                ownerHtmlUrl: repoData.owner.html_url,
-                ownerAvatarUrl: repoData.owner.avatar_url,
-                url: repoData.html_url,
-                description: repoData.description,
-                stars: repoData.stargazers_count,
-                openIssues: repoData.open_issues_count
+                name: data.name,
+                owner: data.owner.login,
+                ownerHtmlUrl: data.owner.html_url,
+                ownerAvatarUrl: data.owner.avatar_url,
+                url: data.html_url,
+                description: data.description,
+                stars: data.stargazers_count,
+                openIssues: data.open_issues_count
             },
         })
 
         res.status(200).json({
             ...addedRepo,
-            description: repoData.description,
-            name: repoData.name,
-            owner: repoData.owner.login,
-            ownerHtmlUrl: repoData.owner.html_url,
-            ownerAvatarUrl: repoData.owner.avatar_url,
-            stars: repoData.stargazers_count,
-            openIssues: repoData.open_issues_count,
+            description: data.description,
+            name: data.name,
+            owner: data.owner.login,
+            ownerHtmlUrl: data.owner.html_url,
+            ownerAvatarUrl: data.owner.avatar_url,
+            stars: data.stargazers_count,
+            openIssues: data.open_issues_count,
             sponsor: (addedRepo.SponsoredRepository ?? { sponsor: { name: "" } }).sponsor.name,
             sponsored: req.body.sponsor
         });

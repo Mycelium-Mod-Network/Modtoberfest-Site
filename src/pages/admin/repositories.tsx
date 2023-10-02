@@ -12,6 +12,9 @@ import * as yup from "yup";
 import {FormInput, FormSelect} from "../../components/form/FormInput";
 import {getSession} from "next-auth/react";
 import {getAccount} from "../../lib/utils";
+import {Repository as GHRepo} from "@octokit/webhooks-types";
+import {Octokit} from "octokit";
+import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
 
 const validationSchema = yup.object({
     owner: yup.string()
@@ -189,7 +192,16 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
         };
     }
 
-    const repos = (await prisma.repository.findMany({
+    const octokit = new Octokit({
+        authStrategy: createOAuthAppAuth,
+        auth: {
+            clientId: process.env.GITHUB_ID,
+            clientSecret: process.env.GITHUB_SECRET
+        }
+    });
+
+
+    const repos = await Promise.all((await prisma.repository.findMany({
         select: {
             id: true,
             repository_id: true,
@@ -205,22 +217,39 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
             },
             cache: true
         }
-    })).map(repo => {
+    })).map(async repo => {
+        let cache = repo.cache;
+        if (!cache) {
+            const repoInfo = await octokit.request("GET /repositories/{repository_id}", {repository_id: repo.repository_id});
+            const repoData: GHRepo = repoInfo.data;
+            cache = {
+                name: repoData.name,
+                owner: repoData.owner.login,
+                ownerHtmlUrl: repoData.owner.html_url,
+                ownerAvatarUrl: repoData.owner.avatar_url,
+                url: repoData.html_url,
+                description: repoData.description,
+                stars: repoData.stargazers_count,
+                openIssues: repoData.open_issues_count,
+                repository_id: repo.repository_id,
+                id: repo.id
+            }
+        }
         return {
             id: repo.id,
             repository_id: repo.repository_id,
             url: repo.url,
-            description: repo.cache.description,
-            name: repo.cache.name,
-            owner: repo.cache.owner,
-            ownerHtmlUrl: repo.cache.ownerHtmlUrl,
-            ownerAvatarUrl: repo.cache.ownerAvatarUrl,
-            stars: repo.cache.stars,
-            openIssues: repo.cache.openIssues,
+            description: cache.description,
+            name: cache.name,
+            owner: cache.owner,
+            ownerHtmlUrl: cache.ownerHtmlUrl,
+            ownerAvatarUrl: cache.ownerAvatarUrl,
+            stars: cache.stars,
+            openIssues: cache.openIssues,
             sponsor: (repo.SponsoredRepository ?? {sponsor: {name: ""}}).sponsor.name,
             sponsored: !!repo.SponsoredRepository
         };
-    })
+    }))
 
     const sponsors = (await prisma.sponsor.findMany({
         select: {

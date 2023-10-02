@@ -1,6 +1,6 @@
-import { Session } from "next-auth";
+import {Session} from "next-auth";
 import prisma from "./db";
-import { Account, Either } from "./Types";
+import {Account, BaseRepository, Either, Repository} from "./Types";
 
 export async function isAdmin(data: Either<string, Session>) {
 
@@ -60,7 +60,7 @@ export async function getAccount(data: Either<string, Session>): Promise<Account
 }
 
 export async function getBasicAccountInfo(data: Either<string, Session>): Promise<{ name: string, id: string, githubId: string }> {
-    let workingToken;
+    let workingToken: string;
     if (data.left) {
         workingToken = data.left;
     } else {
@@ -80,7 +80,7 @@ export async function getBasicAccountInfo(data: Either<string, Session>): Promis
             access_token: workingToken
         }
     });
-    return { name: details.user.name, id: details.id, githubId: details.providerAccountId };
+    return {name: details.user.name, id: details.id, githubId: details.providerAccountId};
 }
 
 
@@ -91,4 +91,53 @@ export function shuffleArray(array) {
         array[i] = array[j];
         array[j] = temp;
     }
+}
+
+export async function getRepo(repository_id: string) {
+    return await prisma.repositoryCache.findFirst({
+        where: {
+            repository_id: repository_id
+        }
+    })
+}
+
+export async function getRepos(repository_ids: string[]): Promise<Repository[]> {
+
+    return (await prisma.repository.findMany({
+        select: {
+            id: true,
+            repository_id: true,
+            url: true,
+            SponsoredRepository: {
+                select: {
+                    sponsor: {
+                        select: {
+                            name: true
+                        }
+                    }
+                }
+            },
+            cache: true
+        },
+        where: {
+            repository_id: {
+                in: repository_ids
+            }
+        }
+    })).map(repo => {
+        return {
+            id: repo.id,
+            repository_id: repo.repository_id,
+            url: repo.url,
+            description: repo.cache.description,
+            name: repo.cache.name,
+            owner: repo.cache.owner,
+            ownerHtmlUrl: repo.cache.ownerHtmlUrl,
+            ownerAvatarUrl: repo.cache.ownerAvatarUrl,
+            stars: repo.cache.stars,
+            openIssues: repo.cache.openIssues,
+            sponsor: (repo.SponsoredRepository ?? {sponsor: {name: ""}}).sponsor.name,
+            sponsored: !!repo.SponsoredRepository
+        };
+    })
 }

@@ -1,31 +1,28 @@
 import Layout from "../../components/Layout";
-import { GetServerSidePropsResult } from "next";
-import { getSession } from "next-auth/react";
-import { getAccount } from "../../lib/utils";
+import {GetServerSidePropsResult} from "next";
 import prisma from "../../lib/db";
 import classNames from "classnames";
 import PageTitle from "../../components/ui/PageTitle";
-import { Dispatch, SetStateAction, useState } from "react";
-import { BasicSponsor, Repository } from "../../lib/Types";
-import { Octokit } from "octokit";
-import { createOAuthAppAuth } from "@octokit/auth-oauth-app";
-import { Repository as GHRepo } from "@octokit/webhooks-types";
-import axios, { AxiosResponse } from "axios";
-import { TrashIcon } from "@heroicons/react/24/outline";
-import { useFormik } from "formik";
+import {Dispatch, SetStateAction, useState} from "react";
+import {BasicSponsor, Repository} from "../../lib/Types";
+import axios from "axios";
+import {TrashIcon} from "@heroicons/react/24/outline";
+import {useFormik} from "formik";
 import * as yup from "yup";
-import { FormInput, FormSelect } from "../../components/form/FormInput";
+import {FormInput, FormSelect} from "../../components/form/FormInput";
+import {getSession} from "next-auth/react";
+import {getAccount} from "../../lib/utils";
 
 const validationSchema = yup.object({
     owner: yup.string()
-        .required("Required"),
+            .required("Required"),
     repo_name: yup.string()
-        .required("Required"),
+            .required("Required"),
     sponsor_id: yup.string()
-        .notRequired()
+            .notRequired()
 });
 
-export function Repository({ repoDetails, setCurrentRepos }: { repoDetails: Repository, setCurrentRepos: Dispatch<SetStateAction<Repository[]>> }) {
+export function Repository({repoDetails, setCurrentRepos}: { repoDetails: Repository, setCurrentRepos: Dispatch<SetStateAction<Repository[]>> }) {
     const [repo] = useState<Repository>(repoDetails);
 
     return <div className = "flex gap-x-4 p-4 w-full border-2">
@@ -106,10 +103,14 @@ export function Repository({ repoDetails, setCurrentRepos }: { repoDetails: Repo
 }
 
 function AddRepoForm({
-    setAddingRepo,
-    setCurrentRepos,
-    sponsors
-}: { setAddingRepo: (adding: boolean) => void, setCurrentRepos: Dispatch<SetStateAction<Repository[]>>, sponsors: BasicSponsor[] }) {
+                         setAddingRepo,
+                         setCurrentRepos,
+                         sponsors
+                     }: {
+    setAddingRepo: (adding: boolean) => void,
+    setCurrentRepos: Dispatch<SetStateAction<Repository[]>>,
+    sponsors: BasicSponsor[]
+}) {
 
     const formik = useFormik({
         initialValues: {
@@ -138,11 +139,11 @@ function AddRepoForm({
             <FormInput formik = {formik} id = {"repo_name"} label = {"Repo Name"} required = {true}/>
 
             <FormSelect formik = {formik} label = "Sponsor" id = "sponsor" required = {false}>
-                {sponsors.map(value => <option key={value.id} value={value.id}>{value.name}</option>)}
+                {sponsors.map(value => <option key = {value.id} value = {value.id}>{value.name}</option>)}
             </FormSelect>
 
             <div className = "flex gap-x-2">
-                <button className = "w-1/2 bg-green-800 bg-opacity-30 border-2 border-green-400 hover:bg-opacity-50" type="submit">
+                <button className = "w-1/2 bg-green-800 bg-opacity-30 border-2 border-green-400 hover:bg-opacity-50" type = "submit">
                     Add Repository
                 </button>
                 <button className = "w-1/2 bg-red-800 bg-opacity-30 border-2 border-red-400 hover:bg-opacity-50" onClick = {(e) => setAddingRepo(false)}>
@@ -153,7 +154,7 @@ function AddRepoForm({
     </div>;
 }
 
-export default function Repositories({ repositories, sponsors }: { repositories: Repository[], sponsors: BasicSponsor[] }) {
+export default function Repositories({repositories, sponsors}: { repositories: Repository[], sponsors: BasicSponsor[] }) {
     const [currentRepositories, setCurrentRepositories] = useState<Repository[]>(repositories);
     const [addingRepo, setAddingRepo] = useState<boolean>(false);
 
@@ -165,11 +166,11 @@ export default function Repositories({ repositories, sponsors }: { repositories:
             <div className = {classNames({
                 "hover:bg-opacity-20 hover:border-cyan-400 hover:text-cyan-400 text-center": !addingRepo
             }, "w-full border-2 text-xl bg-black bg-opacity-10 grid mb-4")}>
-                {addingRepo && <AddRepoForm setAddingRepo = {setAddingRepo} setCurrentRepos = {setCurrentRepositories} sponsors={sponsors}/>}
+                {addingRepo && <AddRepoForm setAddingRepo = {setAddingRepo} setCurrentRepos = {setCurrentRepositories} sponsors = {sponsors}/>}
 
                 {!addingRepo && <button onClick = {(e) => setAddingRepo(true)}>Add Repo</button>}
             </div>
-            {currentRepositories.map(value => <Repository repoDetails = {value} key = {value.name} setCurrentRepos = {setCurrentRepositories}/>)}
+            {currentRepositories.map(value => <Repository repoDetails = {value} key = {value.id} setCurrentRepos = {setCurrentRepositories}/>)}
         </div>
 
     </Layout>;
@@ -201,9 +202,25 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
                         }
                     }
                 }
-            }
+            },
+            cache: true
         }
-    }));
+    })).map(repo => {
+        return {
+            id: repo.id,
+            repository_id: repo.repository_id,
+            url: repo.url,
+            description: repo.cache.description,
+            name: repo.cache.name,
+            owner: repo.cache.owner,
+            ownerHtmlUrl: repo.cache.ownerHtmlUrl,
+            ownerAvatarUrl: repo.cache.ownerAvatarUrl,
+            stars: repo.cache.stars,
+            openIssues: repo.cache.openIssues,
+            sponsor: (repo.SponsoredRepository ?? {sponsor: {name: ""}}).sponsor.name,
+            sponsored: !!repo.SponsoredRepository
+        };
+    })
 
     const sponsors = (await prisma.sponsor.findMany({
         select: {
@@ -212,31 +229,7 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
         }
     }));
 
-    const octokit = new Octokit({
-        authStrategy: createOAuthAppAuth,
-        auth: {
-            clientId: process.env.GITHUB_ID,
-            clientSecret: process.env.GITHUB_SECRET
-        }
-    });
-    const fullRepos: Repository[] = await Promise.all(repos.map(async repo => {
-        const repoInfo = await octokit.request("GET /repositories/{repository_id}", { repository_id: repo.repository_id });
-        const repoData: GHRepo = repoInfo.data;
-
-        return {
-            ...repo,
-            description: repoInfo.data.description,
-            name: repoData.name,
-            owner: repoData.owner.login,
-            ownerHtmlUrl: repoData.owner.html_url,
-            ownerAvatarUrl: repoData.owner.avatar_url,
-            stars: repoData.stargazers_count,
-            openIssues: repoData.open_issues_count,
-            sponsor: (repo.SponsoredRepository ?? { sponsor: { name: "" } }).sponsor.name,
-            sponsored: !!repo.SponsoredRepository
-        };
-    }));
 
 
-    return { props: { repositories: fullRepos, sponsors } };
+    return {props: {repositories: repos, sponsors}};
 }

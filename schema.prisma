@@ -83,8 +83,9 @@ model Repository {
   url               String
   valid             Boolean @default(false)
 
-  @@unique([id])
+  @@unique([id, repository_id])
   SponsoredRepository       SponsoredRepository?
+  cache                     RepositoryCache @relation(fields: [repository_id], references: [repository_id], onDelete: Cascade)
 }
 
 model SponsoredRepository {
@@ -129,4 +130,19 @@ model Claim {
     country         String
     email           String
     feedback        String @db.Text
+}
+
+model RepositoryCache {
+  id                String  @id @default(cuid())
+  repository_id     String  @unique
+  name              String
+  owner             String
+  ownerHtmlUrl      String
+  ownerAvatarUrl    String
+  url               String
+  description       String? @db.Text
+  stars             Int
+  openIssues        Int
+  @@unique([id, repository_id])
+  Repository       Repository?
 }

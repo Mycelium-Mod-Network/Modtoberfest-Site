@@ -36,12 +36,18 @@ services:
         schedule:
             - every: 5 minutes
               task: updatePrs
+            - every: 5 minutes
+              task: updateRepos
         tasks:
             docker:
                 - name: updatePrs
                   image: curlimages/curl:latest
                   script:
                       - "curl --request POST --url https://modtoberfest.com/api/admin/collectPrs --header 'Content-Type: application/json' --data '{\"secret\": \"${ADMIN_SECRET}\"}'"
+                - name: updateRepos
+                  image: curlimages/curl:latest
+                  script:
+                      - "curl --request POST --url https://modtoberfest.com/api/admin/collectRepos --header 'Content-Type: application/json' --data '{\"secret\": \"${ADMIN_SECRET}\"}'"
 networks:
   default:
       name: mariadb

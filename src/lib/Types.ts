@@ -21,8 +21,7 @@ export interface Sponsor extends BasicSponsor {
     discord?: string
 }
 
-export interface Repository {
-    id: string;
+export interface BaseRepository {
     repository_id: string;
     name: string;
     owner: string;
@@ -32,6 +31,9 @@ export interface Repository {
     description?: string;
     stars: number;
     openIssues: number;
+}
+export interface Repository extends BaseRepository {
+    id: string;
     sponsored: boolean;
     sponsor?: string;
 }

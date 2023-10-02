@@ -51,6 +51,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
         const repoData: GHRepo = (await octokit.request("GET /repositories/{repository_id}", { repository_id: addedRepo.repository_id })).data;
 
+        await prisma.repositoryCache.upsert({
+            where: {
+                repository_id: addedRepo.repository_id,
+            },
+            update: {
+                name: repoData.name,
+                owner: repoData.owner.login,
+                ownerHtmlUrl: repoData.owner.html_url,
+                ownerAvatarUrl: repoData.owner.avatar_url,
+                url: repoData.html_url,
+                description: repoData.description,
+                stars: repoData.stargazers_count,
+                openIssues: repoData.open_issues_count
+            },
+            create: {
+                repository_id: addedRepo.repository_id,
+                name: repoData.name,
+                owner: repoData.owner.login,
+                ownerHtmlUrl: repoData.owner.html_url,
+                ownerAvatarUrl: repoData.owner.avatar_url,
+                url: repoData.html_url,
+                description: repoData.description,
+                stars: repoData.stargazers_count,
+                openIssues: repoData.open_issues_count
+            },
+        })
+
         res.status(200).json({
             ...addedRepo,
             description: repoData.description,

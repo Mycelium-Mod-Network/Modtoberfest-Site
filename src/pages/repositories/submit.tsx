@@ -144,7 +144,7 @@ export default function Home({repos}: { repos: SubmittableRepo[] }) {
                     <div className = "flex flex-col gap-8 ">
                         {Object.keys(groups).map(groupName => {
                             let group = groups[groupName]
-                            return <div className = "flex-grow w-full">
+                            return <div className = "flex-grow w-full" key={groupName}>
                                 <div className = "flex gap-x-4 mb-2 border-b-2 pb-2">
                                     <div className = "my-auto w-10">
                                         <a href = {group.url} target = "_blank" rel = "noreferrer">

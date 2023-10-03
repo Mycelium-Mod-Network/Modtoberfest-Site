@@ -80,7 +80,7 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
     if (!session || !(await getAccount({ right: session })).admin) {
         return {
             redirect: {
-                destination: "/403",
+                destination: "/403?url=/admin/users",
                 permanent: false
             }
         };

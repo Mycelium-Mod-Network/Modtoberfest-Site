@@ -28,7 +28,7 @@ export default function UserButton({ className = undefined, showSignout = true, 
                     href = {`/api/auth/signout`}
                     onClick = {(e) => {
                         e.preventDefault();
-                        signOut();
+                        signOut({callbackUrl: "/"});
                     }}
                     className = "text-white"
                 > Sign out </a>}

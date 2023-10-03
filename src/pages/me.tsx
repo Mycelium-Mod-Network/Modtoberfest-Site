@@ -1,13 +1,15 @@
 import Layout from "../components/Layout";
-import { getSession, useSession } from "next-auth/react";
+import {getSession, signIn} from "next-auth/react";
 import PageTitle from "../components/ui/PageTitle";
-import { getAccount } from "../lib/utils";
-import { Account } from "../lib/Types";
+import {getAccount} from "../lib/utils";
+import {Account} from "../lib/Types";
 import ProgressBar from "@ramonak/react-progress-bar";
 import prisma from "../lib/db";
-import { GetServerSidePropsResult } from "next";
-import { GitMergeIcon, GitPullRequestClosedIcon, GitPullRequestIcon } from "@primer/octicons-react";
+import {GetServerSidePropsResult} from "next";
+import {GitMergeIcon, GitPullRequestClosedIcon, GitPullRequestIcon} from "@primer/octicons-react";
 import LinkTo from "../components/ui/LinkTo";
+import {authOptions} from "./api/auth/[...nextauth]";
+import {getServerSession} from "next-auth";
 
 interface PR {
     html_url: string;
@@ -38,9 +40,7 @@ function generateLabel(prs: number): string {
     }
 }
 
-export default function Me({ account, prs }: { account: Account, prs: PR[] }) {
-
-    const { data, status } = useSession();
+export default function Me({account, prs, loggedOut}: ({ account: Account, prs: PR[], loggedOut?: boolean })) {
 
     return <Layout title = "Profile" canonical = "/me" description = {"Your Modtoberfest profile"}>
 
@@ -48,10 +48,10 @@ export default function Me({ account, prs }: { account: Account, prs: PR[] }) {
             <div className = "flex flex-col gap-y-4">
                 <div className = "flex">
                     <img
-                        src = {account.image}
-                        width = "50"
-                        className = "mr-3 mb-2 rounded-full"
-                        alt = "avatar"
+                            src = {account.image}
+                            width = "50"
+                            className = "mr-3 mb-2 rounded-full"
+                            alt = "avatar"
                     />
 
                     <span className = "my-auto">
@@ -97,10 +97,10 @@ export default function Me({ account, prs }: { account: Account, prs: PR[] }) {
                         <div className = "flex relative flex-col flex-grow">
                             <div className = "absolute right-0">
                                 {pr.state === "closed" ?
-                                    (pr.merged ?
-                                        <GitMergeIcon size = {24} className = "text-indigo-500"/> :
-                                        <GitPullRequestClosedIcon size = {24} className = "text-red-500"/>) :
-                                    <GitPullRequestIcon size = {24} className = "text-green-500"/>}
+                                        (pr.merged ?
+                                                <GitMergeIcon size = {24} className = "text-indigo-500"/> :
+                                                <GitPullRequestClosedIcon size = {24} className = "text-red-500"/>) :
+                                        <GitPullRequestIcon size = {24} className = "text-green-500"/>}
                             </div>
                             <span className = "text-sm text-brand-100">
                                 {pr.owner}
@@ -135,18 +135,18 @@ export default function Me({ account, prs }: { account: Account, prs: PR[] }) {
 
 }
 
-export async function getServerSideProps(context): Promise<GetServerSidePropsResult<{ account: Account, prs: PR[] }>> {
+export async function getServerSideProps(context): Promise<GetServerSidePropsResult<{ account: Account, prs: PR[] } | { loggedOut: true }>> {
     const session = await getSession(context);
-    if (!session || !(await getAccount({ right: session }))) {
+    if (!session || !(await getAccount({right: session}))) {
         return {
             redirect: {
-                destination: "/403",
+                destination: "/403?url=/me",
                 permanent: false
             }
         };
     }
 
-    const account = await getAccount({ right: session });
+    const account = await getAccount({right: session});
 
     const prs = (await prisma.pullRequest.findMany({
         select: {
@@ -166,7 +166,7 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
             author_id: account.githubId
         }
     })).map(value => {
-        return { ...value, created_at: value.created_at.getTime() };
+        return {...value, created_at: value.created_at.getTime()};
     });
     return {
         props: {

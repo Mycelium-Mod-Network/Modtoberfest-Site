@@ -6,10 +6,8 @@ import PageTitle from "../../../components/ui/PageTitle";
 import {Dispatch, SetStateAction, useState} from "react";
 import {BasicSponsor, Repository} from "../../../lib/Types";
 import axios from "axios";
-import {CheckCircleIcon, TrashIcon} from "@heroicons/react/24/outline";
-import {useFormik} from "formik";
+import {CheckCircleIcon} from "@heroicons/react/24/outline";
 import * as yup from "yup";
-import {FormInput, FormSelect} from "../../../components/form/FormInput";
 import {getSession} from "next-auth/react";
 import {getAccount} from "../../../lib/utils";
 import {Repository as GHRepo} from "@octokit/webhooks-types";
@@ -106,74 +104,14 @@ export function Repository({repoDetails, setCurrentRepos}: { repoDetails: Reposi
     </div>;
 }
 
-function AddRepoForm({
-                         setAddingRepo,
-                         setCurrentRepos,
-                         sponsors
-                     }: {
-    setAddingRepo: (adding: boolean) => void,
-    setCurrentRepos: Dispatch<SetStateAction<Repository[]>>,
-    sponsors: BasicSponsor[]
-}) {
-
-    const formik = useFormik({
-        initialValues: {
-            owner: "",
-            repo_name: "",
-            sponsor: ""
-        },
-        validationSchema: validationSchema,
-        onSubmit: values => {
-            axios.post("/api/admin/repos/create", values).then(value => {
-                setAddingRepo(false);
-                setCurrentRepos((currentRepos: Repository[]) => {
-                    return [...currentRepos, value.data];
-                });
-            });
-        }
-    });
-
-    return <div className = "flex flex-col my-2 mx-4">
-        <div className = "pb-2 mb-4 text-2xl text-center border-b-2">
-            Adding Repository
-        </div>
-        <form onSubmit = {formik.handleSubmit} className = "flex flex-col gap-2">
-            <FormInput formik = {formik} id = {"owner"} label = {"Owner"} required = {true}/>
-
-            <FormInput formik = {formik} id = {"repo_name"} label = {"Repo Name"} required = {true}/>
-
-            <FormSelect formik = {formik} label = "Sponsor" id = "sponsor" required = {false}>
-                {sponsors.map(value => <option key = {value.id} value = {value.id}>{value.name}</option>)}
-            </FormSelect>
-
-            <div className = "flex gap-x-2">
-                <button className = "w-1/2 bg-green-800 bg-opacity-30 border-2 border-green-400 hover:bg-opacity-50" type = "submit">
-                    Add Repository
-                </button>
-                <button className = "w-1/2 bg-red-800 bg-opacity-30 border-2 border-red-400 hover:bg-opacity-50" onClick = {(e) => setAddingRepo(false)}>
-                    Cancel
-                </button>
-            </div>
-        </form>
-    </div>;
-}
-
 export default function Index({repositories, sponsors}: { repositories: Repository[], sponsors: BasicSponsor[] }) {
     const [currentRepositories, setCurrentRepositories] = useState<Repository[]>(repositories);
-    const [addingRepo, setAddingRepo] = useState<boolean>(false);
 
     return <Layout canonical = "/admin/repositories/submitted" title = "Submitted Repositories" description = "Submitted Repositories">
 
         <PageTitle> Repositories (Total: {currentRepositories.length}) </PageTitle>
 
         <div className = "flex flex-col gap-y-4">
-            <div className = {classNames({
-                "hover:bg-opacity-20 hover:border-cyan-400 hover:text-cyan-400 text-center": !addingRepo
-            }, "w-full border-2 text-xl bg-black bg-opacity-10 grid mb-4")}>
-                {addingRepo && <AddRepoForm setAddingRepo = {setAddingRepo} setCurrentRepos = {setCurrentRepositories} sponsors = {sponsors}/>}
-
-                {!addingRepo && <button onClick = {(e) => setAddingRepo(true)}>Add Repo</button>}
-            </div>
             {currentRepositories.map(value => <Repository repoDetails = {value} key = {value.id} setCurrentRepos = {setCurrentRepositories}/>)}
         </div>
 

@@ -24,6 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const queryData = {
             repository_id: data.id.toString(),
             url: data.html_url,
+            valid: true
         }
         if(req.body.sponsor){
             queryData["SponsoredRepository"] = {

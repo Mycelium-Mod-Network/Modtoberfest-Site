@@ -138,7 +138,7 @@ export default function Home({repos}: { repos: SubmittableRepo[] }) {
                         <span>
                             **Please note that repositories will need to be manually approved and will not appear instantly**
                         </span> <span>
-                            **If your repository has been submitted but is not showing on the repositories page, it means that it still needs to be approved**
+                            **If your repository has still not been approved after a few days, it most likely means that it is not valid for the event, you can come chat to us on the <a target = "_blank" href = "https://discord.modtoberfest.com" rel = "noreferrer"> Discord </a> to find out why**
                         </span>
                     </h3>
                     <div className = "flex flex-col gap-8 ">

@@ -26,6 +26,11 @@ const adminPages: AdminPage[] = [
         name: "Repos",
         url: "repositories",
         icon: <RepoIcon className = "mx-auto w-28 h-28"/>
+    },
+    {
+        name: "Submitted",
+        url: "repositories/submitted",
+        icon: <RepoIcon className = "mx-auto w-28 h-28"/>
     }
 ];
 

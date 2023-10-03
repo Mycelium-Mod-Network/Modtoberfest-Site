@@ -1,17 +1,17 @@
-import Layout from "../../components/Layout";
+import Layout from "../../../components/Layout";
 import {GetServerSidePropsResult} from "next";
-import prisma from "../../lib/db";
+import prisma from "../../../lib/db";
 import classNames from "classnames";
-import PageTitle from "../../components/ui/PageTitle";
+import PageTitle from "../../../components/ui/PageTitle";
 import {Dispatch, SetStateAction, useState} from "react";
-import {BasicSponsor, Repository} from "../../lib/Types";
+import {BasicSponsor, Repository} from "../../../lib/Types";
 import axios from "axios";
-import {TrashIcon} from "@heroicons/react/24/outline";
+import {CheckCircleIcon, TrashIcon} from "@heroicons/react/24/outline";
 import {useFormik} from "formik";
 import * as yup from "yup";
-import {FormInput, FormSelect} from "../../components/form/FormInput";
+import {FormInput, FormSelect} from "../../../components/form/FormInput";
 import {getSession} from "next-auth/react";
-import {getAccount} from "../../lib/utils";
+import {getAccount} from "../../../lib/utils";
 import {Repository as GHRepo} from "@octokit/webhooks-types";
 import {Octokit} from "octokit";
 import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
@@ -82,21 +82,22 @@ export function Repository({repoDetails, setCurrentRepos}: { repoDetails: Reposi
             </div>}
 
             <div className = "flex">
-                <div className = {classNames({}, "bg-red-700 hover:bg-red-600 flex bg-opacity-75")}>
+                <div className = {classNames({}, "bg-green-700 hover:bg-green-500 flex bg-opacity-75")}>
                     <button className = "flex p-1 w-full h-full" onClick = {async event => {
                         event.preventDefault();
-                        axios.post(`/api/admin/repos/delete`, {
-                            id: repo.id
+                        axios.post(`/api/admin/repos/approve`, {
+                            repository_id: repo.repository_id
                         }).then(value => {
+                            console.log(value.data);
                             setCurrentRepos(repos => {
-                                return repos.filter(repo => repo.id !== value.data.id);
+                                return repos.filter(repo => repo.repository_id !== value.data);
                             });
                         });
                     }}>
                         <div className = "flex gap-x-1 m-auto">
-                            <TrashIcon className = "my-auto w-4 h-4"/>
+                            <CheckCircleIcon className = "my-auto w-4 h-4"/>
 
-                            <span>Delete</span>
+                            <span>Approve</span>
                         </div>
                     </button>
                 </div>
@@ -157,11 +158,11 @@ function AddRepoForm({
     </div>;
 }
 
-export default function Repositories({repositories, sponsors}: { repositories: Repository[], sponsors: BasicSponsor[] }) {
+export default function Index({repositories, sponsors}: { repositories: Repository[], sponsors: BasicSponsor[] }) {
     const [currentRepositories, setCurrentRepositories] = useState<Repository[]>(repositories);
     const [addingRepo, setAddingRepo] = useState<boolean>(false);
 
-    return <Layout canonical = "/admin/repositories" title = "Repositories" description = "Repositories">
+    return <Layout canonical = "/admin/repositories/submitted" title = "Submitted Repositories" description = "Submitted Repositories">
 
         <PageTitle> Repositories (Total: {currentRepositories.length}) </PageTitle>
 
@@ -183,7 +184,7 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
 
 
     const session = await getSession(context);
-    if (!session || !(await getAccount({ right: session })).admin) {
+    if (!session || !(await getAccount({right: session})).admin) {
         return {
             redirect: {
                 destination: "/403",
@@ -216,6 +217,11 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
                 }
             },
             cache: true
+        },
+        where: {
+            valid: {
+                equals: false
+            }
         }
     })).map(async repo => {
         let cache = repo.cache;
@@ -257,7 +263,6 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
             name: true
         }
     }));
-
 
 
     return {props: {repositories: repos, sponsors}};

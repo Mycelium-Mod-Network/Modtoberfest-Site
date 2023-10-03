@@ -2,7 +2,7 @@ import Layout from "../components/Layout";
 import {useRouter} from "next/router";
 import LoginLink from "../components/LoginLink";
 
-export default function four0three() {
+export default function Four0three() {
     let router = useRouter()
     let query = router.query;
     const url = query.url as string

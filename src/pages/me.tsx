@@ -1,5 +1,5 @@
 import Layout from "../components/Layout";
-import {getSession, signIn} from "next-auth/react";
+import {getSession} from "next-auth/react";
 import PageTitle from "../components/ui/PageTitle";
 import {getAccount} from "../lib/utils";
 import {Account} from "../lib/Types";
@@ -8,8 +8,6 @@ import prisma from "../lib/db";
 import {GetServerSidePropsResult} from "next";
 import {GitMergeIcon, GitPullRequestClosedIcon, GitPullRequestIcon} from "@primer/octicons-react";
 import LinkTo from "../components/ui/LinkTo";
-import {authOptions} from "./api/auth/[...nextauth]";
-import {getServerSession} from "next-auth";
 
 interface PR {
     html_url: string;

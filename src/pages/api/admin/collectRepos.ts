@@ -49,6 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 openIssues: repoData.open_issues_count
             },
         })
+        await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
 

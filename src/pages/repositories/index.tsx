@@ -47,7 +47,7 @@ function Repository(repo: Repository) {
     </div>;
 }
 
-export default function Home({repos}) {
+export default function Home({repos}: { repos: Repository[] }) {
 
     return (
             <Layout title = "Repositories" canonical = "/repositories" description = {"Repositories"}>
@@ -57,7 +57,7 @@ export default function Home({repos}) {
                     <PageTitle> Repositories </PageTitle>
                     <div className = "flex flex-wrap gap-8 justify-between">
 
-                        {repos.map(repo => <Repository key = {repo.id} {...repo}/>)}
+                        {repos.map(repo => <Repository key = {repo.repository_id} {...repo}/>)}
                     </div>
                 </div>
 
@@ -95,7 +95,7 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<{ repos: Re
 
     return {
         props: {
-            repos: sorted
+            repos: sorted.map(value => ({...value, id: null, sponsor: null}))
         },
         revalidate: 60
 

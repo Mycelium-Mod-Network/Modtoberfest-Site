@@ -1,6 +1,6 @@
 import {Session} from "next-auth";
 import prisma from "./db";
-import {Account, Either, Repository} from "./Types";
+import {Account, BaseRepository, Either, Repository} from "./Types";
 import {Octokit} from "octokit";
 import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
 import {Repository as GHRepo} from "@octokit/webhooks-types";
@@ -105,7 +105,6 @@ export async function getRepo(repository_id: string) {
 }
 
 export async function getRepos(repository_ids: string[]): Promise<Repository[]> {
-
     const octokit = new Octokit({
         authStrategy: createOAuthAppAuth,
         auth: {
@@ -151,9 +150,12 @@ export async function getRepos(repository_ids: string[]): Promise<Repository[]> 
                 stars: repoData.stargazers_count,
                 openIssues: repoData.open_issues_count,
                 repository_id: repo.repository_id,
-                id: repo.id
+                id: repo.id,
+                updatedAt: new Date(repoData.updated_at)
             }
         }
+
+
         return {
             id: repo.id,
             repository_id: repo.repository_id,
@@ -166,7 +168,19 @@ export async function getRepos(repository_ids: string[]): Promise<Repository[]> 
             stars: cache.stars,
             openIssues: cache.openIssues,
             sponsor: (repo.SponsoredRepository ?? {sponsor: {name: ""}}).sponsor.name,
-            sponsored: !!repo.SponsoredRepository
+            sponsored: !!repo.SponsoredRepository,
+            updatedAt: formatDate(cache.updatedAt.getTime())
         };
     }));
+}
+
+export function formatDate(date: number){
+    const rtf1 = new Intl.RelativeTimeFormat('en', { style: 'short' });
+    const deltaSeconds = Math.round((date - Date.now()) / 1000);
+    const cutoffs = [60, 3600, 86400, 86400 * 7, 86400 * 30, 86400 * 365, Infinity];
+
+    const units: Intl.RelativeTimeFormatUnit[] = ["second", "minute", "hour", "day", "week", "month", "year"];
+    const unitIndex = cutoffs.findIndex(cutoff => cutoff > Math.abs(deltaSeconds));
+    const divisor = unitIndex ? cutoffs[unitIndex - 1] : 1;
+    return rtf1.format(Math.floor(deltaSeconds / divisor), units[unitIndex])
 }

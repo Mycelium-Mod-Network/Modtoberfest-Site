@@ -22,7 +22,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     for (let repo of repos) {
         const repoInfo = await octokit.request("GET /repositories/{repository_id}", {repository_id: repo.repository_id});
         const repoData: GHRepo = repoInfo.data;
-
         await prisma.repositoryCache.upsert({
             where: {
                 repository_id: repo.repository_id,
@@ -35,7 +34,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 url: repoData.html_url,
                 description: repoData.description,
                 stars: repoData.stargazers_count,
-                openIssues: repoData.open_issues_count
+                openIssues: repoData.open_issues_count,
+                updatedAt: repoData.updated_at
             },
             create: {
                 repository_id: repo.repository_id,
@@ -46,7 +46,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 url: repoData.html_url,
                 description: repoData.description,
                 stars: repoData.stargazers_count,
-                openIssues: repoData.open_issues_count
+                openIssues: repoData.open_issues_count,
+                updatedAt: repoData.updated_at
             },
         })
         await new Promise(resolve => setTimeout(resolve, 1000));

@@ -1,7 +1,7 @@
 import Layout from "../../components/Layout";
 import classNames from "classnames";
 import PageTitle from "../../components/ui/PageTitle";
-import {getAccessToken, getAccount} from "../../lib/utils";
+import {formatDate, getAccessToken, getAccount} from "../../lib/utils";
 import {IssueOpenedIcon, RepoForkedIcon, RepoIcon, StarIcon, VerifiedIcon} from "@primer/octicons-react";
 import {BaseRepository} from "../../lib/Types";
 import {getSession} from "next-auth/react";
@@ -71,9 +71,11 @@ function RepositoryCard(repo: SubmittableRepo) {
                 <IssueOpenedIcon className = "my-auto w-4 h-4 text-green-500"/> <span className = "my-auto">
                     {currentRepo.openIssues} Issue{currentRepo.openIssues == 1 ? "" : "s"}
                 </span>
-
             </a>
         </div>
+        <p className = "text-xs italic ">
+            Last updated {repo.updatedAt}
+        </p>
         <div className = "flex justify-between text-sm">
             {currentRepo.alreadySubmitted &&
                     <button disabled = {working || repo.sponsored} className = "flex-grow w-full bg-red-700 hover:bg-red-500 disabled:hover:bg-red-700 disabled:bg-opacity-50 disabled:hover:bg-opacity-50 text-white hover:text-black disabled:hover:text-white p-2" type = "submit">
@@ -205,7 +207,8 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
                 description: repo.description,
                 stars: repo.stargazers_count,
                 openIssues: repo.open_issues_count,
-                forked: repo.fork
+                forked: repo.fork,
+                updatedAt: formatDate(new Date(repo.updated_at).getTime())
             }
         })
         if (foundRepos.length == 0) {

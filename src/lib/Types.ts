@@ -31,6 +31,7 @@ export interface BaseRepository {
     description?: string;
     stars: number;
     openIssues: number;
+    updatedAt: string
 }
 export interface Repository extends BaseRepository {
     id: string;

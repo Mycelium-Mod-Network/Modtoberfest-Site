@@ -44,6 +44,9 @@ function Repository(repo: Repository) {
 
             </a>
         </div>
+        <p className = "text-xs italic ">
+            Last updated {repo.updatedAt}
+        </p>
     </div>;
 }
 

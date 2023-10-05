@@ -143,6 +143,7 @@ model RepositoryCache {
   description       String? @db.Text
   stars             Int
   openIssues        Int
+  updatedAt         DateTime @default(now())
   @@unique([id, repository_id])
   Repository      Repository @relation(fields: [repository_id], references: [repository_id], onDelete: Cascade)
 }

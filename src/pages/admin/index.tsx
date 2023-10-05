@@ -2,7 +2,7 @@ import Layout from "../../components/Layout";
 import { CurrencyDollarIcon, UserIcon } from "@heroicons/react/24/outline";
 import PageTitle from "../../components/ui/PageTitle";
 import LinkTo from "../../components/ui/LinkTo";
-import { RepoIcon } from "@primer/octicons-react";
+import {GitPullRequestDraftIcon, GitPullRequestIcon, RepoIcon, RepoPullIcon} from "@primer/octicons-react";
 
 
 interface AdminPage {
@@ -31,6 +31,16 @@ const adminPages: AdminPage[] = [
         name: "Submitted",
         url: "repositories/submitted",
         icon: <RepoIcon className = "mx-auto w-28 h-28"/>
+    },
+    {
+        name: "PRs",
+        url: "pullrequests",
+        icon: <GitPullRequestIcon className = "mx-auto w-28 h-28"/>
+    },
+    {
+        name: "Review PR",
+        url: "pullrequests/review",
+        icon: <GitPullRequestIcon className = "mx-auto w-28 h-28"/>
     }
 ];
 

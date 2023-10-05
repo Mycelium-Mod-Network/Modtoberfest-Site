@@ -28,13 +28,23 @@ function getRepoData(data) {
 const OCTOBER_START = new Date(Date.UTC(2023, 9, 1, 0, 0, 0));
 const NOVEMBER_START = new Date(Date.UTC(2023, 10, 1, 0, 0, 0));
 
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     if (req.body.secret !== process.env.ADMIN_SECRET) {
         return res.status(403).send("forbidden");
     }
 
-    const repos = await prisma.repository.findMany({select: {repository_id: true}});
+    const repos = await prisma.repository.findMany({
+        select: {
+            cache: {
+                select: {
+                    owner: true,
+                    name: true
+                }
+            }
+        }
+    })
     const octokit = new Octokit({
         authStrategy: createOAuthAppAuth,
         auth: {
@@ -42,7 +52,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             clientSecret: process.env.GITHUB_SECRET
         }
     });
-
 
     const existingIds = (await prisma.pullRequest.findMany({
         select: {
@@ -55,18 +64,50 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }, {});
 
     for (let repo of repos) {
-        const pulls: PullRequest[] = (await octokit.request("GET /repositories/{repository_id}/pulls?state=all", {repository_id: repo.repository_id})).data;
-        const octoberPulls = pulls.filter(value => {
+
+        const allPulls = [];
+        let page = 1;
+        while (true) {
+            const pagePulls = (await octokit.rest.pulls.list({
+                owner: repo.cache.owner,
+                repo: repo.cache.name,
+                state: "all",
+                per_page: 100,
+                page: page++,
+            })).data;
+            if (pagePulls.length == 0) {
+                break;
+            } else {
+                allPulls.push(...pagePulls)
+            }
+        }
+
+        const octoberPulls: PullRequest[] = allPulls.filter(value => {
             const date = new Date(value.created_at);
             return date > OCTOBER_START && date < NOVEMBER_START;
         });
         for (let pull of octoberPulls) {
             const prData = getRepoData(pull);
             const existingId = existingIds[prData.pr_id];
-
+            const isInvalid = pull.labels.some(value => /.*(spam|invalid).*/.test(value.name))
+            const prStatus = {
+                invalid: isInvalid,
+                reason: isInvalid ? "The repository owner has marked this PR as spam or invalid" : null
+            }
             if (!existingId) {
-                await prisma.pullRequest.create({
-                    data: prData
+                const pr = await prisma.pullRequest.create({
+                    data: {
+                        ...prData
+                    },
+                    select: {
+                        pr_id: true
+                    }
+                });
+                await prisma.pullRequestStatus.create({
+                    data: {
+                        pr_id: pr.pr_id,
+                        ...prStatus
+                    }
                 });
                 if (prData.author.indexOf("[bot]") == -1) {
                     await info("New PR!", null, [
@@ -96,7 +137,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 await prisma.pullRequest.update({
                     data: {
                         id: existingId,
-                        ...prData
+                        ...prData,
+                        PullRequestStatus: {
+                            upsert: {
+                                create: prStatus,
+                                update: prStatus
+                            }
+                        }
                     },
                     where: {
                         id: existingId

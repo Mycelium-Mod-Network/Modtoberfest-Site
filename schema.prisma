@@ -115,6 +115,18 @@ model PullRequest {
   repo_id String
   repo_name String
   merged Boolean
+  @@unique([id, pr_id])
+  PullRequestStatus       PullRequestStatus?
+}
+
+model PullRequestStatus {
+  id String  @id @default(cuid())
+  pr_id Int @unique
+  invalid Boolean
+  reason String? @db.Text
+  reviewed Boolean @default(false)
+  @@unique([id, pr_id])
+  PullRequest      PullRequest @relation(fields: [pr_id], references: [pr_id], onDelete: Cascade)
 }
 
 model Claim {

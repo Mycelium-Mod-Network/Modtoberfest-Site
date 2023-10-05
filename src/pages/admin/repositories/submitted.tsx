@@ -9,7 +9,7 @@ import axios from "axios";
 import {CheckCircleIcon} from "@heroicons/react/24/outline";
 import * as yup from "yup";
 import {getSession} from "next-auth/react";
-import {getAccount} from "../../../lib/utils";
+import {formatDate, getAccount} from "../../../lib/utils";
 import {Repository as GHRepo} from "@octokit/webhooks-types";
 import {Octokit} from "octokit";
 import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
@@ -176,7 +176,8 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
                 stars: repoData.stargazers_count,
                 openIssues: repoData.open_issues_count,
                 repository_id: repo.repository_id,
-                id: repo.id
+                id: repo.id,
+                updatedAt: new Date(repoData.updated_at)
             }
         }
         return {
@@ -191,7 +192,8 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
             stars: cache.stars,
             openIssues: cache.openIssues,
             sponsor: (repo.SponsoredRepository ?? {sponsor: {name: ""}}).sponsor.name,
-            sponsored: !!repo.SponsoredRepository
+            sponsored: !!repo.SponsoredRepository,
+            updatedAt: formatDate(cache.updatedAt.getTime())
         };
     }))
 

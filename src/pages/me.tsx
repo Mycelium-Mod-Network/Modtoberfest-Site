@@ -161,7 +161,7 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
             owner: true
         },
         where: {
-            author_id: account.githubId
+            author_id: account.githubId,
         }
     })).map(value => {
         return {...value, created_at: value.created_at.getTime()};

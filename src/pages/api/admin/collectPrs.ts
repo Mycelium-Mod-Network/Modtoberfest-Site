@@ -134,14 +134,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     ]);
                 }
             } else {
+                const status = (await prisma.pullRequestStatus.findFirst({
+                    select: {
+                        invalid: true,
+                        reason: true,
+                        reviewed: true
+                    },
+                    where: {
+                        pr_id: {
+                            equals: prData.pr_id
+                        }
+                    }
+                }))
+                let newStatus = prStatus;
+                if(status.reviewed) {
+                    newStatus = status
+                }
+
                 await prisma.pullRequest.update({
                     data: {
                         id: existingId,
                         ...prData,
                         PullRequestStatus: {
                             upsert: {
-                                create: prStatus,
-                                update: prStatus
+                                create: newStatus,
+                                update: newStatus
                             }
                         }
                     },

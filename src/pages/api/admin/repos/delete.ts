@@ -12,11 +12,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 id: req.body.id
             }
         });
-        await prisma.repositoryCache.delete({
-            where: {
-                repository_id: repo.repository_id
-            }
-        })
         res.status(200).json({id: repo.id});
         return;
     }

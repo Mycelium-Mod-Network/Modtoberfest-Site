@@ -1,9 +1,11 @@
 import Layout from "../../components/Layout";
-import { CurrencyDollarIcon, UserIcon } from "@heroicons/react/24/outline";
+import {CurrencyDollarIcon, UserIcon} from "@heroicons/react/24/outline";
 import PageTitle from "../../components/ui/PageTitle";
 import LinkTo from "../../components/ui/LinkTo";
-import {GitPullRequestDraftIcon, GitPullRequestIcon, RepoIcon, RepoPullIcon} from "@primer/octicons-react";
-
+import {GitPullRequestIcon, RepoIcon} from "@primer/octicons-react";
+import {GetServerSidePropsResult} from "next";
+import {getSession} from "next-auth/react";
+import {getAccount} from "../../lib/utils";
 
 interface AdminPage {
     name: string,
@@ -66,4 +68,19 @@ export default function Admin() {
             </div>
         </div>
     </Layout>;
+}
+
+export async function getServerSideProps(context): Promise<GetServerSidePropsResult<{}>> {
+
+    const session = await getSession(context);
+    if (!session || !(await getAccount({right: session})).admin) {
+        return {
+            redirect: {
+                destination: "/403?url=/admin",
+                permanent: false
+            }
+        };
+    }
+
+    return {props: {}}
 }

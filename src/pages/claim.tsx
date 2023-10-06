@@ -214,7 +214,6 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
             author_id: account.githubId
         }
     }))
-    console.log(prs);
     return {
         props: {
             account,

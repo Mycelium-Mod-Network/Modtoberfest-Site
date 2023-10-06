@@ -28,7 +28,6 @@ function getRepoData(data) {
 const OCTOBER_START = new Date(Date.UTC(2023, 9, 1, 0, 0, 0));
 const NOVEMBER_START = new Date(Date.UTC(2023, 10, 1, 0, 0, 0));
 
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     if (req.body.secret !== process.env.ADMIN_SECRET) {
@@ -65,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     for (let repo of repos) {
 
-        const allPulls = [];
+        const allPulls: PullRequest[] = [];
         let page = 1;
         while (true) {
             const pagePulls = (await octokit.rest.pulls.list({
@@ -74,25 +73,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 state: "all",
                 per_page: 100,
                 page: page++,
+                sort: "created"
             })).data;
-            if (pagePulls.length == 0) {
+            const octoberPulls: PullRequest[] = pagePulls.filter(value => {
+                const date = new Date(value.created_at);
+                return date > OCTOBER_START && date < NOVEMBER_START;
+            }) as any[]; // ts is dumb
+            if (octoberPulls.length == 0) {
                 break;
             } else {
-                allPulls.push(...pagePulls)
+                allPulls.push(...octoberPulls)
             }
         }
 
-        const octoberPulls: PullRequest[] = allPulls.filter(value => {
-            const date = new Date(value.created_at);
-            return date > OCTOBER_START && date < NOVEMBER_START;
-        });
-        for (let pull of octoberPulls) {
+        for (let pull of allPulls) {
             const prData = getRepoData(pull);
             const existingId = existingIds[prData.pr_id];
+            const isBot = pull.user.type === "Bot"
             const isInvalid = pull.labels.some(value => /.*(spam|invalid).*/.test(value.name))
             const prStatus = {
-                invalid: isInvalid,
-                reason: isInvalid ? "The repository owner has marked this PR as spam or invalid" : null
+                invalid: isBot || isInvalid,
+                reason: isBot ? "Pull requests was made by a bot account" : isInvalid ? "The repository owner has marked this PR as spam or invalid" : null
             }
             if (!existingId) {
                 const pr = await prisma.pullRequest.create({
@@ -109,7 +110,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         ...prStatus
                     }
                 });
-                if (prData.author.indexOf("[bot]") == -1) {
+                if (!isBot) {
                     await info("New PR!", null, [
                         {
                             name: "Owner",
@@ -147,7 +148,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     }
                 }))
                 let newStatus = prStatus;
-                if(status.reviewed) {
+                if (status.reviewed) {
                     newStatus = status
                 }
 

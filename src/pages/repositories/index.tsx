@@ -26,7 +26,7 @@ function Repository(repo: Repository) {
             </div>
         </div>
         <div className = "flex-grow break-words">
-            <span className = {classNames({"italic": !repo.description})}>{repo.description || "No description provided"}</span>
+            <p className = {classNames({"italic": !repo.description})}>{repo.description ? repo.description.substring(0, 100) + (repo.description.length > 100 ? "..." : "") : "No description provided"}</p>
         </div>
 
         <div className = "flex justify-between text-sm">

@@ -56,7 +56,7 @@ function RepositoryCard(repo: SubmittableRepo) {
             </div>
         </div>
         <div className = "flex-grow break-words">
-            <span className = {classNames({"italic": !currentRepo.description})}>{currentRepo.description || "No description provided"}</span>
+            <p className = {classNames({"italic": !currentRepo.description})}>{currentRepo.description ? currentRepo.description.substring(0, 100) + (currentRepo.description.length > 100 ? "..." : "") : "No description provided"}</p>
         </div>
 
         <div className = "flex justify-between text-sm">

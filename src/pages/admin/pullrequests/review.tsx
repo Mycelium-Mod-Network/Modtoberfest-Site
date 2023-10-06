@@ -60,7 +60,7 @@ function PullRequest({prDetails, removePr}: { prDetails: PullRequest, removePr: 
 
             <a href = {pr.html_url} target = "_blank" rel = "noreferrer" className = "flex gap-x-2">
                 {pr.state === "open" ? <IssueOpenedIcon className = "w-5 h-5 text-green-700 my-auto"/> :
-                    <IssueClosedIcon className = {classNames({"text-purple-500": pr.merged, "text-red-500": !pr.merged}, "w-5 h-5 my-auto")}/>}
+                        <IssueClosedIcon className = {classNames({"text-purple-500": pr.merged, "text-red-500": !pr.merged}, "w-5 h-5 my-auto")}/>}
 
                 <p className = "font-mono">
                     {pr.title}
@@ -76,7 +76,10 @@ function PullRequest({prDetails, removePr}: { prDetails: PullRequest, removePr: 
                        value = {formik.values["reason"]}
                        disabled = {working} type = "text" name = "reason" className = "w-full p-1.5 bg-brand-800"
                 />
-                <button disabled = {working} type = "submit" className = {classNames({"bg-green-700 hover:bg-green-500 disabled:hover:bg-green-700": formik.values.reason.length == 0, "bg-red-700 hover:bg-red-500 disabled:hover:bg-red-700": formik.values.reason.length > 0}, "flex-grow disabled:bg-opacity-50 disabled:hover:bg-opacity-50 text-white hover:text-black disabled:hover:text-white p-2")}>
+                <button disabled = {working} type = "submit" className = {classNames({
+                    "bg-green-700 hover:bg-green-500 disabled:hover:bg-green-700": formik.values.reason.length == 0,
+                    "bg-red-700 hover:bg-red-500 disabled:hover:bg-red-700": formik.values.reason.length > 0
+                }, "flex-grow disabled:bg-opacity-50 disabled:hover:bg-opacity-50 text-white hover:text-black disabled:hover:text-white p-2")}>
                     {working ? <div className = "flex w-full">
                         <div className = "flex mx-auto gap-x-2">
                             <div className = "w-4 h-4 animate-spin my-auto">
@@ -100,8 +103,8 @@ export default function Review({prs}: { prs: PullRequest[] }) {
 
     let [workingPrs, setWorkingPrs] = useState(prs)
     let groups = {}
-    for (let pr of workingPrs) {
-        let group = groups[pr.owner] ?? {
+    for (let pr of workingPrs.sort((a, b) => a.owner.localeCompare(b.owner))) {
+        let group = groups[`${pr.owner}/${pr.repo_name}`] ?? {
             owner: pr.owner,
             name: `${pr.owner}/${pr.repo_name}`,
             url: `https://github.com/${pr.owner}/${pr.repo_name}`,
@@ -109,7 +112,7 @@ export default function Review({prs}: { prs: PullRequest[] }) {
             prs: []
         }
         group.prs.push(pr)
-        groups[pr.owner] = group;
+        groups[`${pr.owner}/${pr.repo_name}`] = group;
     }
 
     return <Layout canonical = "/admin/pullrequests/review" title = "Review Pull Requests" description = "Review Pull Requests">
@@ -123,7 +126,8 @@ export default function Review({prs}: { prs: PullRequest[] }) {
                     return <div className = "flex-grow w-full flex flex-col" key = {groupName}>
                         <div className = "flex gap-x-4 mb-2 border-b-2 pb-2">
                             <div className = "my-auto w-10">
-                                <a href = {group.url} target = "_blank" rel = "noreferrer"> <img src = {group.avatar} alt = {group.name} className = "rounded-full"/> </a>
+                                <a href = {group.url} target = "_blank" rel = "noreferrer">
+                                    <img src = {group.avatar} alt = {group.name} className = "rounded-full"/> </a>
                             </div>
                             <div className = "flex flex-col group">
                                 <h3 className = "text-2xl font-bold">
@@ -133,7 +137,8 @@ export default function Review({prs}: { prs: PullRequest[] }) {
                         </div>
 
                         <div className = "flex flex-wrap flex-col gap-4 justify-between">
-                            {group.prs.map(pr => <PullRequest key = {pr.pr_id} prDetails = {pr} removePr = {pr_id => setWorkingPrs(prevState => prevState.filter(value => value.pr_id !== pr_id))}/>)}
+                            {group.prs.map(pr =>
+                                    <PullRequest key = {pr.pr_id} prDetails = {pr} removePr = {pr_id => setWorkingPrs(prevState => prevState.filter(value => value.pr_id !== pr_id))}/>)}
                         </div>
                     </div>
                 })}

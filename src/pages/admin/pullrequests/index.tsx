@@ -43,7 +43,7 @@ function PullRequest({prDetails}: { prDetails: PullRequest }) {
 
             <a href = {pr.html_url} target = "_blank" rel = "noreferrer" className = "flex gap-x-2">
                 {pr.state === "open" ? <IssueOpenedIcon className = "w-5 h-5 text-green-700 my-auto"/> :
-                    <IssueClosedIcon className = {classNames({"text-purple-500": pr.merged, "text-red-500": !pr.merged}, "w-5 h-5 my-auto")}/>}
+                        <IssueClosedIcon className = {classNames({"text-purple-500": pr.merged, "text-red-500": !pr.merged}, "w-5 h-5 my-auto")}/>}
 
                 <p className = "font-mono">
                     {pr.title}
@@ -60,8 +60,8 @@ export default function Review({prs}: { prs: PullRequest[] }) {
 
     let [workingPrs, setWorkingPrs] = useState(prs)
     let groups = {}
-    for (let pr of workingPrs) {
-        let group = groups[pr.owner] ?? {
+    for (let pr of workingPrs.sort((a, b) => a.owner.localeCompare(b.owner))) {
+        let group = groups[`${pr.owner}/${pr.repo_name}`] ?? {
             owner: pr.owner,
             name: `${pr.owner}/${pr.repo_name}`,
             url: `https://github.com/${pr.owner}/${pr.repo_name}`,
@@ -69,7 +69,7 @@ export default function Review({prs}: { prs: PullRequest[] }) {
             prs: []
         }
         group.prs.push(pr)
-        groups[pr.owner] = group;
+        groups[`${pr.owner}/${pr.repo_name}`] = group;
     }
 
     return <Layout canonical = "/admin/pullrequests" title = "Pull Requests" description = "Pull Requests">
@@ -83,7 +83,8 @@ export default function Review({prs}: { prs: PullRequest[] }) {
                     return <div className = "flex-grow w-full flex flex-col" key = {groupName}>
                         <div className = "flex gap-x-4 mb-2 border-b-2 pb-2">
                             <div className = "my-auto w-10">
-                                <a href = {group.url} target = "_blank" rel = "noreferrer"> <img src = {group.avatar} alt = {group.name} className = "rounded-full"/> </a>
+                                <a href = {group.url} target = "_blank" rel = "noreferrer">
+                                    <img src = {group.avatar} alt = {group.name} className = "rounded-full"/> </a>
                             </div>
                             <div className = "flex flex-col group">
                                 <h3 className = "text-2xl font-bold">

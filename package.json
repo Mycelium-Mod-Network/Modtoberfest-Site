@@ -28,7 +28,7 @@
     "next-auth": "^4.10.3",
     "next-plugin-preact": "^3.0.7",
     "next-seo": "^5.5.0",
-    "nprogress": "^0.2.0",
+    "nextjs-progressbar": "^0.0.16",
     "octokit": "^2.0.7",
     "octonode": "^0.10.2",
     "pg": "^8.8.0",

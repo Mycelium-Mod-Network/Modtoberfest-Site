@@ -12,20 +12,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             account_id: account.id
         }
     });
+    if (hasClaim) {
+        return res.status(400).send("Unable to claim multiple times!")
+    }
     const prs = (await prisma.pullRequest.count({
         where: {
-            owner_id: account.githubId,
+            author_id: account.githubId,
             PullRequestStatus: {
-                invalid: false
+                invalid: false,
+                reviewed: true
             }
         }
     }))
     if (prs < 4) {
         return res.status(403).send("Not enough PRs!")
-    }
-    if (hasClaim) {
-        return res.status(400).send("Unable to claim multiple times!")
-    } else {
+    }     else {
         const data = (await prisma.claim.create({
             data: {
                 account_id: account.id,

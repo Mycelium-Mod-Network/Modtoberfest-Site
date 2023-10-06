@@ -93,7 +93,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const isInvalid = pull.labels.some(value => /.*(spam|invalid).*/.test(value.name))
             const prStatus = {
                 invalid: isBot || isInvalid,
-                reason: isBot ? "Pull requests was made by a bot account" : isInvalid ? "The repository owner has marked this PR as spam or invalid" : null
+                reason: isBot ? "Pull requests was made by a bot account" : isInvalid ? "The repository owner has marked this PR as spam or invalid" : null,
+                reviewed: isBot || isInvalid
             }
             if (!existingId) {
                 const pr = await prisma.pullRequest.create({
@@ -148,7 +149,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     }
                 }))
                 let newStatus = prStatus;
-                if (status.reviewed) {
+                if (status && status.reviewed) {
                     newStatus = status
                 }
 

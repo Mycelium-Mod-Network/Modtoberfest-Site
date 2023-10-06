@@ -205,19 +205,21 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
         select: {
             PullRequestStatus: {
                 select: {
-                    invalid: true
+                    invalid: true,
+                    reviewed: true
                 }
             }
         },
         where: {
-            owner_id: account.githubId
+            author_id: account.githubId
         }
     }))
+    console.log(prs);
     return {
         props: {
             account,
             claim,
-            validPrs: prs.filter(value => value.PullRequestStatus && !value.PullRequestStatus.invalid).length,
+            validPrs: prs.filter(value => value.PullRequestStatus && value.PullRequestStatus.reviewed ? !value.PullRequestStatus.invalid : false).length,
             totalPrs: prs.length
         }
     };

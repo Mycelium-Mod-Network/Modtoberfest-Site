@@ -1,11 +1,11 @@
 import NextAuth, {NextAuthOptions} from "next-auth";
 import GithubProvider from "next-auth/providers/github";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
+import {PrismaAdapter} from "@next-auth/prisma-adapter";
+import {PrismaClient} from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const authOptions:NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
     secret: process.env.NEXTAUTH_SECRET,
     pages: {
@@ -23,20 +23,29 @@ export const authOptions:NextAuthOptions = {
         })
     ],
     callbacks: {
-        async signIn({ user, account, profile, email, credentials }) {
-            await prisma.account.update({
-                data: {
-                    access_token: account.access_token,
-                    token_type: account.token_type,
-                    scope: account.scope
-                },
+        async signIn({user, account, profile, email, credentials}) {
+
+            const newVar = await prisma.account.count({
                 where: {
-                    provider_providerAccountId: {
-                        provider: "github",
-                        providerAccountId: account.providerAccountId
-                    }
+                    provider: "github",
+                    providerAccountId: account.providerAccountId
                 }
-            })
+            });
+            if (newVar > 0) {
+                await prisma.account.update({
+                    data: {
+                        access_token: account.access_token,
+                        token_type: account.token_type,
+                        scope: account.scope
+                    },
+                    where: {
+                        provider_providerAccountId: {
+                            provider: "github",
+                            providerAccountId: account.providerAccountId
+                        }
+                    }
+                })
+            }
             return true
         },
     }

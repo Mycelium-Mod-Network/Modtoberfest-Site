@@ -37,7 +37,7 @@ function Repository(repo: Repository) {
 
             </a>
 
-            <a href = {`${repo.url}/issues`} className = "flex gap-x-1 px-2 no-underline rounded border hover:text-orange-500 hover:bg-black hover:bg-opacity-5 hover:border-orange-500">
+            <a href = {`${repo.url}/issues`} target = "_blank" className = "flex gap-x-1 px-2 no-underline rounded border hover:text-orange-500 hover:bg-black hover:bg-opacity-5 hover:border-orange-500">
                 <IssueOpenedIcon className = "my-auto w-4 h-4 text-green-500"/> <span className = "my-auto">
                     {repo.openIssues} Issue{repo.openIssues == 1 ? "" : "s"}
                 </span>

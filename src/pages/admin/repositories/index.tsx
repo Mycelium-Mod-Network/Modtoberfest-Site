@@ -3,8 +3,8 @@ import {GetServerSidePropsResult} from "next";
 import prisma from "../../../lib/db";
 import classNames from "classnames";
 import PageTitle from "../../../components/ui/PageTitle";
-import {Dispatch, SetStateAction, useState} from "react";
-import {BasicSponsor, Repository} from "../../../lib/Types";
+import React, {Dispatch, SetStateAction, useState} from "react";
+import {AdminRepository, BasicSponsor, Repository} from "../../../lib/Types";
 import axios from "axios";
 import {TrashIcon} from "@heroicons/react/24/outline";
 import {useFormik} from "formik";
@@ -25,10 +25,10 @@ const validationSchema = yup.object({
             .notRequired()
 });
 
-export function Repository({repoDetails, setCurrentRepos}: { repoDetails: Repository, setCurrentRepos: Dispatch<SetStateAction<Repository[]>> }) {
-    const [repo] = useState<Repository>(repoDetails);
+export function Repository({repoDetails, setCurrentRepos}: { repoDetails: AdminRepository, setCurrentRepos: Dispatch<SetStateAction<AdminRepository[]>> }) {
+    const [repo] = useState<AdminRepository>(repoDetails);
 
-    return <div className = "flex gap-x-4 p-4 w-full border-2">
+    return <div className = {classNames({"bg-red-900 bg-opacity-25": repo.invalid}, "flex gap-x-4 p-4 w-full border-2")}>
         <div className = "flex-none">
             <img src = {repo.ownerAvatarUrl} alt = "avatar" className = "w-16 h-16 rounded-full"/>
         </div>
@@ -77,9 +77,21 @@ export function Repository({repoDetails, setCurrentRepos}: { repoDetails: Reposi
                 </span>
             </div>
 
+
             {repo.description && <div className = "p-2 font-mono break-all bg-white bg-opacity-5">
                 {repo.description}
             </div>}
+
+            {
+                    repo.invalid && <div className = {classNames("flex-grow w-full text-white bg-opacity-10 bg-white p-1")}>
+                        <p>
+                            This repository has been denied:
+                        </p>
+                        <code className="break-words">
+                            {repo.reason}
+                        </code>
+                    </div>
+            }
 
             <div className = "flex">
                 <div className = {classNames({}, "bg-red-700 hover:bg-red-600 flex bg-opacity-75")}>
@@ -111,7 +123,7 @@ function AddRepoForm({
                          sponsors
                      }: {
     setAddingRepo: (adding: boolean) => void,
-    setCurrentRepos: Dispatch<SetStateAction<Repository[]>>,
+    setCurrentRepos: Dispatch<SetStateAction<AdminRepository[]>>,
     sponsors: BasicSponsor[]
 }) {
 
@@ -157,8 +169,8 @@ function AddRepoForm({
     </div>;
 }
 
-export default function Index({repositories, sponsors}: { repositories: Repository[], sponsors: BasicSponsor[] }) {
-    const [currentRepositories, setCurrentRepositories] = useState<Repository[]>(repositories);
+export default function Index({repositories, sponsors}: { repositories: AdminRepository[], sponsors: BasicSponsor[] }) {
+    const [currentRepositories, setCurrentRepositories] = useState<AdminRepository[]>(repositories);
     const [addingRepo, setAddingRepo] = useState<boolean>(false);
 
     return <Layout canonical = "/admin/repositories" title = "Repositories" description = "Repositories">
@@ -179,7 +191,7 @@ export default function Index({repositories, sponsors}: { repositories: Reposito
     </Layout>;
 }
 
-export async function getServerSideProps(context): Promise<GetServerSidePropsResult<{ repositories: Repository[], sponsors: BasicSponsor[] }>> {
+export async function getServerSideProps(context): Promise<GetServerSidePropsResult<{ repositories: AdminRepository[], sponsors: BasicSponsor[] }>> {
 
 
     const session = await getSession(context);
@@ -215,9 +227,20 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
                     }
                 }
             },
-            cache: true
+            cache: true,
+            RepositoryStatus: {
+                select: {
+                    invalid: true,
+                    reason: true
+                }
+            }
+        },
+        where: {
+            RepositoryStatus: {
+                reviewed: true
+            }
         }
-    })).map(async repo => {
+    })).map<Promise<AdminRepository>>(async repo => {
         let cache = repo.cache;
         if (!cache) {
             const repoInfo = await octokit.request("GET /repositories/{repository_id}", {repository_id: repo.repository_id});
@@ -249,7 +272,9 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
             openIssues: cache.openIssues,
             sponsor: (repo.SponsoredRepository ?? {sponsor: {name: ""}}).sponsor.name,
             sponsored: !!repo.SponsoredRepository,
-            updatedAt: formatDate(cache.updatedAt.getTime())
+            updatedAt: formatDate(cache.updatedAt.getTime()),
+            reason: repo.RepositoryStatus ? repo.RepositoryStatus.reason : null,
+            invalid: repo.RepositoryStatus ? repo.RepositoryStatus.invalid : false,
         };
     }))
 

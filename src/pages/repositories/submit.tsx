@@ -14,7 +14,14 @@ import React, {useState} from "react";
 import {useFormik} from "formik";
 import Image from "next/image";
 
-type SubmittableRepo = (BaseRepository & { alreadySubmitted: boolean, valid: boolean, sponsored: boolean, forked: boolean })
+type SubmittableRepo = (BaseRepository & {
+    alreadySubmitted: boolean,
+    invalid: boolean,
+    reason: string,
+    reviewed: boolean,
+    sponsored: boolean,
+    forked: boolean
+})
 
 function RepositoryCard(repo: SubmittableRepo) {
 
@@ -37,6 +44,8 @@ function RepositoryCard(repo: SubmittableRepo) {
                     return {...prevState, action: values.action === "submit" ? "remove" : "submit"}
                 })
                 setWorking(false)
+            }).catch(reason => {
+                setWorking(false)
             });
         }
     });
@@ -55,56 +64,69 @@ function RepositoryCard(repo: SubmittableRepo) {
                 <a href = {currentRepo.url} className = "navlink" target = "_blank" rel = "noreferrer">{currentRepo.name}</a>
             </div>
         </div>
-        <div className = "flex-grow break-words">
-            <p className = {classNames({"italic": !currentRepo.description})}>{currentRepo.description ? currentRepo.description.substring(0, 100) + (currentRepo.description.length > 100 ? "..." : "") : "No description provided"}</p>
-        </div>
+        {
+            currentRepo.invalid ?
+                    <div className = {classNames("flex-grow w-full text-white p-2")}>
+                        <p className="text-sm">
+                            This repository has been denied:
+                        </p>
+                        <code className="break-words">
+                        {currentRepo.reason}
+                        </code>
+                    </div> :
+                    <>
+                        <div className = "flex-grow break-words">
+                            <p className = {classNames({"italic": !currentRepo.description})}>{currentRepo.description ? currentRepo.description.substring(0, 100) + (currentRepo.description.length > 100 ? "..." : "") : "No description provided"}</p>
+                        </div>
 
-        <div className = "flex justify-between text-sm">
-            <a href = {`${currentRepo.url}/stargazers`} target = "_blank" rel = "noreferrer" className = "flex gap-x-1 px-2 no-underline rounded border hover:text-orange-500 hover:bg-black hover:bg-opacity-5 hover:border-orange-500">
-                <StarIcon className = "my-auto w-4 h-4 text-yellow-500"/> <span className = "my-auto">
+                        <div className = "flex justify-between text-sm">
+                            <a href = {`${currentRepo.url}/stargazers`} target = "_blank" rel = "noreferrer" className = "flex gap-x-1 px-2 no-underline rounded border hover:text-orange-500 hover:bg-black hover:bg-opacity-5 hover:border-orange-500">
+                                <StarIcon className = "my-auto w-4 h-4 text-yellow-500"/> <span className = "my-auto">
                     {currentRepo.stars} stars
                 </span>
 
-            </a>
+                            </a>
 
-            <a href = {`${currentRepo.url}/issues`} className = "flex gap-x-1 px-2 no-underline rounded border hover:text-orange-500 hover:bg-black hover:bg-opacity-5 hover:border-orange-500">
-                <IssueOpenedIcon className = "my-auto w-4 h-4 text-green-500"/> <span className = "my-auto">
+                            <a href = {`${currentRepo.url}/issues`} className = "flex gap-x-1 px-2 no-underline rounded border hover:text-orange-500 hover:bg-black hover:bg-opacity-5 hover:border-orange-500">
+                                <IssueOpenedIcon className = "my-auto w-4 h-4 text-green-500"/> <span className = "my-auto">
                     {currentRepo.openIssues} Issue{currentRepo.openIssues == 1 ? "" : "s"}
-                </span>
-            </a>
-        </div>
-        <p className = "text-xs italic ">
-            Last updated {repo.updatedAt}
-        </p>
-        <div className = "flex justify-between text-sm">
-            {currentRepo.alreadySubmitted &&
-                    <button disabled = {working || repo.sponsored} className = "flex-grow w-full bg-red-700 hover:bg-red-500 disabled:hover:bg-red-700 disabled:bg-opacity-50 disabled:hover:bg-opacity-50 text-white hover:text-black disabled:hover:text-white p-2" type = "submit">
-                        {working ? <div className = "flex w-full">
-                            <div className = "flex mx-auto gap-x-2">
-                                <div className = "w-4 h-4 animate-spin my-auto">
-                                    <Image src = "https://assets.blamejared.com/modtoberfest/loading.svg" layout = "fill"/>
-                                </div>
-                                <span>
+                </span> </a>
+                        </div>
+                        <p className = "text-xs italic ">
+                            Last updated {repo.updatedAt}
+                        </p>
+                        <div className = "flex justify-between text-sm">
+                            {!currentRepo.invalid && currentRepo.alreadySubmitted &&
+                                    <button disabled = {working || repo.sponsored} className = "flex-grow w-full bg-red-700 hover:bg-red-500 disabled:hover:bg-red-700 disabled:bg-opacity-50 disabled:hover:bg-opacity-50 text-white hover:text-black disabled:hover:text-white p-2" type = "submit">
+                                        {working ? <div className = "flex w-full">
+                                            <div className = "flex mx-auto gap-x-2">
+                                                <div className = "w-4 h-4 animate-spin my-auto">
+                                                    <Image src = "https://assets.blamejared.com/modtoberfest/loading.svg" layout = "fill"/>
+                                                </div>
+                                                <span>
                                     Removing...
                                 </span>
-                            </div>
+                                            </div>
 
-                        </div> : "Remove Repository"}</button>}
+                                        </div> : "Remove Repository"}</button>}
 
-            {!currentRepo.alreadySubmitted &&
-                    <button disabled = {working} className = {classNames("flex-grow w-full bg-green-700 hover:bg-green-500 disabled:hover:bg-green-700 disabled:bg-opacity-50 disabled:hover:bg-opacity-50 text-white hover:text-black disabled:hover:text-white p-2")} type = "submit">
-                        {working ? <div className = "flex w-full">
-                            <div className = "flex mx-auto gap-x-2">
-                                <div className = "w-4 h-4 animate-spin my-auto">
-                                    <Image src = "https://assets.blamejared.com/modtoberfest/loading.svg" layout = "fill"/>
-                                </div>
-                                <span>
+                            {!currentRepo.invalid && !currentRepo.alreadySubmitted &&
+                                    <button disabled = {working} className = {classNames("flex-grow w-full bg-green-700 hover:bg-green-500 disabled:hover:bg-green-700 disabled:bg-opacity-50 disabled:hover:bg-opacity-50 text-white hover:text-black disabled:hover:text-white p-2")} type = "submit">
+                                        {working ? <div className = "flex w-full">
+                                            <div className = "flex mx-auto gap-x-2">
+                                                <div className = "w-4 h-4 animate-spin my-auto">
+                                                    <Image src = "https://assets.blamejared.com/modtoberfest/loading.svg" layout = "fill"/>
+                                                </div>
+                                                <span>
                                     Submitting...
                                 </span>
-                            </div>
+                                            </div>
 
-                        </div> : "Submit Repository"}</button>}
-        </div>
+                                        </div> : "Submit Repository"}</button>}
+                        </div>
+                    </>
+        }
+
     </form>;
 }
 
@@ -146,7 +168,7 @@ export default function Home({repos}: { repos: SubmittableRepo[] }) {
                     <div className = "flex flex-col gap-8 ">
                         {Object.keys(groups).map(groupName => {
                             let group = groups[groupName]
-                            return <div className = "flex-grow w-full" key={groupName}>
+                            return <div className = "flex-grow w-full" key = {groupName}>
                                 <div className = "flex gap-x-4 mb-2 border-b-2 pb-2">
                                     <div className = "my-auto w-10">
                                         <a href = {group.url} target = "_blank" rel = "noreferrer">
@@ -221,8 +243,8 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
     const existingRepos = (await prisma.repository.findMany({
         select: {
             repository_id: true,
-            valid: true,
-            SponsoredRepository: true
+            SponsoredRepository: true,
+            RepositoryStatus: true
         },
         where: {
             repository_id: {
@@ -234,10 +256,14 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
         props: {
             repos: allRepos.map(value => {
                 let alreadySubmittedRepo = existingRepos.find(eValue => eValue.repository_id == value.repository_id)
+                let fallbackStatus = {reviewed: false, reason: null, invalid: false}
+                let status = alreadySubmittedRepo ? alreadySubmittedRepo.RepositoryStatus ?? fallbackStatus : fallbackStatus
                 return {
                     ...value,
                     alreadySubmitted: !!alreadySubmittedRepo,
-                    valid: (alreadySubmittedRepo ?? {valid: false}).valid,
+                    reviewed: status.reviewed,
+                    reason: status.reason,
+                    invalid: status.invalid,
                     sponsored: !!(alreadySubmittedRepo ?? {SponsoredRepository: undefined}).SponsoredRepository
                 }
             })

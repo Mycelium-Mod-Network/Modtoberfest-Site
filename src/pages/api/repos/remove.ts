@@ -47,6 +47,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(403).send("forbidden - User does not have access to the repo!");
     }
 
+    const invalid = (await prisma.repositoryStatus.findFirst({
+        select: {
+            invalid: true
+        },
+        where: {
+            repository_id: {
+                equals: `${foundRepo.repository_id}`
+            },
+            invalid: {
+                equals: true
+            }
+        }
+    }) ?? {invalid: false}).invalid
+
+    if (invalid) {
+        return res.status(403).send("forbidden - Denied repositories state cannot be changed!")
+    }
+
     await prisma.repository.delete({
         where: {
             repository_id: foundRepo.repository_id

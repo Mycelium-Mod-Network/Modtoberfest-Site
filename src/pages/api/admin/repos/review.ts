@@ -3,17 +3,17 @@ import {NextApiRequest, NextApiResponse} from "next";
 import {authOptions} from "../../auth/[...nextauth]";
 import {isAdmin} from "../../../../lib/utils";
 import prisma from "../../../../lib/db";
-import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
-import {Octokit} from "octokit";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const session = await unstable_getServerSession(req, res, authOptions);
 
     if (await isAdmin({right: session})) {
         const repository_id = req.body.repository_id;
-        await prisma.repository.update({
+        await prisma.repositoryStatus.update({
             data: {
-                valid: true
+                reviewed: true,
+                reason: req.body.reason.length == 0 ? null : req.body.reason,
+                invalid: req.body.invalid
             },
             where: {
                 repository_id: repository_id

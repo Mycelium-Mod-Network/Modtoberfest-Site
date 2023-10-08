@@ -1,16 +1,15 @@
-import { unstable_getServerSession } from "next-auth";
-import { NextApiRequest, NextApiResponse } from "next";
-import { authOptions } from "../../auth/[...nextauth]";
-import { isAdmin } from "../../../../lib/utils";
+import {unstable_getServerSession} from "next-auth";
+import {NextApiRequest, NextApiResponse} from "next";
+import {authOptions} from "../../auth/[...nextauth]";
+import {isAdmin} from "../../../../lib/utils";
 import prisma from "../../../../lib/db";
-import { createOAuthAppAuth } from "@octokit/auth-oauth-app";
-import { Octokit } from "octokit";
-import { Repository as GHRepo } from "@octokit/webhooks-types";
+import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
+import {Octokit} from "octokit";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const session = await unstable_getServerSession(req, res, authOptions);
 
-    if (await isAdmin({ right: session })) {
+    if (await isAdmin({right: session})) {
 
         const octokit = new Octokit({
             authStrategy: createOAuthAppAuth,
@@ -20,13 +19,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         });
 
-        const data = (await octokit.rest.repos.get({ owner: req.body.owner, repo: req.body.repo_name })).data;
+        const data = (await octokit.rest.repos.get({owner: req.body.owner, repo: req.body.repo_name})).data;
         const queryData = {
             repository_id: data.id.toString(),
             url: data.html_url,
             valid: true
         }
-        if(req.body.sponsor){
+        if (req.body.sponsor) {
             queryData["SponsoredRepository"] = {
                 create: {
                     sponsor_id: req.body.sponsor
@@ -34,7 +33,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         }
         const addedRepo = await prisma.repository.create({
-            data: queryData,
+            data: {
+                ...queryData,
+                RepositoryStatus: {
+                    create: {
+                        reason: null,
+                        invalid: false,
+                        reviewed: false
+                    }
+                }
+            },
             select: {
                 id: true,
                 repository_id: true,
@@ -87,7 +95,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             ownerAvatarUrl: data.owner.avatar_url,
             stars: data.stargazers_count,
             openIssues: data.open_issues_count,
-            sponsor: (addedRepo.SponsoredRepository ?? { sponsor: { name: "" } }).sponsor.name,
+            sponsor: (addedRepo.SponsoredRepository ?? {sponsor: {name: ""}}).sponsor.name,
             sponsored: req.body.sponsor
         });
         return;

@@ -99,16 +99,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (!existingId) {
                 const pr = await prisma.pullRequest.create({
                     data: {
-                        ...prData
+                        ...prData,
+                        PullRequestStatus: {
+                            create: prStatus
+                        }
                     },
                     select: {
                         pr_id: true
-                    }
-                });
-                await prisma.pullRequestStatus.create({
-                    data: {
-                        pr_id: pr.pr_id,
-                        ...prStatus
                     }
                 });
                 if (!isBot) {

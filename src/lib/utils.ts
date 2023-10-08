@@ -1,6 +1,6 @@
 import {Session} from "next-auth";
 import prisma from "./db";
-import {Account, BaseRepository, Either, Repository} from "./Types";
+import {Account, BaseRepository, Either, Repository, RepositoryPageRepo} from "./Types";
 import {Octokit} from "octokit";
 import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
 import {Repository as GHRepo} from "@octokit/webhooks-types";
@@ -102,6 +102,22 @@ export async function getRepo(repository_id: string) {
             repository_id: repository_id
         }
     })
+}
+
+export function repoToDisplayRepo(repo: Repository): RepositoryPageRepo {
+    return {
+        description: repo.description,
+        id: repo.id,
+        name: repo.name,
+        openIssues: repo.openIssues,
+        owner: repo.owner,
+        repository_id: repo.repository_id,
+        sponsor: repo.sponsor,
+        sponsored: repo.sponsored,
+        stars: repo.stars,
+        updatedAt: repo.updatedAt,
+        url: repo.url
+    }
 }
 
 export async function getRepos(repository_ids: string[]): Promise<Repository[]> {

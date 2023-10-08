@@ -3,12 +3,12 @@ import {GetStaticPropsResult} from "next";
 import prisma from "../../lib/db";
 import classNames from "classnames";
 import PageTitle from "../../components/ui/PageTitle";
-import {getRepos, shuffleArray} from "../../lib/utils";
+import {getRepos, repoToDisplayRepo, shuffleArray} from "../../lib/utils";
 import {IssueOpenedIcon, StarIcon, VerifiedIcon} from "@primer/octicons-react";
 import LinkTo from "../../components/ui/LinkTo";
-import {Repository} from "../../lib/Types";
+import {BaseOwner, OwnerCache, RepositoryPageRepo} from "../../lib/Types";
 
-function Repository(repo: Repository) {
+function Repository({owner, repo}: { owner: BaseOwner, repo: RepositoryPageRepo }) {
 
     return <div className = "relative w-full sm:w-64 bg-black bg-opacity-10 border-2 p-2.5 even:bg-opacity-[15%] hover:border-orange-500 flex flex-col gap-y-2">
         {repo.sponsored &&
@@ -16,11 +16,11 @@ function Repository(repo: Repository) {
                     <VerifiedIcon className = "w-7 h-7 navlink bg-brand-900"/></LinkTo>}
         <div className = "flex gap-x-2 pb-2 border-b-2">
             <div className = "my-auto w-10">
-                <a href = {repo.ownerHtmlUrl} target = "_blank" rel = "noreferrer">
-                    <img src = {repo.ownerAvatarUrl} alt = {repo.owner} className = "rounded-full"/> </a>
+                <a href = {owner.ownerHtmlUrl} target = "_blank" rel = "noreferrer">
+                    <img src = {owner.ownerAvatarUrl} alt = {repo.owner} className = "rounded-full"/> </a>
             </div>
             <div className = "flex flex-col group">
-                <a href = {repo.ownerHtmlUrl} target = "_blank" rel = "noreferrer" className = "group-hover:text-orange-600 group-hover:-translate-y-px navlink">{repo.owner}</a>
+                <a href = {owner.ownerHtmlUrl} target = "_blank" rel = "noreferrer" className = "group-hover:text-orange-600 group-hover:-translate-y-px navlink">{repo.owner}</a>
 
                 <a href = {repo.url} className = "navlink" target = "_blank" rel = "noreferrer">{repo.name}</a>
             </div>
@@ -50,8 +50,7 @@ function Repository(repo: Repository) {
     </div>;
 }
 
-export default function Home({repos}: { repos: Repository[] }) {
-
+export default function Home({owners, repos}: { owners: OwnerCache, repos: RepositoryPageRepo[] }) {
     return (
             <Layout title = "Repositories" canonical = "/repositories" description = {"Repositories"}>
 
@@ -60,7 +59,7 @@ export default function Home({repos}: { repos: Repository[] }) {
                     <PageTitle> Repositories </PageTitle>
                     <div className = "flex flex-wrap gap-8 justify-between">
 
-                        {repos.map(repo => <Repository key = {repo.repository_id} {...repo}/>)}
+                        {repos.map(repo => <Repository key = {repo.repository_id} owner = {owners[repo.owner]} repo = {repo}/>)}
                     </div>
                 </div>
 
@@ -68,15 +67,20 @@ export default function Home({repos}: { repos: Repository[] }) {
     );
 }
 
-export async function getStaticProps(): Promise<GetStaticPropsResult<{ repos: Repository[] }>> {
+export async function getStaticProps(): Promise<GetStaticPropsResult<{ owners: OwnerCache, repos: RepositoryPageRepo[] }>> {
 
     const repos: string[] = (await prisma.repository.findMany({
         select: {
             repository_id: true,
         },
         where: {
-            valid: {
-                equals: true
+            RepositoryStatus: {
+                invalid: {
+                    equals: false
+                },
+                reviewed: {
+                    equals: true
+                }
             }
         }
     })).map(repo => repo.repository_id);
@@ -84,20 +88,33 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<{ repos: Re
     const fullRepos = await getRepos(repos);
     shuffleArray(fullRepos);
 
-    const sorted = [];
+    const owners: OwnerCache = {}
+    const sorted: RepositoryPageRepo[] = [];
     for (let repo of fullRepos) {
-        if (sorted.length < 3 && repo.sponsored) {
-            sorted.push(repo);
+        if (sorted.length < 3) {
+            if (repo.sponsored) {
+                sorted.push(repoToDisplayRepo(repo));
+            }
+        } else {
+            break;
         }
     }
     for (let repo of fullRepos) {
-        if (sorted.indexOf(repo) == -1) {
-            sorted.push(repo);
+        const toInsert = repoToDisplayRepo(repo);
+        if (sorted.indexOf(toInsert) == -1) {
+            sorted.push(toInsert);
+        }
+        if (!owners[repo.owner]) {
+            owners[repo.owner] = owners[repo.owner] ?? {
+                ownerHtmlUrl: repo.ownerHtmlUrl,
+                ownerAvatarUrl: repo.ownerAvatarUrl
+            }
         }
     }
 
     return {
         props: {
+            owners: owners,
             repos: sorted.map(value => ({...value, id: null, sponsor: null}))
         },
         revalidate: 60

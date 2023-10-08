@@ -48,16 +48,41 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const data = (await octokit.rest.repos.get({owner: foundRepo.owner, repo: foundRepo.repo_name})).data;
+
+    const invalid = (await prisma.repositoryStatus.findFirst({
+        select: {
+            invalid: true
+        },
+        where: {
+            repository_id: {
+                equals: `${data.id}`
+            },
+            invalid: {
+                equals: true
+            }
+        }
+    }) ?? {invalid: false}).invalid
+
+    if (invalid) {
+        return res.status(403).send("forbidden - Denied repositories state cannot be changed!")
+    }
     const queryData = {
         repository_id: data.id.toString(),
         url: data.html_url,
     }
     const addedRepo = await prisma.repository.create({
-        data: queryData,
+        data: {
+            ...queryData,
+            RepositoryStatus: {
+                create: {
+                    invalid: false,
+                    reviewed: false,
+                    reason: null
+                }
+            }
+        },
         select: {
-            id: true,
             repository_id: true,
-            url: true
         }
     });
     const repoData = data;

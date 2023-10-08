@@ -11,6 +11,15 @@ export interface BasicSponsor {
     name: string,
 }
 
+export interface BaseOwner {
+    ownerHtmlUrl: string;
+    ownerAvatarUrl: string
+}
+
+export interface Owner extends BaseOwner {
+    owner: string;
+}
+
 export interface Sponsor extends BasicSponsor {
     image_url: string,
     summary: string,
@@ -33,11 +42,23 @@ export interface BaseRepository {
     openIssues: number;
     updatedAt: string
 }
+
 export interface Repository extends BaseRepository {
     id: string;
     sponsored: boolean;
     sponsor?: string;
 }
+
+export interface AdminRepository extends BaseRepository {
+    id: string;
+    sponsored: boolean;
+    sponsor?: string;
+    invalid: boolean
+    reason?: string
+}
+
+export type RepositoryPageRepo = Omit<Repository, "ownerHtmlUrl" | "ownerAvatarUrl">
+
 
 export type Left<T> = {
     left: T;
@@ -50,3 +71,7 @@ export type Right<U> = {
 };
 
 export type Either<T, U> = NonNullable<Left<T> | Right<U>>;
+
+export interface OwnerCache {
+    [key: string]: BaseOwner
+}

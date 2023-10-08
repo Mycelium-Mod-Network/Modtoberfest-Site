@@ -22,6 +22,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     for (let repo of repos) {
         const repoInfo = await octokit.request("GET /repositories/{repository_id}", {repository_id: repo.repository_id});
         const repoData: GHRepo = repoInfo.data;
+        await prisma.repositoryStatus.upsert({
+            create: {
+                repository_id: repo.repository_id,
+                invalid: false,
+                reason: null,
+                reviewed: false
+            },
+            update: {},
+            where: {
+                repository_id: repo.repository_id
+            }
+        })
         await prisma.repositoryCache.upsert({
             where: {
                 repository_id: repo.repository_id,

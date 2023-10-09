@@ -142,7 +142,7 @@ export default function Me({account, prs, loggedOut}: ({ account: Account, prs: 
 
             <div className = "flex flex-wrap gap-4 justify-around">
                 {prs.map(pr => {
-                    return <PR {...pr}/>;
+                    return <PR {...pr} key={pr.pr_id}/>;
                 })}
             </div>
 

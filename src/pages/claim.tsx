@@ -144,7 +144,7 @@ export default function Claims({account, claim, validPrs, totalPrs}: { account: 
             </button>
         </form>}
 
-        {validPrs >= 4 && claim.length == 1 && <div className = "text-center text-2xl">
+        {claim.length == 1 && <div className = "text-center text-2xl">
             <h2>
                 You&apos;ve claimed your prize, your claim id is: <pre>{claim[0]}</pre>
             </h2>
@@ -154,7 +154,7 @@ export default function Claims({account, claim, validPrs, totalPrs}: { account: 
             </h3>
         </div>}
 
-        {validPrs < 4 && <div className = "text-center">
+        {claim.length == 0 && validPrs < 4 && <div className = "text-center">
             {totalPrs >= 4 ? <div>
                 <h2 className = "text-2xl">
                     Unfortunately only {validPrs} of your {totalPrs} pull request(s) are valid, and you are unable to claim your prize!

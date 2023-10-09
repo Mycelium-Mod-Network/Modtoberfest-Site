@@ -42,6 +42,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     name: true
                 }
             }
+        },
+        where: {
+            RepositoryStatus: {
+                reviewed: true,
+                invalid: false
+            }
         }
     })
     const octokit = new Octokit({
@@ -73,7 +79,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 state: "all",
                 per_page: 100,
                 page: page++,
-                sort: "created"
+                sort: "created",
+                direction: "desc"
             })).data;
             const octoberPulls: PullRequest[] = pagePulls.filter(value => {
                 const date = new Date(value.created_at);
@@ -85,7 +92,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 allPulls.push(...octoberPulls)
             }
         }
-
         for (let pull of allPulls) {
             const prData = getRepoData(pull);
             const existingId = existingIds[prData.pr_id];

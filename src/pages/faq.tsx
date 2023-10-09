@@ -59,14 +59,11 @@ export default function Home() {
                     </Item>
 
                     <Item title = "What is the event's timeframe?">
-                        The event runs from 00:00 October 1st to 23:59 October 31st.
-                        
-                        For further clarification, our backend systems use the UTC timezone. It is not possible to add special exceptions for PRs made
-                        outside of the timeframe of the event. Additionally, there was a countdown timer on the website showing that the event had not started.
-                        </Item>
+                        The event uses the UTC timezone and runs from 00:00 October 1st to 23:59 October 31st.
 
-                    <Item title = "What time zone does the event use?">
-                        We use the UTC timezone for Modtoberfest. All pull request data is taken from GitHub's API, which also uses UTC time.
+                        Any pull request made outside of this timeframe will not be picked up by our system as we use the time provided by Github's API, which is in UTC.
+                        
+                        It is not possible to add special exceptions for PRs made outside of the timeframe of the event.
                     </Item>
 
                     <Item title = "How are pull requests tracked?">

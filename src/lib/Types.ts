@@ -6,6 +6,20 @@ export interface Account {
     image: string
 }
 
+export interface Claim {
+    id: string;
+    firstName: string;
+    lastName: string;
+    address1: string;
+    address2?: string;
+    city: string;
+    zip: string;
+    state: string;
+    country: string;
+    email: string;
+    feedback: string;
+}
+
 export interface BasicSponsor {
     id: string,
     name: string,

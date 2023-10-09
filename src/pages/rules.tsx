@@ -15,7 +15,7 @@ export default function Rules() {
                     <Item title = {"Rules"} multi = {true}>
                         <ol>
                             <li>You must sign up before the end of October 2023.</li>
-                            <li>Pull requests must be made during October 2023.</li>
+                            <li>Pull requests must be made between October 1st 2023 00:00 UTC and October 31st 2023 23:59 UTC.</li>
                             <li>
                                 Only pull requests against GitHub repositories on our <LinkTo href = "/repositories">participating projects
                                 list</LinkTo> count towards your progress in the challenge.

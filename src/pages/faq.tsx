@@ -35,7 +35,7 @@ export default function Home() {
                     </Item>
 
                     <Item title = "What is a pull request?">
-                        Pull requests are a popular way to submit your changes to a project. This allows maintainer of the project to review your
+                        Pull requests are a popular way to submit your changes to a project. This allows a maintainer of the project to review your
                         changes. If your changes are approved they can be merged, allowing them to benefit from your work. Creating pull requests is
                         a great way to give back to an open source project.
                     </Item>
@@ -53,13 +53,20 @@ export default function Home() {
                         available. Prizes are also limited to one per person.
                     </Item>
 
-                    <Item title = "Does the pull request need to be merged">
+                    <Item title = "Does the pull request need to be merged?">
                         No, the pull request does not need to be merged. We only require that they pass our quality control policy, are not a draft
                         PR, and that the project maintainer does not flag your pull request as invalid or spam.
                     </Item>
 
+                    <Item title = "What is the event's timeframe?">
+                        The event runs from 00:00 October 1st to 23:59 October 31st.
+                        
+                        For further clarification, our backend systems use the UTC timezone. It is not possible to add special exceptions for PRs made
+                        outside of the timeframe of the event. Additionally, there was a countdown timer on the website showing that the event had not started.
+                        </Item>
+
                     <Item title = "What time zone does the event use?">
-                        We use the UTC timezone for Modtoberfest. All pull request data is taken from GitHub's API which also uses UTC time.
+                        We use the UTC timezone for Modtoberfest. All pull request data is taken from GitHub's API, which also uses UTC time.
                     </Item>
 
                     <Item title = "How are pull requests tracked?">
@@ -68,11 +75,11 @@ export default function Home() {
                     </Item>
 
                     <Item title = "Do pull requests made before signing up still count?">
-                        Yes we can count any pull request made during the events timeframe. We will only count pull requests that follow our <LinkTo href = "/rules">rules</LinkTo>.
+                        Yes, we can count any pull request made during the event's timeframe. We will only count pull requests that follow our <LinkTo href = "/rules">rules</LinkTo>.
                     </Item>
 
                     <Item title = "Do commits count?">
-                        No, we can only track pull requests. Additionally we can only credit pull requests to the author of the pull request on
+                        No, we can only track pull requests. Additionally, we can only credit pull requests to the author of the pull request on
                         GitHub. This means that Co-authors are not tracked or credited.
                     </Item>
 

@@ -114,7 +114,6 @@ export default function Claims({account, claim, validPrs, totalPrs}: { account: 
         }
     });
 
-    console.log(claim);
     return <Layout title = "Claim your prizes" canonical = "/claim" description = {"Enter your shipping information to claim your prize"}>
 
         <PageTitle>

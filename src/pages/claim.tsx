@@ -91,7 +91,18 @@ export default function Claims({account, claim, validPrs, totalPrs}: { account: 
         feedback: ""
     }
     const formik = useFormik({
-        initialValues: existingClaim,
+        initialValues: {
+            firstName: existingClaim.firstName,
+            lastName: existingClaim.lastName,
+            address1: existingClaim.address1,
+            address2: existingClaim.address2,
+            city: existingClaim.city,
+            zip: existingClaim.zip,
+            state: existingClaim.state,
+            country: existingClaim.country,
+            email: existingClaim.email,
+            feedback: existingClaim.feedback
+        },
         validationSchema: validationSchema,
         onSubmit: async (values, formikHelpers) => {
             formikHelpers.setSubmitting(true);

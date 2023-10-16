@@ -44,14 +44,19 @@ function generateLabel(prs: number): string {
 
 
 function PR(pr: PR) {
-    return <div className = {classNames({"bg-red-500": pr.reviewed && pr.invalid, "bg-yellow-500": !pr.reviewed, "bg-green-500": pr.reviewed && !pr.invalid}, "w-64 bg-opacity-25 border-2 even:bg-opacity-20 border-brand-500")} key = {pr.pr_id}>
+    return <div className = {classNames({
+        "bg-red-500": pr.reviewed && pr.invalid,
+        "bg-yellow-500": !pr.reviewed,
+        "bg-green-500": pr.reviewed && !pr.invalid
+    }, "w-64 bg-opacity-25 border-2 even:bg-opacity-20 border-brand-500")} key = {pr.pr_id}>
         {(!pr.reviewed || pr.invalid) && <div className = "border-b border-brand-500 flex flex-col p-2">
 
             {
                 pr.reviewed ? (pr.invalid && <div>
-                    <p className = "text-sm">We have determined that this PR is not eligible, if you think this is a mistake, please reach out on discord:</p>
-                    <p className="text-sm font-mono">{pr.reason}</p>
-                </div>) : <p className="text-sm">This PR is awaiting manual review</p>
+                    <p className = "text-sm">We have determined that this PR is not eligible, if you think this is a mistake, please reach out on
+                        discord:</p>
+                    <p className = "text-sm font-mono">{pr.reason}</p>
+                </div>) : <p className = "text-sm">This PR is awaiting manual review</p>
             }
 
         </div>}
@@ -93,7 +98,7 @@ function PR(pr: PR) {
     </div>
 }
 
-export default function Me({account, prs, loggedOut}: ({ account: Account, prs: PR[], loggedOut?: boolean })) {
+export default function Me({account, prs, loggedOut, claimed}: ({ account: Account, prs: PR[], claimed: boolean, loggedOut?: boolean })) {
 
     let validPrs = prs.filter(value => value.reviewed && !value.invalid)
     return <Layout title = "Profile" canonical = "/me" description = {"Your Modtoberfest profile"}>
@@ -129,7 +134,7 @@ export default function Me({account, prs, loggedOut}: ({ account: Account, prs: 
             {prs.length >= 4 && <h3 className = "text-xl text-center font-semibold flex flex-col flex-center mx-auto">
                 <span>
                     You've completed the event!
-                </span> <LinkTo href = "/claim"> Claim your prize here! </LinkTo>
+                </span> <LinkTo href = "/claim"> {claimed ? `Check your claim info here!` : `Claim your prize here!`} </LinkTo>
             </h3>}
             <div className = "flex flex-col gap-y-2">
                 <span className = "text-lg font-semibold text-center">
@@ -142,7 +147,7 @@ export default function Me({account, prs, loggedOut}: ({ account: Account, prs: 
 
             <div className = "flex flex-wrap gap-4 justify-around">
                 {prs.map(pr => {
-                    return <PR {...pr} key={pr.pr_id}/>;
+                    return <PR {...pr} key = {pr.pr_id}/>;
                 })}
             </div>
 
@@ -153,7 +158,9 @@ export default function Me({account, prs, loggedOut}: ({ account: Account, prs: 
 
 }
 
-export async function getServerSideProps(context): Promise<GetServerSidePropsResult<{ account: Account, prs: PR[] } | { loggedOut: true }>> {
+export async function getServerSideProps(context): Promise<GetServerSidePropsResult<{ account: Account, prs: PR[], claimed: boolean } | {
+    loggedOut: true
+}>> {
     const session = await getSession(context);
     if (!session || !(await getAccount({right: session}))) {
         return {
@@ -166,6 +173,13 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
 
     const account = await getAccount({right: session});
 
+    const claimed = (await prisma.claim.count({
+        where: {
+            account_id: {
+                equals: account.id
+            }
+        }
+    })) > 0
     const prs = (await prisma.pullRequest.findMany({
         select: {
             html_url: true,
@@ -203,6 +217,7 @@ export async function getServerSideProps(context): Promise<GetServerSidePropsRes
     return {
         props: {
             account,
+            claimed,
             prs: prs
         }
     };

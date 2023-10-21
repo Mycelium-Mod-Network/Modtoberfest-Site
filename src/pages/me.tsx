@@ -131,7 +131,7 @@ export default function Me({account, prs, loggedOut, claimed}: ({ account: Accou
                 {validPrs.length} / 4 Completed PRs
             </h2>
 
-            {prs.length >= 4 && <h3 className = "text-xl text-center font-semibold flex flex-col flex-center mx-auto">
+            {prs.filter(value => value.reviewed && !value.invalid).length >= 4 && <h3 className = "text-xl text-center font-semibold flex flex-col flex-center mx-auto">
                 <span>
                     You've completed the event!
                 </span> <LinkTo href = "/claim"> {claimed ? `Check your claim info here!` : `Claim your prize here!`} </LinkTo>

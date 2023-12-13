@@ -4,7 +4,12 @@ import {authOptions} from "./auth/[...nextauth]";
 import {getAccount} from "../../lib/utils";
 import prisma from "../../lib/db";
 
+const CLAIM_PERIOD_OVER = true;
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    if (CLAIM_PERIOD_OVER) {
+        return res.status(400).send("The claim period is over!")
+    }
     const session = await unstable_getServerSession(req, res, authOptions);
     const account = await getAccount({right: session});
     const hasClaim = await prisma.claim.count({
@@ -26,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }))
     if (prs < 4) {
         return res.status(403).send("Not enough PRs!")
-    }     else {
+    } else {
         const data = (await prisma.claim.create({
             data: {
                 account_id: account.id,

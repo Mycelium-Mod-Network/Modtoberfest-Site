@@ -27,13 +27,14 @@ export default function Home() {
                 </p>
 
                 <p>
-                    So far we have planted <span className='font-extrabold text-yellow-600'>201</span> trees and reforested 0.16 hectares! Over their
-                    lifetime it is estimated that these trees will capture 68.14 tonnes of CO2. You can find our digital forest <a href='https://tree-nation.com/profile/modtoberforest' target='_blank' rel='noreferrer'>here</a>.
+                    So far we have planted <span className='font-extrabold text-yellow-600'>501</span> trees! Over their
+                    lifetime it is estimated that these trees will capture 103.14 tonnes of CO2. You can find our digital forest <a href='https://tree-nation.com/profile/modtoberforest' target='_blank' rel='noreferrer'>here</a>.
                 </p>
 
                 <h2>History</h2>
                 <ul>
                     <li>2022 - 201 trees</li>
+                    <li>2023 - 300 trees</li>
                 </ul>
             </div>
         </Layout>

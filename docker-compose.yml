@@ -44,6 +44,10 @@ services:
                   image: curlimages/curl:latest
                   script:
                       - "curl --request POST --url https://modtoberfest.com/api/admin/repositories/update --header 'Content-Type: application/json' --data '{\"secret\": \"${ADMIN_SECRET}\"}'"
+                - name: updateLanguages
+                  image: curlimages/curl:latest
+                  script:
+                      - "curl --request POST --url https://modtoberfest.com/api/admin/languages/collect --header 'Content-Type: application/json' --data '{\"secret\": \"${ADMIN_SECRET}\"}'"
 networks:
   default:
       name: mariadb

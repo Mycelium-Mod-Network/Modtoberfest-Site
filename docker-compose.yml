@@ -24,6 +24,8 @@ services:
   modtoberfest_tasks:
     image: strm/tasker
     container_name: modtoberfest_tasks
+    profiles:
+      - donotstart
     restart: unless-stopped
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
@@ -34,6 +36,8 @@ services:
               task: updatePrs
             - cron: 0 * * * *
               task: updateRepos
+            - cron: 0 * * * *
+              task: updateLanguages
         tasks:
             docker:
                 - name: updatePrs

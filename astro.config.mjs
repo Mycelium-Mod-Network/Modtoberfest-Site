@@ -10,15 +10,15 @@ import solidJs from "@astrojs/solid-js";
 
 // https://astro.build/config
 export default defineConfig({
-  output: "server",
+    output: "server",
+    site: "https://modtoberfest.com",
+    adapter: node({
+        mode: "standalone"
+    }),
 
-  adapter: node({
-      mode: "standalone"
-  }),
+    security: {
+        checkOrigin: true
+    },
 
-  security: {
-      checkOrigin: true
-  },
-
-  integrations: [tailwind(), icon(), solidJs()]
+    integrations: [tailwind(), icon(), solidJs()]
 });

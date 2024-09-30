@@ -61,7 +61,15 @@ const dbRepos = (await prisma.repository.findMany({
             reviewed: true
         }
     }
+}).then(value => value).catch(e => {
+    console.log(e);
+    return undefined;
 }))
+
+if(!dbRepos) {
+    return;
+}
+
 
 const repos = await Promise.all(dbRepos.map<Promise<AdminRepository>>(async repo => {
     let cache = repo.cache;

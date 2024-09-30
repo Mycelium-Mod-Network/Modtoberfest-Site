@@ -1,0 +1,76 @@
+---
+import PageTitle from "../components/ui/PageTitle.astro";
+import Layout from "../layouts/Layout.astro";
+import Item from "../components/ui/Item.astro";
+---
+<Layout title = "Rules" description = "Rules of the event" canonical = "/rules">
+    <div class = "mx-auto prose max-w-none prose-invert prose-h2:mb-1 prose-h2:mt-1 prose-h3:mb-1 prose-h3:mt-1">
+        <PageTitle>Rules</PageTitle>
+        <p>
+            See the <a href = "/faq" class = "font-bold">FAQ</a>
+        </p>
+        <div class = "mx-auto rules">
+            <Item title = {"Rules"} multi = {true}>
+                <ol>
+                    <li>
+                        You must sign up before the end of October 2024.
+                    </li>
+                    <li>
+                        Pull requests must be created during October 2024 in any timezone around the world. (<a href = "https://en.wikipedia.org/wiki/Anywhere_on_Earth" rel="noreferrer" target="_blank">AoE</a>)
+                    </li>
+                    <li>
+                        Only pull requests created for repositories on our <a href = "/repositories">participating projects list</a> count towards your progress in the challenge.
+                    </li>
+                    <li>
+                        You must submit a total of <strong>four</strong> pull requests to any of the <a href = "/repositories">participating repositories</a>
+                    </li>
+                    <li>
+                        Pull requests for your own projects or projects you maintain will not count towards your progress in the challenge.
+                    </li>
+                    <li>
+                        Pull requests must meet our quality standards.
+                    </li>
+                    <li>
+                        Rewards and prizes for completing the challenge are limited to one per person.
+                    </li>
+                </ol>
+                <p>
+                    In addition to these rules, any attempt to abuse, impede, disrupt, tamper, hack, or meddle in this event will disqualify you from participating.
+                </p>
+
+            </Item>
+
+            <Item title = "Disclaimers" multi = {true}}>
+                <p>
+                    The sticker pack awarded to participants will be shipped for free, however you may be required to pay customs fees, import taxes, or other fees based on your local laws.
+                </p>
+                <p>
+                    Please note that participants in countries that have been sanctioned by the Government of Canada may not be able to claim or receive the sticker pack.
+                </p>
+                <p>
+                    We are unable to offer a replacement or compensation if your sticker pack is lost during shipping, stolen, or damaged.
+                </p>
+            </Item>
+            <Item title = "Quality Standards" multi = {true}>
+                <p>
+                    To ensure a minimum standard of quality the following types of pull requests will not contribute to your challenge goal. We will be manually reviewing all PRs to ensure this policy is enforced.
+                </p>
+                <ul class = "list-disc">
+                    <li>
+                        Pull requests that have been scripted, automated, or AI generated.
+                    </li>
+                    <li>
+                        Pull requests that are unhelpful or harmful to the project.
+                    </li>
+                    <li>
+                        Pull requests that focus on minor changes such as typos, whitespace, code formatting, or code style.
+                    </li>
+                </ul>
+                <p>
+                    Additionally any project maintainer may mark your pull request with the invalid label which will automatically disqualify that pull request from our systems.
+                </p>
+            </Item>
+        </div>
+
+    </div>
+</Layout>

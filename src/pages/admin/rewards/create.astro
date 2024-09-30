@@ -1,0 +1,83 @@
+---
+import {isUserAdmin} from "@lib/util";
+import PageTitle from "../../../components/ui/PageTitle.astro";
+import Layout from "../../../layouts/Layout.astro";
+import {actions} from "astro:actions";
+import prisma from "../../../lib/db";
+const user = Astro.locals.user;
+if (!isUserAdmin(user)) {
+    return Astro.redirect("/403?url=/admin/users")
+}
+
+const sponsors = await prisma.sponsor.findMany({
+    select: {
+        name: true,
+        id: true
+    }
+})
+---
+<Layout title = "Add Reward" description = "Create Reward" canonical = "/admin/rewards/create">
+    <div class = "mx-auto max-w-none">
+        <PageTitle>Add Reward</PageTitle>
+        <form action = {"/admin/rewards" + actions.rewards.create} method = "post" class = "flex flex-col gap-y-2">
+            <div class = "grid grid-cols-2 gap-2">
+                <label for = "title">Title: <span class = "text-red-500">*</span></label>
+
+                <input type = "text" name = "title" required id = "title" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <label for = "summary">Summary: <span class = "text-red-500">*</span></label>
+
+                <textarea name = "summary" required id = "summary" class = "min-h-16 bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300"/>
+
+                <label for = "logo_url">Logo Url: <span class = "text-red-500">*</span></label>
+
+                <input type = "text" name = "logo_url" required id = "logo_url" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <label for = "banner_url">Banner Url: <span class = "text-red-500">*</span></label>
+
+                <input type = "text" name = "banner_url" required id = "banner_url" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <label for = "digital">Digital: <span class = "text-red-500">*</span></label>
+
+                <input type = "checkbox" name = "digital" required id = "digital" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <label for = "sponsor_id">Sponsor: <span class = "text-red-500">*</span></label>
+
+                <select name = "sponsor_id" class = "text-black" id = "sponsor_id">
+                    {sponsors.map(sponsor =>
+                            <option class = "text-black" value = {sponsor.id}>{sponsor.name}</option>)}
+                </select>
+
+                <div class = "flex flex-col">
+                    <label for = "description">Description: <span class = "text-red-500">*</span></label>
+
+                    <textarea name = "description" required id = "description" class = "min-h-64 bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300"/>
+
+                </div>
+                <div>
+                    <h2 class = "text-center text-3xl">Description Preview</h2>
+                    <div id = "description_preview" class = "prose prose-invert mx-auto">
+                    </div>
+                </div>
+            </div>
+
+            <button type = "submit" class = "w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-green-500 bg-opacity-25">
+                Add Reward
+            </button>
+            <a href = "/admin/rewards" class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-red-500 bg-opacity-25 hover:text-white"> Cancel </a>
+        </form>
+
+
+    </div>
+    <script>
+        const description = document.getElementById('#description');
+        const descTarget = document.getElementById("description_preview");
+        if (description && descTarget) {
+            description.addEventListener('input', (e) => {
+                if (e.target && "value" in e.target) {
+                    descTarget.innerHTML = e.target.value as string
+                }
+            })
+        }
+    </script>
+</Layout>

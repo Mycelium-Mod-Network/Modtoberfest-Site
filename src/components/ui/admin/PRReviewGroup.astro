@@ -1,0 +1,23 @@
+---
+import type {PRGroup} from "../../../lib/types";
+interface Props {
+    group: PRGroup
+}
+import ReviewPullRequest from "./ReviewPullRequest.astro";
+
+const {group} = Astro.props;
+---
+
+<div class = "flex flex-col">
+    <div class = "flex gap-x-2 mb-2 border-b-2 pb-2 place-items-center">
+        <img src = {group.avatar} alt = {group.name} class = "rounded-full w-12 h-12"/>
+
+        <span class = "font-semibold text-2xl">
+        <a href = `https://github.com/${group.owner}` target = "_blank" rel = "noreferrer" class = "transition-transform hover:scale-125">{group.owner}</a>/<a href = `https://github.com/${group.owner}/${group.name}` target = "_blank" rel = "noreferrer">{group.name}</a>
+        </span>
+    </div>
+    <div class = "flex flex-col gap-2">
+        {group.prs.sort((a, b) => a.number - b.number).map(pr =>
+                <ReviewPullRequest pr = {pr}/>)}
+    </div>
+</div>

@@ -1,0 +1,143 @@
+---
+import {isUserAdmin} from "@lib/util";
+import Layout from "@layouts/Layout.astro";
+import PageTitle from "@components/ui/PageTitle.astro";
+import prisma from "@lib/db";
+import {Octokit} from "octokit";
+import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
+import type {SimpleUser, AdminRepository} from "@lib/types";
+import type {Repository as GHRepo} from "@octokit/webhooks-types";
+import {formatDate} from "@lib/util";
+import AdminRepositoryCard from "@components/ui/AdminRepositoryCard.astro";
+
+const user = Astro.locals.user;
+if (!isUserAdmin(user)) {
+    return Astro.redirect("/403?url=/admin/users")
+}
+const octokit = new Octokit({
+    authStrategy: createOAuthAppAuth,
+    auth: {
+        clientId: import.meta.env.GITHUB_ID,
+        clientSecret: import.meta.env.GITHUB_SECRET
+    }
+});
+
+const dbRepos = (await prisma.repository.findMany({
+    select: {
+        id: true,
+        repository_id: true,
+        SponsoredRepository: {
+            select: {
+                sponsor: {
+                    select: {
+                        name: true
+                    }
+                }
+            }
+        },
+        cache: true,
+        RepositoryStatus: {
+            select: {
+                invalid: true,
+                reason: true,
+                user: {
+                    select: {
+                        username: true,
+                        avatar: true
+                    }
+                }
+            }
+        },
+        user: {
+            select: {
+                username: true,
+                avatar: true
+            }
+        },
+        tags: true
+    },
+    where: {
+        RepositoryStatus: {
+            reviewed: true
+        }
+    }
+}))
+
+const repos = await Promise.all(dbRepos.map<Promise<AdminRepository>>(async repo => {
+    let cache = repo.cache;
+    //TODO delete?
+    if (!cache) {
+        const repoInfo = await octokit.request("GET /repositories/{repository_id}", {repository_id: repo.repository_id});
+        const repoData: GHRepo = repoInfo.data;
+        cache = {
+            name: repoData.name,
+            owner: repoData.owner.login,
+            ownerHtmlUrl: repoData.owner.html_url,
+            ownerAvatarUrl: repoData.owner.avatar_url,
+            url: repoData.html_url,
+            description: repoData.description,
+            stars: repoData.stargazers_count,
+            openIssues: repoData.open_issues_count,
+            repository_id: repo.repository_id,
+            id: repo.id,
+            // Language requires more database lookups, it will be inserted when repos are updated later
+            languageName: null,
+            updatedAt: new Date(repoData.updated_at),
+            license: (repoData.license ?? {name: null}).name
+        }
+    }
+
+    const sponsorInfo: { sponsor?: string, sponsored: boolean } = {
+        sponsor: undefined,
+        sponsored: false
+    }
+    const status: { reason?: string, invalid: boolean, reviewedBy?: SimpleUser } = {
+        reason: undefined, invalid: false, reviewedBy: undefined
+    }
+    if (repo.SponsoredRepository) {
+        sponsorInfo.sponsor = repo.SponsoredRepository.sponsor.name
+        sponsorInfo.sponsored = true
+    }
+    if (repo.RepositoryStatus) {
+        status.reason = repo.RepositoryStatus.reason ?? undefined
+        status.invalid = repo.RepositoryStatus.invalid
+        if (repo.RepositoryStatus.user) {
+            status.reviewedBy = {
+                username: repo.RepositoryStatus.user.username,
+                avatar: repo.RepositoryStatus.user.avatar
+            }
+        }
+    }
+
+    return {
+        id: repo.id,
+        repository_id: repo.repository_id,
+        url: cache.url,
+        description: cache.description ?? undefined,
+        name: cache.name,
+        owner: cache.owner,
+        ownerHtmlUrl: cache.ownerHtmlUrl,
+        ownerAvatarUrl: cache.ownerAvatarUrl,
+        stars: cache.stars,
+        openIssues: cache.openIssues,
+        license: cache.license,
+        ...sponsorInfo,
+        updatedAt: cache.updatedAt.getTime(),
+        ...status,
+        submitter: repo.user ? {username: repo.user.username, avatar: repo.user.avatar} : undefined,
+        tags: (repo.tags ?? []).map(tag => tag.tag_name)
+    };
+}))
+---
+
+<Layout title = "Admin Repositories" description = "Admin Repositories" canonical = "/admin/repositories">
+    <div class = "mx-auto max-w-none">
+        <PageTitle>Repositories ({repos.length})</PageTitle>
+        <a href = "/admin/repositories/create" class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600"> Add Repo </a>
+        <div class = "mt-4 flex gap-6 flex-col">
+            {repos.map(repo =>
+                    <AdminRepositoryCard repository = {repo}/>)}
+        </div>
+
+    </div>
+</Layout>

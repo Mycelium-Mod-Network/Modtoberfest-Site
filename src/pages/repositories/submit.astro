@@ -1,0 +1,138 @@
+---
+import Layout from "@layouts/Layout.astro";
+import {Octokit} from "octokit";
+import type {Language, RepoGroups, SubmittingRepo} from "../../lib/types";
+import prisma from "../../lib/db";
+import GroupedRepositories from "../../components/ui/repositories/GroupedRepositories.astro";
+import PageTitle from "../../components/ui/PageTitle.astro";
+const user = Astro.locals.user;
+
+if (!user) {
+    return Astro.redirect("/auth/github")
+}
+
+const octokit = new Octokit({
+    auth: user.access_token
+});
+
+const tags = (await prisma.tag.findMany({
+    select: {
+        name: true
+    }
+})).map(value => value.name)
+const languages: Record<string, Language> = (await prisma.language.findMany({
+    select: {
+        name: true,
+        color: true
+    }
+})).reduce<Record<string, Language>>((acc, cur) => {
+    acc[cur.name] = cur;
+    return acc;
+}, {})
+type ExistingRepos = { [key: string]: { sponsor?: string, submitter?: string, reviewed?: boolean, reason?: string, invalid?: boolean, tags: string[] } }
+const existing: ExistingRepos = (await prisma.repository.findMany({
+    select: {
+        repository_id: true,
+        user: {
+            select: {
+                username: true
+            }
+        },
+        tags:true,
+        RepositoryStatus: {
+            select: {
+                invalid: true,
+                reason: true,
+                reviewed: true
+            }
+        },
+        SponsoredRepository: {
+            select: {
+                sponsor: {
+                    select: {
+                        name: true
+                    }
+                }
+            }
+        },
+
+    }
+})).reduce<ExistingRepos>((acc, cur) => {
+    acc[cur.repository_id] = {tags: (cur.tags ?? []).map(tag => tag.tag_name)};
+    if (cur.SponsoredRepository) {
+        acc[cur.repository_id].sponsor = cur.SponsoredRepository.sponsor.name
+    }
+    if (cur.user) {
+        acc[cur.repository_id].submitter = cur.user.username;
+    }
+    if (cur.RepositoryStatus) {
+        acc[cur.repository_id].invalid = cur.RepositoryStatus.invalid
+        acc[cur.repository_id].reason = cur.RepositoryStatus.reason ?? undefined
+        acc[cur.repository_id].reviewed = cur.RepositoryStatus.reviewed
+    }
+
+    return acc;
+}, {})
+const allRepos = (await octokit.paginate("GET /user/repos", {
+    visibility: "public",
+    sort: "full_name",
+    per_page: 100
+})).reduce<SubmittingRepo[]>((acc, repo) => {
+    if (!repo.fork) {
+        const id = repo.id.toString();
+        acc.push({
+            repository_id: id,
+            name: repo.name,
+            owner: repo.owner.login,
+            ownerHtmlUrl: repo.owner.html_url,
+            ownerAvatarUrl: repo.owner.avatar_url,
+            url: repo.html_url,
+            description: repo.description,
+            stars: repo.stargazers_count,
+            openIssues: repo.open_issues_count,
+            updatedAt: repo.updated_at ? new Date(repo.updated_at).getTime() : 0,
+            language: languages[repo.language ?? ""],
+            license: (repo.license ?? {name: null}).name,
+            submitted: id in existing,
+            sponsor: existing[id] ? existing[id].sponsor : undefined,
+            submitter: existing[id] ? existing[id].submitter : undefined,
+            invalid: existing[id] ? existing[id].invalid : false,
+            reviewed: existing[id] ? existing[id].reviewed : false,
+            reason: existing[id] ? existing[id].reason : undefined,
+            tags: existing[id] ? existing[id].tags : []
+        })
+    }
+    return acc;
+}, []);
+let groups: RepoGroups<SubmittingRepo> = {}
+for (let repo of allRepos) {
+    let group = groups[repo.owner] ?? {
+        name: repo.owner,
+        url: repo.ownerHtmlUrl,
+        avatar: repo.ownerAvatarUrl,
+        repos: []
+    }
+    group.repos.push(repo)
+    groups[repo.owner] = group;
+}
+---
+<Layout title = "Submit Repositories" description = "Submit Repositories" canonical = "/repositories/submit">
+    <div class = "mx-auto">
+        <PageTitle>Repositories</PageTitle>
+        <h2 class = "text-white text-xl flex flex-col">
+            <span>You can submit your repositories to the event below.</span>
+
+            <span>If you need help with managing repositories, please reach out to us on our <a target = "_blank" href = "https://discord.modtoberfest.com" rel = "noreferrer"> Discord </a></span>
+        </h2>
+        <h3 class = "text-white text-lg font-semibold mb-4 pb-4 border-b-2 flex flex-col">
+            **Please note that repositories will need to be manually approved and will not appear instantly**
+        </h3>
+        <div class = "flex gap-8 flex-wrap mt-6">
+            {
+                Object.values(groups).map(group =>
+                        <GroupedRepositories group = {group} tags = {tags}/>)
+            }
+        </div>
+
+    </div>
+</Layout>

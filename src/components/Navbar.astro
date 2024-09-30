@@ -1,0 +1,32 @@
+---
+import {isUserAdmin} from "@lib/util";
+import NavLink from "./nav/NavLink.astro";
+import UserButton from "./ui/UserButton.astro";
+
+const user = Astro.locals.user;
+const isAdmin = isUserAdmin(user);
+---
+
+<header class = "py-4 px-6 bg-gradient-to-b from-brand-800 via-brand-800 to-brand-900">
+    <div class = "flex gap-x-6 justify-between my-auto mx-auto max-w-6xl h-14">
+        <a href = "/" class = "my-auto"> <img src = "/logo/svg/full/2024.svg" alt = "logo" width = "88" height = "88"/> </a>
+
+        <div class = "flex-grow my-auto">
+            <div class = "flex gap-x-6 w-full">
+                <NavLink to = "/">Home</NavLink>
+                <NavLink to = "/rules">Rules</NavLink>
+                <NavLink to = "/sponsors">Sponsors</NavLink>
+                <NavLink to = "/repositories">Repositories</NavLink>
+                <NavLink to = "https://discord.modtoberfest.com">Discord</NavLink>
+                <NavLink to = "/faq">FAQ</NavLink>
+                {isAdmin &&
+                        <NavLink to = "/admin">Admin</NavLink>}
+            </div>
+        </div>
+
+        <div class = "my-auto">
+            <UserButton/>
+        </div>
+    </div>
+
+</header>

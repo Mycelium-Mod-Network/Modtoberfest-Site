@@ -1,0 +1,24 @@
+---
+import LinkExternal from "../icon/LinkExternal.astro";
+interface Props {
+    to: string;
+}
+
+const {to} = Astro.props;
+const external = to.startsWith("http")
+---
+
+{external &&
+<>
+    <a href = {to} class = "nav-link flex gap-x-1" target = "_blank" rel = "noreferrer">
+        <slot/>
+        <LinkExternal/>
+    </a>
+
+</>}
+{!external &&
+<>
+    <a href = {to} class = "nav-link">
+        <slot/>
+    </a>
+</>}

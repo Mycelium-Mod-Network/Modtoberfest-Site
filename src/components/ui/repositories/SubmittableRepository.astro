@@ -1,0 +1,63 @@
+---
+import type {DisplayRepository, SubmittingRepo} from "@lib/types";
+import {formatDate} from "@lib/util";
+import {Icon} from "astro-icon/components";
+import RepositorySubmitter from "./RepositorySubmitter.tsx";
+import {actions} from "astro:actions";
+import RepositoryTags from "@components/ui/repositories/RepositoryTags.astro";
+
+interface Props {
+    repo: SubmittingRepo;
+    tags: string[]
+}
+const {repo, tags} = Astro.props;
+const sponsored = !!repo.sponsor
+const user = Astro.locals.user;
+
+const username = user ? user.username : undefined
+const submitterByUser = !repo.submitter || repo.submitter === username
+---
+
+<form class:list = {["border-2 flex flex-col gap-y-2 p-2 relative w-48 group transition", {"border-sky-400 hover:border-sky-600": sponsored, "border-orange-400 hover:border-orange-600": !sponsored}]} method = "post" action = {repo.submitted ? actions.repository.remove : actions.repository.submit}>
+    <input type = "hidden" value = {repo.repository_id} name = "repository_id"/>
+
+    {sponsored &&
+            <Icon name = "octicon:verified-16" class = "absolute -top-3 -right-3 w-6 h-6 bg-brand-900 hover:text-orange-400 hover:-translate-y-px"/>}
+
+    <div class:list = {["flex flex-col font-semibold text-center border-b border-b-orange-300", {"border-b-sky-300 group-hover:border-b-sky-400": sponsored, "border-b-orange-300 group-hover:border-orange-400": !sponsored}]}>
+        <a href = {repo.url} class:list = {["no-underline", {"text-sky-400 hover:text-sky-600": sponsored, "text-orange-400 hover:text-orange-600": !sponsored}]} target = "_blank" rel = "noreferrer">{repo.name}</a>
+    </div>
+    <p class:list = {["text-sm flex-grow break-words", {"italic": !repo.description}]}>{repo.description ? repo.description.substring(0, 70) + (repo.description.length > 70 ? "..." : "") : "No description provided"}</p>
+
+    <RepositoryTags repo = {repo}/>
+    <span class = "text-xs italic">
+            Updated {formatDate(repo.updatedAt)}
+        </span>
+
+
+    <div class = "border-b-2 pb-2"/>
+    {sponsored &&
+            <p class = "text-xs italics">This repository has been sponsored by <span class = "text-sky-400">{repo.sponsor}</span> and cannot be deleted.</p>
+    }
+
+    {!sponsored &&
+            <>
+                {
+                    !repo.reviewed ?
+                        (repo.submitted ?
+                                <>
+                                    <p>This repository has already been submitted {!submitterByUser &&
+                                            <>by <span class = "text-sky-400">{repo.submitter} </span></>}and is awaiting review.</p>
+                                </> :
+                                <RepositorySubmitter tags = {tags} client:load/>)
+                        : repo.invalid ?
+                                    <p class = "text-xs italics">This repository has been denied because: <span class = "text-rose-400 font-mono">{repo.reason}</span></p> :
+                            submitterByUser ?
+                                    <button type = "submit" class = "w-full bg-rose-700 hover:bg-rose-600 text-white p-2 text-center">Remove Repository</button> :
+                                    <p>Only <span class = "text-sky-400">{repo.submitter} </span> can remove the repository.</p>
+                }
+
+
+            </>
+    }
+</form>

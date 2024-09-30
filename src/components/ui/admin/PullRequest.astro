@@ -1,0 +1,47 @@
+---
+import {Icon} from 'astro-icon/components'
+import type {PullRequest} from "@lib/types";
+import { actions } from "astro:actions";
+
+interface Props {
+    pr: PullRequest,
+}
+
+const {pr} = Astro.props;
+---
+
+<div class:list={["flex flex-col gap-y-2 border-2 border-orange-400 sm:flex-col p-2 bg-opacity-25 relative", {"bg-yellow-500": !pr.reviewed, "bg-red-500": pr.reason && pr.invalid, "bg-green-500": pr.reason && !pr.invalid}]}>
+
+    {pr.reviewedBy &&
+            <div class = "bg-brand-900 p-1 absolute -top-4 -right-4 flex gap-x-1 text-xs border select-none transition-transform hover:scale-125">
+                <img src = {pr.reviewedBy.avatar} alt = {pr.reviewedBy.username} class = "w-4 h-4 rounded-full my-auto"/>
+
+                <span>{pr.reviewedBy.username} reviewed</span>
+            </div>
+    }
+
+    <div class = "flex flex-col flex-grow w-full">
+
+        <a href = {pr.html_url} target = "_blank" rel = "noreferrer" class = "flex gap-x-2">
+            {pr.state === "open" ?
+                    <Icon name = "octicon:issue-opened-16" class = "w-5 h-5 text-green-700 my-auto"/> :
+                    <Icon name = "octicon:issue-closed-16" class = `w-5 h-5 my-auto ${pr.merged ? 'text-purple-500' : 'text-red-500'}`/>
+            }
+            <p class = "font-mono">
+                {pr.title}
+            </p>
+        </a>
+        <div class = "smtext-xs ml-7">
+            #{pr.number} by <a href = `https://github.com/${pr.author}` target = "_blank" rel = "noreferrer">{pr.author}</a>
+        </div>
+        {pr.reviewed && <>
+            <div>
+                <span>{pr.invalid ? "Reason:" : "Category:"} {pr.reason}</span>
+            </div>
+            <form class = "flex flex-col gap-y-2 w-full mt-4" method="POST" action={actions.pull_request.reset_status}>
+                <input type="hidden" name="id" value={pr.pr_id}/>
+                <button type = "submit" class = "w-full text-center border-2 border-rose-400 bg-rose-900 hover:bg-rose-700 no-underline block">Reset</button>
+            </form>
+            </>}
+    </div>
+</div>

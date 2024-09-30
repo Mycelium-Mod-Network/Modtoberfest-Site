@@ -1,0 +1,34 @@
+---
+import {isUserAdmin} from "@lib/util";
+import Layout from "@layouts/Layout.astro";
+import PageTitle from "@components/ui/PageTitle.astro";
+import prisma from "@lib/db";
+import SponsorCard from "@components/ui/admin/SponsorCard.astro";
+const user = Astro.locals.user;
+if (!isUserAdmin(user)) {
+    return Astro.redirect("/403?url=/admin/users")
+}
+const sponsors = await prisma.sponsor.findMany({
+    select: {
+        id: true,
+        name: true,
+        summary: true,
+        image_url: true,
+        links: true
+    }
+})
+---
+
+<Layout title = "Admin Sponsors" description = "Admin Sponsors" canonical = "/admin/sponsors">
+    <div class = "mx-auto max-w-none">
+        <PageTitle>Sponsors ({sponsors.length})</PageTitle>
+        <a href = "/admin/sponsors/create" class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600"> Add Sponsor </a>
+        <div class="mt-4 flex gap-4 flex-col">
+            {sponsors.map((sponsor) =>
+                    <>
+                        <SponsorCard sponsor = {sponsor}/>
+                    </>)}
+        </div>
+
+    </div>
+</Layout>

@@ -1,0 +1,24 @@
+---
+interface Props {
+    complex?: boolean
+    hasColor?: boolean
+    color?: "none" | "yellow" | "green" | "teal" | "neutral"
+    style?: string
+    hoverEffects?: boolean
+}
+
+const {complex, color = "teal", style, hoverEffects = true} = Astro.props;
+
+const Element = complex ? "div" : "span"
+---
+
+<Element class:list = {["px-1 text-sm cursor-default", {
+    "bg-neutral-900 border border-neutral-700": color === "neutral",
+    "bg-teal-900 border border-teal-700": color === "teal",
+    "bg-yellow-700 border border-yellow-500": color === "yellow",
+    "bg-green-900 border border-green-700": color === "green",
+    "bg-opacity-50 hover:bg-opacity-100": hoverEffects
+}]} style = {style}>
+    <slot/>
+</Element>
+

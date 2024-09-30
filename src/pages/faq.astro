@@ -1,0 +1,85 @@
+---
+import PageTitle from "../components/ui/PageTitle.astro";
+import Layout from "../layouts/Layout.astro";
+import Item from "../components/ui/Item.astro";
+---
+<Layout title = "FAQ" description = "Frequently asked question" canonical = "/faq">
+    <div class = "mx-auto max-w-none prose prose-invert prose-h2:mb-1 prose-h2:mt-1 prose-h3:mb-1 prose-h3:mt-1">
+        <PageTitle> Frequently Asked Questions </PageTitle>
+
+        <p>
+            See the <a href = "/rules" class = "font-bold">rules</a>.
+        </p>
+        <p>
+            See the <a href = "/repositories" class = "font-bold">repositories to contribute to</a>.
+        </p>
+
+            <Item title = "What is Modtoberfest?">
+                Modtoberfest is a celebration of open source projects in the Minecraft community. During October we challenge the community
+                to give back to the open source projects at the heart of our community by contributing pull requests. Those who submit four
+                valid pull requests to participating <a href = "/repositories">community projects</a> will be eligible to receive a
+                free prize pack including stickers and pins designed by the sponsors of the event. You can <a href="/auth/github">sign up</a> any
+                time during October.
+            </Item>
+
+
+            <Item title = "What is open source?">
+                Open source projects allow anyone to view or modify their source code. These projects are very important to the community as
+                they are great resources for learning and encourage collaboration within the community. Open source projects build the
+                foundation of many communities, including the Minecraft community.
+            </Item>
+
+            <Item title = "What is a pull request?">
+                Pull requests are a popular way to submit your changes to a project. This allows a maintainer of the project to review your
+                changes. If your changes are approved they can be merged, allowing them to benefit from your work. Creating pull requests is
+                a great way to give back to an open source project.
+            </Item>
+
+            <Item title = "What is the Modtoberfest challenge?">
+                During October we challenge the community to participate in the open source Minecraft community by submitting four valid pull
+                requests to participating <a href = "/repositories">community projects</a>. Those who complete the challenge will
+                be eligible to receive a free prize pack in the mail that includes stickers and pins from various community projects. Please
+                check our <a href = "/rules">rules</a> for more information.
+            </Item>
+
+            <Item title = "Is there a prize for participating?">
+                Those who complete our challenge will be eligible to receive a prize pack containing stickers, pins, and other items from
+                projects in our community that have sponsored the event. Supplies are limited and will only be given out while they are
+                available. Prizes are also limited to one per person.
+            </Item>
+
+            <Item title = "Does the pull request need to be merged?">
+                No, the pull request does not need to be merged. We only require that they pass our quality control policy, are not a draft
+                PR, and that the project maintainer does not flag your pull request as invalid or spam.
+            </Item>
+
+            <Item title = "What is the event's timeframe?">
+                The event uses the UTC timezone and runs from 00:00 October 1st to 23:59 October 31st.
+
+                Any pull request made outside of this timeframe will not be picked up by our system as we use the time provided by Github's API, which is in UTC.
+
+                It is not possible to add special exceptions for PRs made outside of the timeframe of the event.
+            </Item>
+
+            <Item title = "How are pull requests tracked?">
+                We track all pull requests created on participating repositories during October. This data is pulled from the GitHub API. For
+                us to track your data you must <a href="/auth/github">sign up</a> for the event.
+            </Item>
+
+            <Item title = "Do pull requests made before signing up still count?">
+                Yes, we can count any pull request made during the event's timeframe. We will only count pull requests that follow our <a href = "/rules">rules</a>.
+            </Item>
+
+            <Item title = "Do commits count?">
+                No, we can only track pull requests. Additionally, we can only credit pull requests to the author of the pull request on
+                GitHub. This means that Co-authors are not tracked or credited.
+            </Item>
+
+            <Item title = "How will the prizes be shipped?">
+                The prizes will be shipped through Canada Post. International shipping is supported in most countries. Please keep in mind
+                that you may be expected to pay customs, duties, or taxes depending on where you live. Tracking codes will not be available
+                replacements are not guaranteed due to the limited quantities of stickers available.
+            </Item>
+
+    </div>
+</Layout>

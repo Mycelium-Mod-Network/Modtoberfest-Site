@@ -1,0 +1,85 @@
+---
+export interface Props {
+    date: number,
+    refreshRate?: number
+}
+
+interface RenderProps {
+
+    days: number,
+    hours: number,
+    minutes: number,
+    seconds: number,
+    completed: boolean
+}
+
+const { date, refreshRate = 1000} = Astro.props;
+---
+
+<div>
+    <div class="countdown inline-flex justify-center text-center pr-4 gap-x-4 sm:gap-x-8 prose-p:mt-0 prose-p:mb-0">
+
+        <div class="my-auto">
+            <p class="text-2xl lg:text-5xl days">0</p>
+            <p class='font-bold'>Days</p>
+        </div>
+
+        <div class="my-auto">
+            <p class="text-2xl lg:text-5xl hours">0</p>
+            <p class='font-bold'>Hours</p>
+        </div>
+
+        <div class="my-auto">
+            <p class="text-2xl lg:text-5xl minutes">0</p>
+            <p class='font-bold'>Minutes</p>
+        </div>
+
+        <div class="my-auto">
+            <p class="text-2xl lg:text-5xl seconds">0</p>
+            <p class='font-bold'>Seconds</p>
+        </div>
+    </div>
+
+    <div class='hidden completed'>
+        <slot/>
+    </div>
+</div>
+
+<script is:inline define:vars={{ date: date, refreshRate: refreshRate }}>
+
+    const updateCountdown = () => {
+
+        const total = date - new Date().getTime();
+
+        const seconds = Math.floor( (total/1000) % 60 );
+        const minutes = Math.floor( (total/1000/60) % 60 );
+        const hours = Math.floor( (total/(1000*60*60)) % 24 );
+        const days = Math.floor( total/(1000*60*60*24) );
+
+        // Could I do this better?
+        document.querySelector(".days").innerText = days;
+        document.querySelector(".hours").innerText = hours;
+        document.querySelector(".minutes").innerText = minutes;
+        document.querySelector(".seconds").innerText = seconds;
+
+        if (seconds === 4) {
+            document.querySelector(".seconds").classList.add("spooky-text")
+        }
+        if (seconds === 3) {
+            document.querySelector(".seconds").classList.remove("spooky-text")
+        }
+
+        // Stop updating if the timer hits 0.
+        if (total <= 0) {
+
+            clearInterval(updateCountdown);
+
+            document.querySelector(".countdown").style.display = 'none'
+            document.querySelector(".completed").style.display = 'block'
+        }
+    };
+
+    // Invoke immediately.
+    updateCountdown();
+    setInterval(updateCountdown, refreshRate);
+</script>

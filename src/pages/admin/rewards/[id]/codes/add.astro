@@ -1,0 +1,32 @@
+---
+import {isUserAdmin} from "@lib/util";
+import PageTitle from "@components/ui/PageTitle.astro";
+import Layout from "@layouts/Layout.astro";
+import {actions} from "astro:actions";
+import prisma from "@lib/db";
+
+const user = Astro.locals.user;
+if (!isUserAdmin(user)) {
+    return Astro.redirect("/403?url=/admin/users")
+}
+
+const {id} = Astro.params
+const reward = await prisma.reward.findUnique({
+    where: {
+        id: id
+    }
+})
+if (!reward) {
+    return Astro.redirect("/admin/rewards?error=not_found")
+}
+//TODO show codes
+---
+<Layout title = `Add ${reward.title} codes` description = `Add ${reward.title} codes` canonical = `/admin/rewards/${id}/codes/add`>
+    <div class = "mx-auto max-w-none">
+        <PageTitle>Add {reward.title} codes </PageTitle>
+        <form method="post" action="post"></form>
+        <a href = `/admin/rewards/${id}/codes` class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-red-500 bg-opacity-25 hover:text-white"> Cancel </a>
+
+    </div>
+
+</Layout>

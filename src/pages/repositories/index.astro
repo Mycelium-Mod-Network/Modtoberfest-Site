@@ -1,0 +1,99 @@
+---
+import Layout from "@layouts/Layout.astro";
+import prisma from "@lib/db";
+import Repository from "@components/ui/repositories/Repository.astro";
+import type {DisplayRepository} from "@lib/types";
+import {shuffleArray} from "../../lib/util";
+
+
+let sponsoredCount = 0;
+const dbRepos: DisplayRepository[] = (await prisma.repository.findMany({
+    select: {
+        repository_id: true,
+        SponsoredRepository: {
+            select: {
+                sponsor: {
+                    select: {
+                        name: true,
+                        image_url: true
+                    }
+                }
+            }
+        },
+        cache: {
+            select: {
+                name: true,
+                owner: true,
+                ownerHtmlUrl: true,
+                ownerAvatarUrl: true,
+                url: true,
+                description: true,
+                stars: true,
+                openIssues: true,
+                updatedAt: true,
+                license: true,
+                language: true
+            }
+        },
+        tags: true
+    },
+    where: {
+        RepositoryStatus: {
+            reviewed: true,
+            invalid: false
+        }
+    },
+})).reduce<DisplayRepository[]>((repos, repo) => {
+
+    if (repo.cache) {
+
+        repos.push({
+            repository_id: repo.repository_id,
+            name: repo.cache.name,
+            owner: repo.cache.owner,
+            description: repo.cache.description ?? undefined,
+            openIssues: repo.cache.openIssues,
+            ownerAvatarUrl: repo.cache.ownerAvatarUrl,
+            ownerHtmlUrl: repo.cache.ownerHtmlUrl,
+            sponsor: (repo.SponsoredRepository && {
+                name: repo.SponsoredRepository.sponsor.name,
+                image_url: repo.SponsoredRepository.sponsor.image_url,
+            }) || undefined,
+            stars: repo.cache.stars,
+            updatedAt: repo.cache.updatedAt.getTime(),
+            url: repo.cache.url,
+            license: repo.cache.license,
+            language: repo.cache.language,
+            tags: (repo.tags ?? []).map(tag => tag.tag_name),
+        });
+
+    }
+    return repos;
+}, [])
+
+shuffleArray(dbRepos)
+const repos = dbRepos.reduce<DisplayRepository[]>((acc, cur) => {
+    if(cur.sponsor && sponsoredCount++ < 8) {
+        return [cur, ...acc]
+    }
+    return [...acc, cur]
+}, [])
+const user = Astro.locals.user;
+---
+
+<Layout title = "Repositories" description = "Repositories" canonical = "/repositories">
+    <div class = "mx-auto">
+        <h1 class:list = {["text-white text-3xl font-semibold font-brand border-b-2 tracking-wide mb-4 pb-4 font-brand", {"flex justify-between": user}]}>
+            <span>Repositories</span>
+
+            {user && <a href = "/repositories/submit" class = "no-underline"> Submit</a>}
+        </h1>
+        <div class = "flex gap-8 flex-wrap mt-6">
+            {repos.map((repo) =>
+                    <>
+                        <Repository repo = {repo}/>
+                    </>)}
+        </div>
+
+    </div>
+</Layout>

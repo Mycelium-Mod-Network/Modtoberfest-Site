@@ -1,0 +1,30 @@
+---
+import {isUserAdmin} from "@lib/util";
+import PageTitle from "../../../components/ui/PageTitle.astro";
+import Layout from "../../../layouts/Layout.astro";
+import {actions} from "astro:actions";
+const user = Astro.locals.user;
+if (!isUserAdmin(user)) {
+    return Astro.redirect("/403?url=/admin/users")
+}
+---
+<Layout title = "Create Tag" description = "Create Tag" canonical = "/admin/tags/create">
+    <div class = "mx-auto max-w-none">
+        <PageTitle>Add tag</PageTitle>
+        <form action = {"/admin/tags" + actions.tag.create} method = "post" class = "flex flex-col gap-y-2">
+            <div class = "grid grid-cols-2 gap-2">
+                <label for = "name">Name: <span class = "text-red-500">*</span></label>
+
+                <input type = "text" name = "name" required id = "name" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+            </div>
+
+            <button type = "submit" class = "w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-green-500 bg-opacity-25">
+                Add tag
+            </button>
+            <a href = "/admin/tags" class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-red-500 bg-opacity-25 hover:text-white"> Cancel </a>
+        </form>
+
+
+    </div>
+</Layout>

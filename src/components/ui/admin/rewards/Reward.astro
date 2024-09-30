@@ -1,0 +1,33 @@
+---
+import type {Reward} from "@lib/types";
+import {actions} from "astro:actions";
+interface Props {
+    reward: Reward
+}
+
+const {reward} = Astro.props
+---
+
+<div class = "border-2 border-orange-400 flex flex-col gap-y-2 p-2">
+
+    <p class = "text-center font-semibold text-3xl">
+        {reward.title}
+
+    </p>
+    <p  class = "text-center italic">{reward.summary}</p>
+    <img src={reward.banner_url} alt={reward.title}/>
+    <div class = "flex gap-x-2">
+        <img src = {reward.logo_url} class = "aspect-square w-32 h-32 p-2" alt = `${reward.title}`/>
+        <div class="prose prose-invert mx-auto">
+            <Fragment set:html= {reward.description}/>
+        </div>
+    </div>
+    <div class = "flex gap-x-2 w-full">
+        <a class = "w-full text-center border-2 border-cyan-400 bg-cyan-900 hover:bg-cyan-700 no-underline block text-white hover:text-white" href = `/admin/rewards/${reward.id}/edit`> Edit </a>
+        {reward.digital && <a class = "w-full text-center border-2 border-indigo-400 bg-indigo-900 hover:bg-indigo-700 no-underline block text-white hover:text-white" href = `/admin/rewards/${reward.id}/codes`> Codes </a>}
+        <form method = "POST" action = {actions.rewards.delete} class = "w-full">
+            <input type = "hidden" value = {reward.id} name = "id"/>
+            <button type = "submit" class = "w-full text-center border-2 border-rose-400 bg-rose-900 hover:bg-rose-700 no-underline block">Delete</button>
+        </form>
+    </div>
+</div>

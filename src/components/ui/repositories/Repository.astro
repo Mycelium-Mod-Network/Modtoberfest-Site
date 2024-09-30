@@ -1,0 +1,31 @@
+---
+import type {DisplayRepository} from "@lib/types";
+import {formatDate} from "@lib/util";
+import {Icon} from "astro-icon/components";
+import RepositoryTags from "./RepositoryTags.astro";
+interface Props {
+    repo: DisplayRepository;
+}
+const {repo} = Astro.props;
+const sponsored = !!repo.sponsor
+---
+
+<div class:list = {["border-2 flex flex-col gap-y-2 p-2 relative w-48 group transition", {"border-sky-400 hover:border-sky-600": sponsored, "border-orange-400 hover:border-orange-600": !sponsored}]}>
+    <img src = {repo.ownerAvatarUrl} alt = {repo.owner} class:list = {["absolute -top-4 -left-4 rounded-full w-8 h-8 bg-brand-900 border-2", {"border-sky-400 group-hover:border-sky-600": sponsored, "border-orange-400 group-hover:border-orange-600": !sponsored}]}/>
+
+    {sponsored &&
+            <Icon name = "octicon:verified-16" class = "absolute -top-3 -right-3 w-6 h-6 bg-brand-900"/>
+    }
+
+    <div class:list = {["flex flex-col font-semibold text-center border-b border-b-orange-300", {"border-b-sky-300 group-hover:border-b-sky-400": sponsored, "border-b-orange-300  group-hover:border-orange-400": !sponsored}]}>
+        <a href = {repo.ownerHtmlUrl} class:list = {["no-underline text-sm", {"text-sky-300 hover:text-sky-600": sponsored, "text-orange-300 hover:text-orange-600": !sponsored}]} target = "_blank" rel = "noreferrer">{repo.owner}</a>
+
+        <a href = {repo.url} class:list = {["no-underline", {"text-sky-400 hover:text-sky-600": sponsored, "text-orange-400 hover:text-orange-600": !sponsored}]} target = "_blank" rel = "noreferrer">{repo.name}</a>
+    </div>
+    <p class:list = {["text-sm flex-grow break-words", {"italic": !repo.description}]}>{repo.description ? repo.description.substring(0, 70) + (repo.description.length > 70 ? "..." : "") : "No description provided"}</p>
+
+    <RepositoryTags repo = {repo}/>
+    <span class = "text-xs italic">
+            Updated {formatDate(repo.updatedAt)}
+        </span>
+</div>

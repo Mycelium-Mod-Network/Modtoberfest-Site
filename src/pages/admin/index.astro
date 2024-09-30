@@ -1,0 +1,47 @@
+---
+import {isUserAdmin} from "@lib/util";
+import Layout from "@layouts/Layout.astro";
+import PageTitle from "@components/ui/PageTitle.astro";
+import AdminCard from "@components/ui/AdminCard.astro";
+import {Icon} from 'astro-icon/components'
+const user = Astro.locals.user;
+if (!isUserAdmin(user)) {
+    return Astro.redirect("/403?url=/admin")
+}
+---
+
+<Layout title = "Admin dashboard" description = "Admin Dashboard" canonical = "/admin">
+    <div class = "mx-auto max-w-none">
+        <PageTitle>Admin Pages</PageTitle>
+
+        <div class = "flex flex-wrap place-items-center gap-4">
+            <AdminCard name = "Users" path = "/admin/users">
+                <Icon name = "octicon:person-16" class = "my-auto w-full h-full"/>
+            </AdminCard>
+            <AdminCard name = "Sponsors" path = "/admin/sponsors">
+                <Icon name = "octicon:heart-16" class = "my-auto w-full h-full"/>
+            </AdminCard>
+            <AdminCard name = "Repos" path = "/admin/repositories">
+                <Icon name = "octicon:repo-16" class = "my-auto w-full h-full"/>
+            </AdminCard>
+            <AdminCard name = "Submitted" path = "/admin/repositories/submitted">
+                <Icon name = "octicon:repo-16" class = "my-auto w-full h-full"/>
+            </AdminCard>
+            <AdminCard name = "All PRs" path = "/admin/pullrequests">
+                <Icon name = "octicon:git-pull-request-16" class = "my-auto w-full h-full"/>
+            </AdminCard>
+            <AdminCard name = "Review PRs" path = "/admin/pullrequests/review">
+                <Icon name = "octicon:git-pull-request-16" class = "my-auto w-full h-full"/>
+            </AdminCard>
+            <AdminCard name = "Tags" path = "/admin/tags">
+                <Icon name = "octicon:tag-16" class = "my-auto w-full h-full"/>
+            </AdminCard>
+            <AdminCard name = "Tag Repos" path = "/admin/repositories/tag">
+                <Icon name = "octicon:tag-16" class = "my-auto w-full h-full"/>
+            </AdminCard>
+            <AdminCard name = "Rewards" path = "/admin/rewards">
+                <Icon name = "octicon:trophy-16" class = "my-auto w-full h-full"/>
+            </AdminCard>
+        </div>
+    </div>
+</Layout>

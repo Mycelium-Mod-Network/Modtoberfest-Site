@@ -1,0 +1,26 @@
+---
+import type {RepoGroup, SubmittingRepo} from "../../../lib/types";
+import SubmittableRepository from "./SubmittableRepository.astro";
+interface Props {
+    group: RepoGroup<SubmittingRepo>
+    tags: string[]
+}
+const {group, tags} = Astro.props;
+---
+
+<div class = "flex-grow w-full">
+    <a class = "flex gap-x-2 mb-2 border-b-2 hover:border-b-orange-600 pb-2 place-items-center no-underline" href = {group.url} target = "_blank" rel = "noreferrer">
+
+        <img src = {group.avatar} alt = {group.owner} class = "rounded-full w-8"/>
+        <p class = "text-2xl font-semibold">
+            {group.name}
+        </p>
+    </a>
+
+    <div class = "flex flex-wrap gap-8 mt-4">
+
+        {group.repos.map(repo =>
+                <SubmittableRepository repo = {repo} tags={tags}/>)
+        }
+    </div>
+</div>

@@ -1,0 +1,60 @@
+---
+import {Icon} from 'astro-icon/components'
+import type {PullRequest} from "@lib/types";
+import {actions} from "astro:actions";
+
+interface Props {
+    pr: PullRequest,
+}
+
+const {pr} = Astro.props;
+---
+
+<div class = "flex flex-col gap-y-2 border-2 border-orange-400 sm:flex-col p-2">
+
+    <div class = "flex flex-col flex-grow w-full">
+
+        <a href = {pr.html_url} target = "_blank" rel = "noreferrer" class = "flex gap-x-2">
+            {pr.state === "open" ?
+                    <Icon name = "octicon:issue-opened-16" class = "w-5 h-5 text-green-700 my-auto"/> :
+                    <Icon name = "octicon:issue-closed-16" class = `w-5 h-5 my-auto ${pr.merged ? 'text-purple-500' : 'text-red-500'}`/>
+            }
+
+            <p class = "font-mono">
+                {pr.title}
+            </p>
+        </a>
+        <div class = "smtext-xs ml-7">
+            #{pr.number} by <a href = `https://github.com/${pr.author}` target = "_blank" rel = "noreferrer">{pr.author}</a>
+        </div>
+
+        <div class = "flex gap-x-2 mt-4">
+            <form class = "flex flex-col gap-y-2 w-full" method="POST" action={actions.pull_request.approve}>
+                <input type="hidden" name="id" value={pr.pr_id}/>
+                <label><select class = "w-full bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300" name="reason">
+                    <option class="text-black">Bugfix</option>
+                    <option class="text-black">Optimization</option>
+                    <option class="text-black">Localization</option>
+                    <option class="text-black">Feature</option>
+                    <option class="text-black">Port</option>
+                    <option class="text-black">Other</option>
+                </select></label>
+                <button type = "submit" class = "w-full text-center border-2 border-rose-400 bg-green-900 hover:bg-green-700 no-underline block">Approve</button>
+            </form>
+            <form class = "flex flex-col gap-y-2 w-full" method="POST" action={actions.pull_request.deny}>
+                <input type="hidden" name="id" value={pr.pr_id}/>
+                <label>
+                    <select class = "w-full bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300" name="reason">
+                        <option class = "text-black">Quality Control: Pull requests that have been scripted or automated.</option>
+                        <option class = "text-black">Quality Control: Pull requests that focus on minor changes such as whitespace, indenting, typos, and optimizing assets and images.</option>
+                        <option class = "text-black">Quality Control: Incomplete/Self-closed PR</option>
+                        <option class = "text-black">Quality Control: Incomplete PR</option>
+                        <option class = "text-black">Quality Control: Commits from this PR are taken from other PRs.</option>
+                        <option class = "text-black">Quality Control: Commits from this PR are already present in other PRs you have submitted.</option>
+                    </select>
+                </label>
+                <button type = "submit" class = "w-full text-center border-2 border-rose-400 bg-rose-900 hover:bg-rose-700 no-underline block">Deny</button>
+            </form>
+        </div>
+    </div>
+</div>

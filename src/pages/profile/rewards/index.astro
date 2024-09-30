@@ -1,0 +1,68 @@
+---
+import Layout from "@layouts/Layout.astro";
+import prisma from "@lib/db";
+import type {PullRequest as PR} from "@lib/types";
+const user = Astro.locals.user;
+if (!user) {
+    return Astro.redirect("/auth/github?url=/admin")
+}
+
+const prs: PR[] = (await prisma.pullRequest.findMany({
+    select: {
+        html_url: true,
+        created_at: true,
+        merged: true,
+        number: true,
+        owner_avatar_url: true,
+        repository_id: true,
+        pr_id: true,
+        title: true,
+        state: true,
+        owner: true,
+        PullRequestStatus: {
+            select: {
+                invalid: true,
+                reason: true,
+                reviewed: true
+            }
+        },
+        Repository: {
+            select: {
+                cache: {
+                    select: {
+                        name: true
+                    }
+                }
+            }
+        }
+    },
+    where: {
+        author_id: `${user.githubId}`,
+    }
+})).map(pr => {
+    return {
+        pr_id: 0,
+        author: "",
+        created_at: new Date(pr.created_at).getTime(),
+        html_url: pr.html_url,
+        merged: pr.merged,
+        number: pr.number,
+        owner: pr.owner,
+        owner_avatar_url: pr.owner_avatar_url,
+        repo_name: (pr.Repository.cache || {name: ""}).name,
+        title: pr.title,
+        state: pr.state,
+        reviewed: pr.PullRequestStatus?.reviewed || false,
+        invalid: pr.PullRequestStatus?.invalid || false,
+        reason: pr.PullRequestStatus?.reason || undefined
+    }
+})
+
+const validPrs = prs.filter(pr => pr.reviewed ? !pr.invalid : false);
+---
+
+<Layout title = "Claim rewards" description = "Claim Rewards" canonical = "/profile/rewards">
+    <div class = "mx-auto max-w-none">
+
+    </div>
+</Layout>

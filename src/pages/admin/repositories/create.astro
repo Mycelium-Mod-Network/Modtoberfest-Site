@@ -1,0 +1,46 @@
+---
+import {isUserAdmin} from "@lib/util";
+import PageTitle from "@components/ui/PageTitle.astro";
+import Layout from "@layouts/Layout.astro";
+import {actions} from "astro:actions";
+import prisma from "@lib/db";
+const user = Astro.locals.user;
+if (!isUserAdmin(user)) {
+    return Astro.redirect("/403?url=/admin/repositories")
+}
+
+const sponsors = await prisma.sponsor.findMany({
+    select: {
+        id: true,
+        name: true
+    }
+})
+---
+<Layout title = "Create Repository" description = "Create Repository" canonical = "/admin/repositories/create">
+    <div class = "mx-auto max-w-none">
+        <PageTitle>Add Repository</PageTitle>
+        <form action = {"/admin/repositories" + actions.repository.create} method = "post" class = "flex flex-col gap-y-2">
+            <div class="grid grid-cols-2 gap-2">
+                <label for = "owner">Owner: <span class = "text-red-500">*</span></label>
+                <input type = "text" name = "owner" required id = "owner" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <label for = "name">Repo name: <span class = "text-red-500">*</span></label>
+                <input type = "text" name = "name" required id = "name" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <label for = "sponsor">Sponsor: <span class = "text-red-500">*</span></label>
+                <select name="sponsor" id="sponsor" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+                    <option label=""></option>
+                    {sponsors.map(sponsor => <><option value={sponsor.id} class="text-black">{sponsor.name}</option> </>)}
+                </select>
+
+            </div>
+
+            <button type="submit" class="w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-green-500 bg-opacity-25">
+                Add repository
+            </button>
+            <a href = "/admin/repositories" class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-red-500 bg-opacity-25 hover:text-white"> Cancel </a>
+        </form>
+
+
+    </div>
+</Layout>

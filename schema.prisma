@@ -7,165 +7,196 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
+model User {
+  id                String              @id
+  sessions          Session[]
+  github_id         Int                 @unique
+  name              String
+  username          String
+  email             String
+  admin             Boolean             @default(false)
+  avatar            String
+  access_token      String?             @db.Text
+  RepositoryStatus  RepositoryStatus[]
+  Repository        Repository[]
+  PullRequestStatus PullRequestStatus[]
+  ClaimedCode       ClaimedCode[]
 
-  user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Participant       Participant?
-
-  @@unique([provider, providerAccountId])
+  @@unique([id])
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
+  id        String   @id
+  userId    String
+  expiresAt DateTime
 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-}
+  user User @relation(references: [id], fields: [userId], onDelete: Cascade)
 
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
-model Participant {
-  id          String  @id @default(cuid())
-  accountId   String @unique
-  admin       Boolean @default(false)
-  discordUser String?
-  githubId    String @unique
-  account     Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
-
-  @@unique([id, githubId])
+  @@unique([id])
 }
 
 model Sponsor {
-  id                    String  @id @default(cuid())
-  name                  String
-  image_url             String
-  summary               String  @db.Text
-  website_url           String?
-  github_user           String?
-  twitter_handle        String?
-  subreddit             String?
-  discord               String?
-  SponsoredRepository   SponsoredRepository[]
+  id                  String                @id @default(cuid())
+  name                String
+  summary             String                @db.Text
+  image_url           String
+  SponsoredRepository SponsoredRepository[]
+  links               SponsorLinks[]
+  Reward              Reward[]
+
+  @@unique([id])
+}
+
+model SponsorLinks {
+  id         String  @id @default(cuid())
+  sponsor_id String
+  name       String
+  value      String
+  sponsor    Sponsor @relation(references: [id], fields: [sponsor_id], onDelete: Cascade)
+
+  @@unique([id])
 }
 
 model Repository {
-  id                String  @id @default(cuid())
-  repository_id     String  @unique
-  url               String
+  id                  String               @id @default(cuid())
+  repository_id       String               @unique
+  submitter           String?
+  SponsoredRepository SponsoredRepository?
+  cache               RepositoryCache?
+  RepositoryStatus    RepositoryStatus?
+  user                User?                @relation(fields: [submitter], references: [id], onDelete: Cascade)
+  PullRequest         PullRequest[]
+  tags                TaggedRepository[]
 
   @@unique([id, repository_id])
-  SponsoredRepository       SponsoredRepository?
-  cache                     RepositoryCache?
-  RepositoryStatus          RepositoryStatus?
 }
 
 model SponsoredRepository {
-    id              String @id @default(cuid())
-    repository_id   String @unique
-    sponsor_id      String
+  id            String @id @default(cuid())
+  repository_id String @unique
+  sponsor_id    String
 
-    repository      Repository @relation(fields: [repository_id], references: [repository_id], onDelete: Cascade)
-    sponsor         Sponsor @relation(fields: [sponsor_id], references: [id], onDelete: Cascade)
+  repository Repository @relation(fields: [repository_id], references: [repository_id], onDelete: Cascade)
+  sponsor    Sponsor    @relation(fields: [sponsor_id], references: [id], onDelete: Cascade)
 
-    @@unique([id])
+  @@unique([id])
 }
 
 model RepositoryStatus {
-  id String  @id @default(cuid())
-  repository_id String @unique
-  invalid Boolean
-  reason String? @db.Text
-  reviewed Boolean @default(false)
+  id            String     @id @default(cuid())
+  repository_id String     @unique
+  invalid       Boolean
+  reason        String?    @db.Text
+  reviewed      Boolean    @default(false)
+  reviewed_by   String?
+  Repository    Repository @relation(fields: [repository_id], references: [repository_id], onDelete: Cascade)
+  user          User?      @relation(fields: [reviewed_by], references: [id], onDelete: Cascade)
+
   @@unique([id, repository_id])
-  Repository      Repository @relation(fields: [repository_id], references: [repository_id], onDelete: Cascade)
-}
-
-model PullRequest {
-  id String  @id @default(cuid())
-  pr_id Int  @unique
-  html_url String
-  number Int
-  state String
-  title String @db.Text
-  author String
-  author_id String
-  created_at DateTime
-  owner String
-  owner_id String
-  owner_avatar_url String @db.Text
-  repo_id String
-  repo_name String
-  merged Boolean
-  @@unique([id, pr_id])
-  PullRequestStatus       PullRequestStatus?
-}
-
-model PullRequestStatus {
-  id String  @id @default(cuid())
-  pr_id Int @unique
-  invalid Boolean
-  reason String? @db.Text
-  reviewed Boolean @default(false)
-  @@unique([id, pr_id])
-  PullRequest      PullRequest @relation(fields: [pr_id], references: [pr_id], onDelete: Cascade)
-}
-
-model Claim {
-    id              String  @id @default(cuid())
-    account_id      String
-    firstName       String
-    lastName        String
-    address1        String
-    address2        String?
-    city            String
-    zip             String
-    state           String
-    country         String
-    email           String
-    feedback        String @db.Text
 }
 
 model RepositoryCache {
-  id                String  @id @default(cuid())
-  repository_id     String  @unique
-  name              String
-  owner             String
-  ownerHtmlUrl      String
-  ownerAvatarUrl    String
-  url               String
-  description       String? @db.Text
-  stars             Int
-  openIssues        Int
-  updatedAt         DateTime @default(now())
+  id             String     @id @default(cuid())
+  repository_id  String     @unique
+  name           String
+  owner          String
+  ownerHtmlUrl   String
+  ownerAvatarUrl String
+  url            String
+  description    String?    @db.Text
+  stars          Int
+  openIssues     Int
+  updatedAt      DateTime   @default(now())
+  languageName   String?
+  language       Language?  @relation(fields: [languageName], references: [name])
+  license        String?    @db.Text
+  Repository     Repository @relation(fields: [repository_id], references: [repository_id], onDelete: Cascade)
+
   @@unique([id, repository_id])
-  Repository      Repository @relation(fields: [repository_id], references: [repository_id], onDelete: Cascade)
+}
+
+model PullRequest {
+  id                String             @id @default(cuid())
+  pr_id             Int                @unique
+  html_url          String
+  number            Int
+  state             String
+  title             String             @db.Text
+  author            String
+  author_id         String
+  created_at        DateTime
+  owner             String
+  owner_id          String
+  owner_avatar_url  String             @db.Text
+  repository_id     String
+  merged            Boolean
+  PullRequestStatus PullRequestStatus?
+  Repository        Repository         @relation(fields: [repository_id], references: [repository_id], onDelete: Cascade)
+
+  @@unique([id, pr_id])
+}
+
+model PullRequestStatus {
+  id          String      @id @default(cuid())
+  pr_id       Int         @unique
+  invalid     Boolean
+  reason      String?     @db.Text
+  reviewed    Boolean     @default(false)
+  reviewed_by String?
+  PullRequest PullRequest @relation(fields: [pr_id], references: [pr_id], onDelete: Cascade)
+  user        User?       @relation(fields: [reviewed_by], references: [id], onDelete: Cascade)
+
+  @@unique([id, pr_id])
+}
+
+model Language {
+  name            String            @id
+  color           String?           @db.Text
+  RepositoryCache RepositoryCache[]
+}
+
+model Tag {
+  name             String             @id
+  TaggedRepository TaggedRepository[]
+}
+
+model TaggedRepository {
+  tag_name      String
+  repository_id String
+  Tag           Tag        @relation(fields: [tag_name], references: [name], onDelete: Cascade)
+  Repository    Repository @relation(fields: [repository_id], references: [id], onDelete: Cascade)
+
+  @@id([tag_name, repository_id])
+}
+
+model Reward {
+  id          String  @id @default(cuid())
+  title       String  @db.Text
+  summary     String  @db.LongText
+  description String  @db.LongText
+  logo_url    String  @db.Text
+  banner_url  String  @db.Text
+  digital     Boolean
+  sponsor_id  String
+
+  sponsor    Sponsor      @relation(fields: [sponsor_id], references: [id], onDelete: Cascade)
+  RewardCode RewardCode[]
+}
+
+model RewardCode {
+  id          String        @id @default(cuid())
+  reward_id   String
+  code        String        @db.LongText
+  reward      Reward        @relation(fields: [reward_id], references: [id], onDelete: Cascade)
+  ClaimedCode ClaimedCode[]
+}
+
+model ClaimedCode {
+  code_id         String
+  claimed_user_id String
+
+  code         RewardCode @relation(fields: [code_id], references: [id], onDelete: Cascade)
+  claimed_user User       @relation(fields: [claimed_user_id], references: [id], onDelete: Cascade)
+
+  @@id([code_id, claimed_user_id])
 }

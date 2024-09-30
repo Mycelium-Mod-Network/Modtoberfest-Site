@@ -1,0 +1,28 @@
+---
+import {actions} from "astro:actions"
+import type {Sponsor} from "@lib/types";
+interface Props {
+    sponsor: Sponsor;
+}
+const {sponsor} = Astro.props;
+---
+
+<div class = "border-2 border-orange-400 flex flex-col gap-y-2 p-2">
+
+    <p class = "text-center font-semibold text-3xl">
+        {sponsor.name}
+    </p>
+    <div class = "flex gap-x-2">
+        <img src = {sponsor.image_url} class = "aspect-square w-32 h-32 p-2" alt = `${sponsor.name}`/>
+        <p>
+            {sponsor.summary}
+        </p>
+    </div>
+    <div class = "flex gap-x-2 w-full">
+        <a class = "w-full text-center border-2 border-cyan-400 bg-cyan-900 hover:bg-cyan-700 no-underline block text-white hover:text-white" href = `/admin/sponsors/${sponsor.id}/edit`> Edit </a>
+        <form method = "POST" action = {actions.sponsor.delete} class = "w-full">
+            <input type = "hidden" value = {sponsor.id} name = "id"/>
+            <button type = "submit" class = "w-full text-center border-2 border-rose-400 bg-rose-900 hover:bg-rose-700 no-underline block">Delete</button>
+        </form>
+    </div>
+</div>

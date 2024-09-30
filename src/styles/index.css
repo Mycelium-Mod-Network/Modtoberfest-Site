@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Germania+One&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.nav-link {
+    @apply no-underline font-bold text-orange-400 transition duration-200 ease-in-out transform hover:text-orange-600 hover:-translate-y-px;
+}
+
+.basic-link {
+    @apply hover:text-white;
+}
+
+a, #sign-out {
+    overflow-wrap: anywhere;
+    @apply underline transition duration-200 ease-in-out transform hover:text-orange-600;
+}
+
+.font-brand {
+    font-family: "Germania One", system-ui;
+    font-weight: 400;
+    font-style:  normal;
+}
+
+.participate {
+    @apply grid;
+    grid-template-areas: "tl" "bl" "tr" "br";
+}
+
+@screen sm {
+    .participate {
+        grid-template-areas: "tl tr" "bl br";
+    }
+
+}
+main {
+    @apply text-neutral-200 flex-1 w-full max-w-4xl p-4 mx-auto min-h-full;
+}
+
+progress {
+    color:         #FB923C;
+    /* Firefox: Unfilled portion of the progress bar */
+    background:    lightgrey;
+    border-radius: 10em;
+}
+
+/* Firefox: Filled portion of the progress bar */
+progress::-moz-progress-bar {
+    background:    currentColor;
+    border-radius: 10em;
+}
+
+/* Chrome & Safari: Unfilled portion of the progress bar */
+progress::-webkit-progress-bar {
+    background:    lightgrey;
+    border-radius: 10em;
+
+}
+
+/* Chrome & Safari: Filled portion of the progress bar */
+progress::-webkit-progress-value {
+    background:    currentColor;
+    border-radius: 10em;
+}

@@ -1,0 +1,82 @@
+---
+import {isUserAdmin} from "@lib/util";
+import Layout from "@layouts/Layout.astro";
+import PageTitle from "@components/ui/PageTitle.astro";
+import prisma from "@lib/db";
+import type {PullRequest, PRGroups} from "@lib/types";
+import AdminRepositoryCard from "@components/ui/AdminRepositoryCard.astro";
+import PRGroup from "../../../components/ui/admin/PRGroup.astro";
+import PRReviewGroup from "../../../components/ui/admin/PRReviewGroup.astro";
+
+const user = Astro.locals.user;
+if (!isUserAdmin(user)) {
+    return Astro.redirect("/403?url=/admin/users")
+}
+
+const prGroups: PRGroups = {}
+const prs: PullRequest[] = (await prisma.pullRequest.findMany({
+    select: {
+        pr_id: true,
+        author: true,
+        created_at: true,
+        html_url: true,
+        merged: true,
+        number: true,
+        owner: true,
+        owner_avatar_url: true,
+        title: true,
+        state: true,
+        Repository: {
+            select: {
+                cache: {
+                    select: {
+                        name: true
+                    }
+                }
+            }
+        }
+    },
+    where: {
+        PullRequestStatus: {
+            reviewed: false
+        }
+    }
+})).map<PullRequest>(pr => ({
+    pr_id: pr.pr_id,
+    author: pr.author,
+    created_at: new Date(pr.created_at).getTime(),
+    html_url: pr.html_url,
+    merged: pr.merged,
+    number: pr.number,
+    owner: pr.owner,
+    owner_avatar_url: pr.owner_avatar_url,
+    repo_name: (pr.Repository.cache || {name: ""}).name,
+    title: pr.title,
+    invalid: false,
+    reason: "",
+    state: pr.state,
+    reviewed: false
+}))
+
+prs.sort((a,b) => a.owner.localeCompare(b.owner)).forEach(pr => {
+    prGroups[`${pr.owner}/${pr.repo_name}`] = prGroups[`${pr.owner}/${pr.repo_name}`] || {
+        owner: pr.owner,
+        name: pr.repo_name,
+        avatar: pr.owner_avatar_url,
+        prs: []
+    }
+
+    prGroups[`${pr.owner}/${pr.repo_name}`].prs.push(pr)
+})
+---
+
+<Layout title = "Review Pull Requests" description = "Review Pull Requests" canonical = "/admin/pullrequests/review">
+    <div class = "mx-auto max-w-none">
+        <PageTitle>Pull Requests ({prs.length})</PageTitle>
+        <div class = "mt-4 flex gap-6 flex-col">
+            {Object.values(prGroups).map(group =>
+                    <PRReviewGroup group = {group}/>)}
+        </div>
+
+    </div>
+</Layout>

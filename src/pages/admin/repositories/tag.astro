@@ -1,0 +1,97 @@
+---
+import {isUserAdmin} from "@lib/util";
+import Layout from "@layouts/Layout.astro";
+import PageTitle from "@components/ui/PageTitle.astro";
+import prisma from "@lib/db";
+import {Octokit} from "octokit";
+import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
+import type {Repository as GHRepo} from "@octokit/webhooks-types";
+import TagRepository from "../../../components/ui/admin/repositories/TagRepository.astro";
+
+const user = Astro.locals.user;
+if (!isUserAdmin(user)) {
+    return Astro.redirect("/403?url=/admin/users")
+}
+const octokit = new Octokit({
+    authStrategy: createOAuthAppAuth,
+    auth: {
+        clientId: import.meta.env.GITHUB_ID,
+        clientSecret: import.meta.env.GITHUB_SECRET
+    }
+});
+const dbRepos = (await prisma.repository.findMany({
+    select: {
+        id: true,
+        repository_id: true,
+        cache: true,
+        tags: true
+    },
+    where: {
+        RepositoryStatus: {
+            reviewed: true
+        },
+        tags: {
+            none: {}
+        }
+    }
+}))
+
+const repos = await Promise.all(dbRepos.map(async repo => {
+    let cache = repo.cache;
+    //TODO delete?
+    if (!cache) {
+        const repoInfo = await octokit.request("GET /repositories/{repository_id}", {repository_id: repo.repository_id});
+        const repoData: GHRepo = repoInfo.data;
+        cache = {
+            name: repoData.name,
+            owner: repoData.owner.login,
+            ownerHtmlUrl: repoData.owner.html_url,
+            ownerAvatarUrl: repoData.owner.avatar_url,
+            url: repoData.html_url,
+            description: repoData.description,
+            stars: repoData.stargazers_count,
+            openIssues: repoData.open_issues_count,
+            repository_id: repo.repository_id,
+            id: repo.id,
+            updatedAt: new Date(repoData.updated_at),
+            license: (repoData.license ?? {name: null}).name,
+            // Language requires more database lookups, it will be inserted when repos are updated later
+            languageName: null
+        }
+    }
+
+    return {
+        id: repo.id,
+        repository_id: repo.repository_id,
+        url: cache.url,
+        description: cache.description ?? undefined,
+        name: cache.name,
+        owner: cache.owner,
+        ownerHtmlUrl: cache.ownerHtmlUrl,
+        ownerAvatarUrl: cache.ownerAvatarUrl,
+        stars: cache.stars,
+        openIssues: cache.openIssues,
+        updatedAt: cache.updatedAt.getTime(),
+        reason: undefined,
+        invalid: false,
+        tags: []
+    };
+}))
+
+const tags = (await prisma.tag.findMany({
+    select: {
+        name: true
+    }
+})).map(value => value.name)
+---
+
+<Layout title = "Tag Repositories" description = "Tag Repositories" canonical = "/admin/repositories/tag">
+    <div class = "mx-auto max-w-none">
+        <PageTitle>Repositories ({repos.length})</PageTitle>
+        <div class = "mt-4 flex gap-4 flex-col">
+            {repos.sort((a, b) => a.id.localeCompare(b.id)).map(repo =>
+                    <TagRepository repository = {repo} tags = {tags}/>)}
+        </div>
+
+    </div>
+</Layout>

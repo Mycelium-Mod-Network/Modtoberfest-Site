@@ -1,0 +1,66 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GridArea from "../components/ui/GridArea.astro";
+import UserButton from "../components/ui/UserButton.astro";
+import Button from "../components/ui/Button.astro";
+import {type SEOProps} from "astro-seo";
+import Timer from "../components/ui/Timer.astro";
+
+const user = Astro.locals.user;
+---
+
+<Layout title = "Modtoberfest" description = "Modtoberfest" canonical = "/">
+    <div class = "flex flex-col gap-y-8 mx-auto">
+
+        <div class = "mx-auto mt-8 w-full">
+            <img src = {"/logo/svg/full/2024.svg"} width = {500} height = {280} alt = "logo" class = "mx-auto"/>
+        </div>
+
+        <div class = "mx-auto text-center prose prose-invert text-2xl">
+            <p>
+                Modtoberfest is an annual celebration of open source projects in the Minecraft Community!
+            </p>
+            <p>
+                During October we challenge participants to give back to the open source projects at the heart of our community by contributing at least four valid pull requests to participating projects.
+            </p>
+            <p>
+                Those who complete our challenge will be rewarded with a prize pack that includes awesome stickers designed by the sponsors of our event! We will also be planting a tree for each person who completes the event in the <a href = "/modtoberforest">Modtoberforest</a>.
+            </p>
+            <span>The event starts in</span>
+            <Timer date={Date.UTC(2024, 9, 1, 0, 0, 0) - (12 * 60 * 60 * 1000)}>
+                <p>
+                    The event has started, you can now submit pull requests!
+                </p>
+            </Timer>
+        </div>
+
+        <div class = "gap-y-4 gap-x-8 mb-32 w-full text-xl text-center participate">
+
+            <GridArea name = "tl" classes = "text-2xl"> Participants</GridArea>
+
+            <GridArea name = "tr" classes = "text-2xl"> Project organizers</GridArea>
+
+            <GridArea name = "bl">
+                {user ?
+                        <UserButton showSignout = {false} centerA = {true}/>
+                    :
+                        <a href = "/auth/github">
+
+                            <Button classes = {`mx-auto`}>Sign up here</Button>
+
+                        </a>}
+            </GridArea>
+
+            <GridArea name = "br">
+
+                <a href = "/repositories/submit" class = "no-underline">
+                    <div class = "inline-flex py-2 px-4 font-bold text-white bg-orange-400 rounded-full transition duration-200 ease-in-out transform lg:mt-0 hover:bg-orange-600 hover:scale-105">
+                        Submit your project
+                    </div>
+                </a>
+
+            </GridArea>
+
+        </div>
+    </div>
+</Layout>

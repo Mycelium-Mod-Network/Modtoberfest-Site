@@ -1,0 +1,92 @@
+---
+import {isUserAdmin} from "@lib/util";
+import Layout from "@layouts/Layout.astro";
+import PageTitle from "@components/ui/PageTitle.astro";
+import prisma from "@lib/db";
+import type {PullRequest, PRGroups} from "@lib/types";
+import AdminRepositoryCard from "@components/ui/AdminRepositoryCard.astro";
+import PRGroup from "../../../components/ui/admin/PRGroup.astro";
+
+const user = Astro.locals.user;
+if (!isUserAdmin(user)) {
+    return Astro.redirect("/403?url=/admin/users")
+}
+
+const prGroups: PRGroups = {}
+const prs: PullRequest[] = (await prisma.pullRequest.findMany({
+    select: {
+        pr_id: true,
+        author: true,
+        created_at: true,
+        html_url: true,
+        merged: true,
+        number: true,
+        owner: true,
+        owner_avatar_url: true,
+        title: true,
+        state: true,
+        PullRequestStatus: {
+            select: {
+                invalid: true,
+                reason: true,
+                user: true,
+                reviewed: true
+            }
+        },
+        Repository: {
+            select: {
+                cache: {
+                    select: {
+                        name: true
+                    }
+                }
+
+            }
+        }
+
+    }
+})).map<PullRequest>(pr => {
+    return {
+        pr_id: pr.pr_id,
+        author: pr.author,
+        created_at: new Date(pr.created_at).getTime(),
+        html_url: pr.html_url,
+        merged: pr.merged,
+        number: pr.number,
+        owner: pr.owner,
+        owner_avatar_url: pr.owner_avatar_url,
+        repo_name: (pr.Repository.cache || {name: ""}).name,
+        title: pr.title,
+        invalid: pr.PullRequestStatus ? pr.PullRequestStatus.invalid : false,
+        reason: pr.PullRequestStatus?.reason || "",
+        state: pr.state,
+        reviewed: pr.PullRequestStatus ? pr.PullRequestStatus.reviewed : false,
+        reviewedBy: pr.PullRequestStatus && pr.PullRequestStatus.user ? {
+            username: pr.PullRequestStatus.user.username,
+            avatar: pr.PullRequestStatus.user.avatar,
+        } : undefined
+    }
+})
+
+prs.sort((a, b) => a.owner.localeCompare(b.owner)).forEach(pr => {
+    prGroups[`${pr.owner}/${pr.repo_name}`] = prGroups[`${pr.owner}/${pr.repo_name}`] || {
+        owner: pr.owner,
+        name: pr.repo_name,
+        avatar: pr.owner_avatar_url,
+        prs: []
+    }
+
+    prGroups[`${pr.owner}/${pr.repo_name}`].prs.push(pr)
+})
+---
+
+<Layout title = "Admin Pull Requests" description = "Admin Pull Requests" canonical = "/admin/pullrequests">
+    <div class = "mx-auto max-w-none">
+        <PageTitle>Pull Requests ({prs.length})</PageTitle>
+        <div class = "mt-4 flex gap-6 flex-col">
+            {Object.values(prGroups).map(group =>
+                    <PRGroup group = {group}/>)}
+        </div>
+
+    </div>
+</Layout>

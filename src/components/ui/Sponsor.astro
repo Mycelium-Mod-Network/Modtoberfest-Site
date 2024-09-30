@@ -1,0 +1,38 @@
+---
+import type {Sponsor} from "@lib/types";
+import {Icon} from 'astro-icon/components'
+interface Props {
+    sponsor: Sponsor
+}
+const {sponsor} = Astro.props;
+
+const links: { [key: string]: string } = {}
+sponsor.links.forEach(value => {
+    switch (value.name) {
+        case "website":
+            links["share"] = value.value
+            break;
+        default:
+            links[value.name] = value.value
+            break;
+    }
+
+
+})
+---
+
+<div class = "border-2 p-4 flex flex-col w-64 gap-y-2">
+    <div class = "mx-auto hover:scale-110 transition-transform">
+        <img src = {sponsor.image_url} alt = {sponsor.name} class = "w-32 h-32"/>
+    </div>
+    <p class = "text-center text-xl font-semibold">{sponsor.name}</p>
+    <p class = "text-center flex-grow">{sponsor.summary}</p>
+
+    <div class = "flex flex-wrap gap-1">
+        {Object.keys(links).map(link => {
+            return <a href = {links[link]}  target = "_blank" rel="noreferrer" class="p-1.5 mx-auto rounded-full">
+                <Icon name = `pajamas:${link}` class = "w-6 h-6"/>
+            </a>
+        })}
+    </div>
+</div>

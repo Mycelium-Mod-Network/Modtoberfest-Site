@@ -1,0 +1,31 @@
+---
+import type {BaseRepository} from "../../../lib/types";
+import TagBadge from "../TagBadge.astro";
+import {Icon} from "astro-icon/components";
+interface Props {
+    repo: BaseRepository
+}
+const {repo} = Astro.props;
+---
+<div class = "flex flex-wrap gap-2 text-xs">
+    {repo.language &&
+            <TagBadge complex = {true} color = "neutral" hoverEffects = {false}>
+                <div class = `flex place-items-center gap-x-1 cursor-default` style = `color: ${repo.language.color}`>
+                    <div class = "w-2 h-2 rounded-full" style = `background: ${repo.language.color}`/>
+                    <span>{repo.language.name}</span>
+                </div>
+            </TagBadge>}
+
+    {repo.stars > 0 &&
+            <TagBadge complex = {true} color = "yellow"><a class = "flex place-items-center gap-x-1 no-underline cursor-pointer basic-link" href = {`${repo.url}/stargazers`} target = "_blank" rel = "noreferrer">
+                <Icon name = "octicon:star-fill-16" class = "w-4 h-4 fill-yellow-500"/>
+                <span>{repo.stars}</span> </a></TagBadge>}
+
+    {repo.openIssues > 0 &&
+            <TagBadge complex = {true} color = "green"><a class = "flex place-items-center gap-x-1 no-underline cursor-pointer basic-link" href = {`${repo.url}/issues`} target = "_blank" rel = "noreferrer">
+                <Icon name = "octicon:issue-opened-16" class = "w-4 h-4"/>
+                <span>{repo.openIssues} issue{repo.openIssues === 1 ? "" : "s"}</span> </a></TagBadge>}
+
+    {repo.tags && repo.tags.map(tag =>
+            <TagBadge>{tag}</TagBadge>)}
+</div>

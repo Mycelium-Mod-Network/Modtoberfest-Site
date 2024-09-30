@@ -1,0 +1,51 @@
+---
+import type {PullRequest} from "../../../lib/types";
+import {Icon} from "astro-icon/components";
+interface Props {
+    pr: PullRequest,
+}
+const {pr} = Astro.props;
+---
+
+<div class:list = {["p-2 border-2 flex w-64 bg-opacity-25 relative", {"bg-yellow-500": !pr.reviewed, "bg-green-500": pr.reviewed && !pr.invalid, "bg-rose-500": pr.reviewed && pr.invalid}]}>
+
+    <div class = "absolute -top-4 -left-4">
+        <img src = {pr.owner_avatar_url} alt = {pr.owner_name} class = "rounded-full w-8 h-8 border-2"/>
+    </div>
+    {pr.merged &&
+            <Icon name = "octicon:git-merge-16" class = "absolute top-1 right-1 w-6 h-6 text-indigo-500"/>}
+    <div class = "flex flex-col w-full">
+        <a href = `https://github.com/${pr.owner}` class = "text-sm no-underline flex flex-col w-full text-center" target = "_blank" rel = "noreferrer">
+
+            <span>{pr.owner}</span>
+
+        </a>
+
+
+        <a href = {pr.html_url} class = "no-underline text-orange-400 text-center" target = "_blank" rel = "noreferrer">{pr.repo_name}#{pr.number}</a>
+
+        <span class = "border-b text-sm text-brand-100">
+            {new Date(pr.created_at).toLocaleString()}
+        </span>
+
+
+        <span class = "font-mono">
+            {pr.title}
+        </span>
+
+        {(!pr.reviewed || pr.invalid) &&
+                <div class = "mt-auto border-t flex flex-col p-2 text-sm">
+
+                    {
+                        pr.reviewed ? (pr.invalid &&
+                                <>
+                                    <p>We have determined that this PR is not eligible, if you think this is a mistake, please reach out on discord:</p>
+                                    <p class = "font-mono">{pr.reason}</p>
+                                </>
+                        ) : <p>This PR is awaiting manual review</p>
+                    }
+
+                </div>}
+
+    </div>
+</div>

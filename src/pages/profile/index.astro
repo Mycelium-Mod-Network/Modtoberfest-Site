@@ -1,0 +1,109 @@
+---
+import PageTitle from "@components/ui/PageTitle.astro";
+import Layout from "@layouts/Layout.astro";
+import prisma from "@lib/db";
+import PullRequest from "@components/ui/profile/PullRequest.astro"
+import type {SimpleUser, PullRequest as PR} from "../../lib/types";
+const user = Astro.locals.user;
+if (!user) {
+    return Astro.redirect("/auth/github?url=/admin")
+}
+
+function generateLabel(prs: number): string {
+    switch (prs) {
+        case 0:
+            return "No detected pull requests.";
+        case 1:
+            return "Now you're getting somewhere! Only 3 left!";
+        case 2:
+            return "Half way!";
+        case 3:
+            return "One more to go!";
+        default:
+            return "You've completed the event!";
+    }
+}
+
+const prs: PR[] = (await prisma.pullRequest.findMany({
+    select: {
+        html_url: true,
+        created_at: true,
+        merged: true,
+        number: true,
+        owner_avatar_url: true,
+        repository_id: true,
+        pr_id: true,
+        title: true,
+        state: true,
+        owner: true,
+        PullRequestStatus: {
+            select: {
+                invalid: true,
+                reason: true,
+                reviewed: true
+            }
+        },
+        Repository: {
+            select: {
+                cache: {
+                    select: {
+                        name: true
+                    }
+                }
+            }
+        }
+    },
+    where: {
+        author_id: `${user.githubId}`,
+    }
+})).map(pr => {
+    return {
+        pr_id: 0,
+        author: "",
+        created_at: new Date(pr.created_at).getTime(),
+        html_url: pr.html_url,
+        merged: pr.merged,
+        number: pr.number,
+        owner: pr.owner,
+        owner_avatar_url: pr.owner_avatar_url,
+        repo_name: (pr.Repository.cache || {name: ""}).name,
+        title: pr.title,
+        state: pr.state,
+        reviewed: pr.PullRequestStatus?.reviewed || false,
+        invalid: pr.PullRequestStatus?.invalid || false,
+        reason: pr.PullRequestStatus?.reason || undefined
+    }
+})
+
+const validPrs = prs.filter(pr => pr.reviewed ? !pr.invalid : false);
+---
+
+<Layout title = "Profile" description = "Profile" canonical = "/profile">
+    <div class = "mx-auto max-w-none">
+        <PageTitle>
+            <div class = "flex gap-x-2 place-items-center">
+                <img src = {user.avatar} alt = {user.name} class = "rounded-full w-12 h-12">
+                <p>{user.username}</p>
+            </div>
+        </PageTitle>
+
+        <h2 class = "text-3xl text-center p-2">Your event progress</h2>
+
+        <div class = "flex flex-col gap-y-2 pb-4">
+            <h3 class = "text-xl font-semibold text-center flex flex-col">
+                <span>{validPrs.length} / 4 Completed PRs</span>
+
+                {generateLabel(validPrs.length)}
+                {validPrs.length >=4 && <a href="/profile/rewards" class="nav-link">Please claim your rewards here</a>}
+            </h3>
+
+            <progress class = "w-full" value = {validPrs.length} max = "4"></progress>
+
+        </div>
+        <div class = "flex flex-wrap gap-4 justify-center">
+            {prs.map(pr =>
+                    <PullRequest pr = {pr}/>)}
+        </div>
+
+    </div>
+</Layout>

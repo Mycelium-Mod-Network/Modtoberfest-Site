@@ -6,24 +6,20 @@ services:
       context: .
       args:
         - DATABASE_URL=${DATABASE_URL:-default}
-        - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-default}
         - GITHUB_ID=${GITHUB_ID:-default}
         - GITHUB_SECRET=${GITHUB_SECRET:-default}
         - ADMIN_SECRET=${ADMIN_SECRET:-default}
         - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:-default}
-        - NEXTAUTH_URL=${NEXTAUTH_URL:-default}
     ports:
       - "127.0.0.1:2902:3000"
     restart: unless-stopped
     environment:
       - NODE_ENV=production
       - DATABASE_URL
-      - NEXTAUTH_SECRET
       - GITHUB_ID
       - GITHUB_SECRET
       - ADMIN_SECRET
       - DISCORD_WEBHOOK_URL
-      - NEXTAUTH_URL
     container_name: modtoberfest
   modtoberfest_tasks:
     image: strm/tasker
@@ -43,11 +39,11 @@ services:
                 - name: updatePrs
                   image: curlimages/curl:latest
                   script:
-                      - "curl --request POST --url https://modtoberfest.com/api/admin/collectPrs --header 'Content-Type: application/json' --data '{\"secret\": \"${ADMIN_SECRET}\"}'"
+                      - "curl --request POST --url https://modtoberfest.com/api/admin/pull_requests/collect --header 'Content-Type: application/json' --data '{\"secret\": \"${ADMIN_SECRET}\"}'"
                 - name: updateRepos
                   image: curlimages/curl:latest
                   script:
-                      - "curl --request POST --url https://modtoberfest.com/api/admin/collectRepos --header 'Content-Type: application/json' --data '{\"secret\": \"${ADMIN_SECRET}\"}'"
+                      - "curl --request POST --url https://modtoberfest.com/api/admin/repositories/update --header 'Content-Type: application/json' --data '{\"secret\": \"${ADMIN_SECRET}\"}'"
 networks:
   default:
       name: mariadb

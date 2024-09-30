@@ -1,0 +1,28 @@
+---
+import Layout from "@layouts/Layout.astro";
+import PageTitle from "@components/ui/PageTitle.astro";
+import prisma from "@lib/db";
+import Sponsor from "../../components/ui/Sponsor.astro";
+const sponsors = await prisma.sponsor.findMany({
+    select: {
+        id: true,
+        name: true,
+        summary: true,
+        image_url: true,
+        links: true
+    }
+})
+---
+
+<Layout title = "Sponsors" description = "Admin Dashboard" canonical = "/sponsors">
+    <div class = "mx-auto">
+        <PageTitle>Sponsors</PageTitle>
+        <div class="flex gap-8 flex-wrap justify-between">
+            {sponsors.sort((a,b) => a.name.localeCompare(b.name)).map((sponsor) =>
+                    <>
+                        <Sponsor sponsor = {sponsor}/>
+                    </>)}
+        </div>
+
+    </div>
+</Layout>

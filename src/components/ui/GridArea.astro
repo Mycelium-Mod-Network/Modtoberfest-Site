@@ -1,0 +1,13 @@
+---
+interface Props {
+    name:string;
+    classes?:string;
+}
+
+const {name, classes} = Astro.props;
+---
+
+
+<div class={classes} style = {{ gridArea: name }}>
+    <slot/>
+</div>

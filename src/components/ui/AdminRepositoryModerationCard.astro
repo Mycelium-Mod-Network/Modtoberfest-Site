@@ -1,0 +1,62 @@
+---
+import type {AdminRepository} from "../../lib/types";
+import {actions} from "astro:actions";
+import TagBadge from "./TagBadge.astro";
+interface Props {
+    repository: AdminRepository
+}
+const {repository} = Astro.props;
+---
+
+<div class:list = {["p-4 w-full border-2 relative", {"bg-red-900 bg-opacity-25": repository.invalid}]}>
+    {
+        repository.submitter && <a class = "bg-brand-900 p-1 absolute -top-4 -left-4 flex gap-x-2 text-xs border no-underline hover:border-orange-600 transition-transform hover:scale-125" href = `https://github.com/${repository.submitter.username}`  target = "_blank" rel="noreferrer">
+
+                <img src = {repository.submitter.avatar} alt = {repository.submitter.username} class = "w-4 h-4 rounded-full my-auto"/>
+
+                <span>{repository.submitter.username} submitted</span>
+
+            </a>
+    }
+    <div class = "flex gap-x-2">
+        <img src = {repository.ownerAvatarUrl} alt = {repository.owner} class = "w-16 h-16 rounded-full"/>
+        <div class = "flex flex-col gap-y-1 flex-grow">
+            <a href = {repository.ownerHtmlUrl}  target = "_blank" rel="noreferrer">{repository.owner}</a>
+
+            <a href = {repository.url}  target = "_blank" rel="noreferrer">{repository.name}</a>
+
+
+            <p>ID: {repository.id}</p>
+            <p>GHID: {repository.repository_id}</p>
+
+            {repository.description &&
+                    <div class = "p-2 font-mono break-all bg-white bg-opacity-5">
+                        {repository.description}
+                    </div>
+            }
+
+            {repository.tags && repository.tags.length !== 0 &&
+                    <div class = "flex gap-2 flex-wrap">{repository.tags.map(tag => <TagBadge>{tag}</TagBadge>)}</div>}
+
+
+            <div class = "flex flex-col gap-y-2">
+                <form method = "POST" action = {actions.repository.approve} class = "w-full">
+                    <input type = "hidden" value = {repository.repository_id} name = "id"/>
+                    <button type = "submit" class = "w-full text-center border-2 border-emerald-400 bg-emerald-900 hover:bg-emerald-700 no-underline block">Approve</button>
+                </form>
+                <form method = "POST" action = {actions.repository.deny} class = "w-full flex flex-col gap-y-2">
+                    <input type = "hidden" value = {repository.repository_id} name = "id"/>
+
+                    <label><select class = "w-full bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300" name = "reason">
+                        <option class="text-black">This project is not related to Minecraft.</option>
+                        <option class="text-black">This project is not open-source.</option>
+                        <option class="text-black">This project is not actively maintained.</option>
+                        <option class="text-black">This project promotes spam or abuse.</option>
+                        <option class="text-black">This project is malicious or contains malware.</option>
+                    </select></label>
+                    <button type = "submit" class = "w-full text-center border-2 border-rose-400 bg-rose-900 hover:bg-rose-700 no-underline block">Deny</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

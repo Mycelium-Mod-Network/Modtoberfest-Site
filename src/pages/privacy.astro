@@ -1,0 +1,63 @@
+---
+import PageTitle from "../components/ui/PageTitle.astro";
+import Layout from "../layouts/Layout.astro";
+import Item from "../components/ui/Item.astro";
+---
+<Layout title = "Privacy Policy" description = "The privacy policy for Modtoberfest." canonical = "/privacy">
+    <div class = "mx-auto max-w-none prose prose-invert prose-h2:mb-1 prose-h2:mt-1 prose-h3:mb-1 prose-h3:mt-1">
+        <PageTitle>Privacy Policy</PageTitle>
+        <p>
+            This privacy policy applies to the Modtoberfest event, our website modtoberfest.com, and other related services operated by us which link back to this policy. We reserve the right to to revise, modify, and amend this policy at any time and in any manner. This policy was last updated 2024-09-30.
+        </p>
+
+        <Item title = "Contact"> Modtoberfest is hosted by the Mycelium Mod Network. If you have any questions or concerns about our privacy policy or our related services you may contact us using our Discord server</Item>
+
+        <Item title = "Personal Data"> As part of Modtoberfest we will collect personal data from our users and participants. We will only collect the data that is necessary to provide a feature or service. This data will be stored, processed, and shared as outlined in this privacy policy.</Item>
+
+        <Item title = "Data Types"> We classify personal data into three distinct categories.</Item>
+
+        <Item title = "Requested Data"> Modtoberfest will request personal data from users when it is necessary to provide a feature or service. For example it is not possible to ship out prizes to participants without providing us with your shipping address. Requested data includes usernames, email addresses, user IDs, shipping information, service usage, and cookies.</Item>
+
+        <Item title = "Processed Personal Data"> In some cases Modtoberfest will process your personal data to derive additional information. In some cases derived information will be associated with your unique user ID. Additionally Modtoberfest may process your personal data to create anonymized aggregate data. An example of anonymized aggregate data would be processing shipping information to derive the number of unique countries with participants in the event. Another example would be deriving how many unique users participated in the event. Anonymized aggregate data is necessarily not linked to any individual user.</Item>
+
+        <Item title = "3rd Party Data"> Modtoberfest integrates 3rd party services that are governed by their own privacy policies. These 3rd party services can collect and process data independently from Modtoberfest and our privacy policy. You can learn more about these third party services in our detailed information section.</Item>
+
+        <Item title = "Retention Time" multi = {true}><p>
+            Modtoberfest will only retain personal data for the duration of time necessary to provide related features and services unless a longer retention period is required. A longer retention period may be required in the following situations.
+        </p>
+            <ul>
+                <li>Complying with legal or regulatory requirements.</li>
+                <li>Preventing fraud or abuse.</li>
+                <li>Financial record keeping.</li>
+            </ul>
+        </Item>
+
+        <Item title = "Child Privacy">Modtoberfest does not knowingly collect information from children under the age of 13. Children under the age of 13 are prohibited from using our services. If you learn that a child has provided us with personal information in violation of this policy you can alert us using a listed contact method.</Item>
+
+
+        <Item title = "Sell and Transfer">Personal data collected by Modtoberfest will never be sold to third parties. In some cases we may share personal data with third parties when required to provide a feature or service. We may also share anonymized aggregate data which has been stripped of any personally identifying information and can not be linked to any individual user in any reasonable capacity. Third parties are subject to their own privacy policies.</Item>
+
+
+        <Item title = "Detailed Data Usage" multi = {true}>
+
+            <Item title = "Modtoberfest Account" small = {true}> A Modtoberfest account is required to participate in the Modtoberfest event. Modtoberfest accounts are backed by a unique ID and represents your identity within our system. Creating a Modtoberfest account allows us to track your participation in the event, track and share your progress, and moderate your participation for abuse. Modtoberfest accounts are linked to your GitHub account and can optionally be linked to other supported services such as Discord. Your unique account ID will also be linked to any personal data we collect from you such as your shipping address.</Item>
+
+            <Item title = "Cookies" small = {true}> Modtoberfest stores cookies on your browser to help with the authorization process. These cookies allow users to resume their previous session without logging in every time. These cookies are not used for analytics.</Item>
+
+
+            <Item title = "Analytics and Usage Data" small = {true}> Modtoberfest tracks a number of analytical data points. This data is used to help us monitor the platform for abuse or issues. This information may also be aggregated to create anonymous statistics that we use to improve or market our events. The data points collected by Modtoberfest are tracked and stored using an internal service and not a third party.</Item>
+
+            <Item title = "Cloudflare" small = {true}> Modtoberfest uses Cloudflare to proxy our origin servers. This allows us to protect our servers from malicious attacks while also improving the availability of our services. Cloudflare also collects DNS level analytics of our services. The data collected by Cloudflare is subject to their <a href = "https://www.cloudflare.com/privacypolicy" target = "_blank" rel = "noreferrer">privacy policy</a>.</Item>
+
+            <Item title = "GitHub" small = {true}> Modtoberfest uses GitHub to track pull requests and other participation metrics for our event. This allows us to track your progress during the event, share your progress with others, and moderate your activity for abuse. GitHub is a third party and collects their own data which is subject to their <a href = "https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target = "_blank" rel = "noreferrer">privacy policy</a>.</Item>
+
+            <Item title = "Discord" small = {true}>Modtoberfest uses Discord as the central hub for discussion and community. By linking your Discord account we can attribute your progress during the event to your Discord profile in our community. This will allow us to reference your account in status updates and announcements. This will also allow us to grant your Discord account additional roles and permissions based on your event progress. Discord is a third party service and is subject to their own <a href = "https://discord.com/privacy" target = "_blank" rel = "noreferrer">privacy policy</a>.</Item>
+
+            <Item title = "Google Services" small = {true}>Modtoberfest uses a number of Google services such as Google Forms and Google Sheets to collect and store feedback from participants. Unless stated otherwise this data is not linked to your Modtoberfest account. Google is a third party service and is subject to their own <a href = "https://policies.google.com/privacy" target = "_blank" rel = "noreferrer">privacy policy</a>.</Item>
+
+            <Item title = "Courier Services" small = {true}>Modtoberfest relies on courier services to ship and distribute sticker packs to participants. To provide this service it is necessary for us to share your full name and shipping address with couriers such as Canada Post and their postal workers. In some cases they may share this information with their own partners such as a third party delivery service in your own country. Canada post is a third party and their handling of your information is subject to their own <a href = "https://www.canadapost-postescanada.ca/cpc/en/our-company/about-us/privacy-policy/privacy-policy-introduction.page" target = "_blank" rel = "noreferrer">privacy policy</a>.</Item>
+
+        </Item>
+
+    </div>
+</Layout>

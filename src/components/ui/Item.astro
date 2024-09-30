@@ -1,0 +1,22 @@
+---
+interface Props {
+    title: string;
+    multi?: boolean;
+    small?: boolean;
+}
+
+const {title, multi = false, small = false} = Astro.props;
+const id = title.toLocaleLowerCase().replace(/\s/g, "-").replace(/\?/, "");
+const TitleElement = small ? "h3" : "h2";
+---
+
+<div>
+    <TitleElement><a id = {id} href = {`#${id}`} class="font-brand">{title}</a></TitleElement>
+
+    {multi ?
+            <slot/> :
+            <p>
+                <slot/>
+            </p>
+    }
+</div>

@@ -1,47 +1,38 @@
-export interface Account {
-    id: string,
-    githubId: string,
-    name: string,
-    admin: boolean,
-    image: string
+export interface SimpleUser {
+    username: string;
+    avatar: string;
 }
 
-export interface Claim {
+
+export interface SimpleSponsor {
+    name: string;
+    image_url: string;
+}
+
+export interface User extends SimpleUser {
     id: string;
-    firstName: string;
-    lastName: string;
-    address1: string;
-    address2?: string;
-    city: string;
-    zip: string;
-    state: string;
-    country: string;
+    github_id: number;
+    name: string;
     email: string;
-    feedback: string;
+    admin: boolean;
 }
 
-export interface BasicSponsor {
+export interface Sponsor extends SimpleSponsor {
     id: string,
-    name: string,
-}
-
-export interface BaseOwner {
-    ownerHtmlUrl: string;
-    ownerAvatarUrl: string
-}
-
-export interface Owner extends BaseOwner {
-    owner: string;
-}
-
-export interface Sponsor extends BasicSponsor {
-    image_url: string,
     summary: string,
-    website_url?: string,
-    github_user?: string,
-    twitter_handle?: string,
-    subreddit?: string,
-    discord?: string
+    links: SponsorLink[]
+}
+
+export interface SponsorLink {
+    sponsor_id: string;
+    name: string;
+    value: string
+}
+
+
+export interface Language {
+    name: string;
+    color: string | null | undefined;
 }
 
 export interface BaseRepository {
@@ -51,41 +42,84 @@ export interface BaseRepository {
     ownerHtmlUrl: string;
     ownerAvatarUrl: string;
     url: string;
-    description?: string;
+    description?: string | null;
     stars: number;
     openIssues: number;
-    updatedAt: string
+    updatedAt: number;
+    language?: Language | null | undefined;
+    license?: string | null | undefined;
+    tags: string[]
 }
 
 export interface Repository extends BaseRepository {
     id: string;
     sponsored: boolean;
-    sponsor?: string;
+    sponsor?: string | null;
+}
+
+export interface DisplayRepository extends BaseRepository {
+    sponsor?: SimpleSponsor
 }
 
 export interface AdminRepository extends BaseRepository {
     id: string;
     sponsored: boolean;
-    sponsor?: string;
+    sponsor?: string | null;
     invalid: boolean
-    reason?: string
+    reason?: string | null
+    reviewedBy?: SimpleUser | null
+    submitter?: SimpleUser | null
 }
 
-export type RepositoryPageRepo = Omit<Repository, "ownerHtmlUrl" | "ownerAvatarUrl">
+export interface PullRequest {
+    pr_id: number;
+    author: string;
+    created_at: number;
+    html_url: string;
+    merged: boolean;
+    number: number;
+    owner: string;
+    owner_avatar_url: string;
+    repo_name: string;
+    title: string;
+    state: string;
+    reviewed: boolean;
+    invalid?: boolean | null;
+    reason?: string | null;
+    reviewedBy?: SimpleUser | null
+}
 
+export interface PRGroups {
+    [key: string]: PRGroup
+}
 
-export type Left<T> = {
-    left: T;
-    right?: never;
-};
+export interface PRGroup {
+    owner: string
+    name: string
+    avatar: string
+    prs: PullRequest[]
+}
 
-export type Right<U> = {
-    left?: never;
-    right: U;
-};
+export interface RepoGroups<T extends BaseRepository> {
+    [key: string]: RepoGroup<T>
+}
 
-export type Either<T, U> = NonNullable<Left<T> | Right<U>>;
+export interface RepoGroup<T> {
+    name: string
+    url: string
+    avatar: string
+    repos: T[]
+}
 
-export interface OwnerCache {
-    [key: string]: BaseOwner
+export type SubmittingRepo = BaseRepository & { submitted: boolean, sponsor?: string, submitter?: string, reviewed?: boolean, reason?: string, invalid?: boolean };
+
+export interface Reward {
+    id?:string
+    title: string
+    summary: string
+    description: string
+    logo_url: string
+    banner_url: string
+    digital: boolean
+    sponsor_id: string
 }

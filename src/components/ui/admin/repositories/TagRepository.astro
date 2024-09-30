@@ -1,0 +1,35 @@
+---
+import type {BaseRepository} from "../../../../lib/types";
+import {actions} from "astro:actions";
+import RepositorySubmitter from "../../repositories/RepositorySubmitter";
+interface Props {
+    repository: BaseRepository
+    tags: string[]
+}
+const {repository, tags} = Astro.props;
+---
+
+
+<div class:list = {["p-4 w-full border-2 relative", {"bg-red-900 bg-opacity-25": repository.invalid}]}>
+    <div class = "flex gap-x-2">
+        <img src = {repository.ownerAvatarUrl} alt = {repository.owner} class = "w-16 h-16 rounded-full"/>
+        <div class = "flex flex-col gap-y-1 flex-grow">
+            <a href = {repository.ownerHtmlUrl} target = "_blank" rel = "noreferrer">{repository.owner}</a>
+
+            <a href = {repository.url} target = "_blank" rel = "noreferrer">{repository.name}</a>
+
+            {repository.description &&
+                    <div class = "p-2 font-mono break-all bg-white bg-opacity-5">
+                        {repository.description}
+                    </div>
+            }
+
+            <div class = "flex flex-col gap-y-2">
+                <form method = "POST" action = {actions.repository.tag} class = "w-full">
+                    <input type = "hidden" value = {repository.repository_id} name = "repository_id"/>
+                    <RepositorySubmitter tags = {tags} client:load/>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

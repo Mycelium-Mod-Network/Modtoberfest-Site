@@ -11,7 +11,7 @@ services:
         - ADMIN_SECRET=${ADMIN_SECRET:-default}
         - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:-default}
     ports:
-      - "127.0.0.1:2902:3000"
+      - "127.0.0.1:2902:4321"
     restart: unless-stopped
     environment:
       - NODE_ENV=production

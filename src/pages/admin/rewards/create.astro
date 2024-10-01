@@ -70,7 +70,7 @@ const sponsors = await prisma.sponsor.findMany({
 
     </div>
     <script>
-        const description = document.getElementById('#description');
+        const description = document.getElementById('description');
         const descTarget = document.getElementById("description_preview");
         if (description && descTarget) {
             description.addEventListener('input', (e) => {

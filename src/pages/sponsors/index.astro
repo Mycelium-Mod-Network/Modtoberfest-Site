@@ -17,7 +17,7 @@ const sponsors = await prisma.sponsor.findMany({
 <Layout title = "Sponsors" description = "Admin Dashboard" canonical = "/sponsors">
     <div class = "mx-auto">
         <PageTitle>Sponsors</PageTitle>
-        <div class="flex gap-8 flex-wrap justify-between">
+        <div class="flex flex-col md:flex-row gap-8 flex-wrap justify-between w-full">
             {sponsors.sort((a,b) => a.name.localeCompare(b.name)).map((sponsor) =>
                     <>
                         <Sponsor sponsor = {sponsor}/>

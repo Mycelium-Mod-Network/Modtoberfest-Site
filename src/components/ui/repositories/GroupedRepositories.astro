@@ -17,7 +17,7 @@ const {group, tags} = Astro.props;
         </p>
     </a>
 
-    <div class = "flex flex-wrap gap-8 mt-4">
+    <div class = "flex flex-col sm:flex-row gap-8 flex-wrap mt-6 w-full justify-between">
 
         {group.repos.map(repo =>
                 <SubmittableRepository repo = {repo} tags={tags}/>)

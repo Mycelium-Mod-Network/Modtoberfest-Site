@@ -18,7 +18,7 @@ const username = user ? user.username : undefined
 const submitterByUser = !repo.submitter || repo.submitter === username
 ---
 
-<form class:list = {["border-2 flex flex-col gap-y-2 p-2 relative w-48 group transition", {"border-sky-400 hover:border-sky-600": sponsored, "border-orange-400 hover:border-orange-600": !sponsored}]} method = "post" action = {repo.submitted ? actions.repository.remove : actions.repository.submit}>
+<form class:list = {["border-2 w-full sm:w-5/12 md:w-48 flex flex-col gap-y-2 p-2 relative group transition", {"border-sky-400 hover:border-sky-600": sponsored, "border-orange-400 hover:border-orange-600": !sponsored}]} method = "post" action = {repo.submitted ? actions.repository.remove : actions.repository.submit}>
     <input type = "hidden" value = {repo.repository_id} name = "repository_id"/>
 
     {sponsored &&

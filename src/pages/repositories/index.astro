@@ -88,7 +88,7 @@ const user = Astro.locals.user;
 
             {user && <a href = "/repositories/submit" class = "no-underline"> Submit</a>}
         </h1>
-        <div class = "flex gap-8 flex-wrap mt-6">
+        <div class = "flex flex-col sm:flex-row gap-8 flex-wrap mt-6 w-full justify-between">
             {repos.map((repo) =>
                     <>
                         <Repository repo = {repo}/>

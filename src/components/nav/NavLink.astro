@@ -10,7 +10,7 @@ const external = to.startsWith("http")
 
 {external &&
 <>
-    <a href = {to} class = "nav-link flex gap-x-1 mx-auto md:mx-0 p-2 md:p-0" target = "_blank" rel = "noreferrer">
+    <a href = {to} class = "nav-link flex gap-x-1 mx-auto lg:mx-0 p-2 lg:p-0" target = "_blank" rel = "noreferrer">
         <slot/>
         <LinkExternal/>
     </a>
@@ -18,7 +18,7 @@ const external = to.startsWith("http")
 </>}
 {!external &&
 <>
-    <a href = {to} class = "nav-link  p-2 md:p-0">
+    <a href = {to} class = "nav-link p-2 lg:p-0">
         <slot/>
     </a>
 </>}

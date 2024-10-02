@@ -8,17 +8,17 @@ const isAdmin = isUserAdmin(user);
 ---
 
 <header class = "py-4 px-6 bg-gradient-to-b from-brand-800 via-brand-800 to-brand-900">
-    <div class="block md:flex md:gap-x-6">
-        <div class = "flex gap-x-6 justify-between my-auto mx-auto max-w-6xl h-14">
+    <div class="block lg:flex lg:gap-x-6 max-w-6xl mx-auto my-auto lg:h-14">
+        <div class = "flex gap-x-6 justify-between">
             <a href = "/" class = "my-auto"> <img src = "/logo/svg/full/2024.svg" alt = "logo" width = "88" height = "88"/> </a>
 
-                <svg id="nav-controller" class="block md:hidden w-10 h-10 items-center text-orange-200 rounded border-2 border-orange-400 hover:text-white hover:border-white my-auto" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <svg id="nav-controller" class="block lg:hidden w-10 h-10 items-center text-orange-200 rounded border-2 border-orange-400 hover:text-white hover:border-white my-auto" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                 </svg>
 
         </div>
-        <div class="flex-grow my-auto md:flex flex-col md:flex-row w-full hidden" id="nav">
-            <div class = "flex flex-col md:flex-row gap-x-6 w-full text-center">
+        <div class="flex-grow my-auto lg:flex flex-col lg:flex-row w-full hidden" id="nav">
+            <div class = "flex flex-col lg:flex-row gap-x-6 w-full text-center place-items-center">
                 <NavLink to = "/">Home</NavLink>
                 <NavLink to = "/rules">Rules</NavLink>
                 <NavLink to = "/sponsors">Sponsors</NavLink>
@@ -29,7 +29,7 @@ const isAdmin = isUserAdmin(user);
                         <NavLink to = "/admin">Admin</NavLink>}
             </div>
 
-            <div class="w-full md:w-auto flex-none">
+            <div class="w-full lg:w-auto flex-none">
                 <UserButton/>
             </div>
         </div>

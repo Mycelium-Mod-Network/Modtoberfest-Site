@@ -238,7 +238,11 @@ export const rewards = {
                             }
                         }
                     },
-                    PhysicalRewardClaim: true
+                    PhysicalRewardClaim: {
+                        where: {
+                            claimer_id: user.id
+                        }
+                    }
                 }, where: {id}
             }), "BAD_REQUEST", "No reward for given id")
             errorIf((reward.DigitalRewardCodes.length + reward.PhysicalRewardClaim.length) > 0, "FORBIDDEN", "Unable to claim the same reward multiple times!")

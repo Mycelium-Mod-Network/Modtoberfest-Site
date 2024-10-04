@@ -4,15 +4,6 @@ export interface Props {
     refreshRate?: number
 }
 
-interface RenderProps {
-
-    days: number,
-    hours: number,
-    minutes: number,
-    seconds: number,
-    completed: boolean
-}
-
 const { date, refreshRate = 1000} = Astro.props;
 ---
 

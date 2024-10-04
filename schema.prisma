@@ -8,19 +8,20 @@ generator client {
 }
 
 model User {
-  id                String              @id
-  sessions          Session[]
-  github_id         Int                 @unique
-  name              String
-  username          String
-  email             String
-  admin             Boolean             @default(false)
-  avatar            String
-  access_token      String?             @db.Text
-  RepositoryStatus  RepositoryStatus[]
-  Repository        Repository[]
-  PullRequestStatus PullRequestStatus[]
-  ClaimedCode       ClaimedCode[]
+  id                  String                @id
+  sessions            Session[]
+  github_id           Int                   @unique
+  name                String
+  username            String
+  email               String
+  admin               Boolean               @default(false)
+  avatar              String
+  access_token        String?               @db.Text
+  RepositoryStatus    RepositoryStatus[]
+  Repository          Repository[]
+  PullRequestStatus   PullRequestStatus[]
+  DigitalRewardClaim  DigitalRewardClaim[]
+  PhysicalRewardClaim PhysicalRewardClaim[]
 
   @@unique([id])
 }
@@ -174,29 +175,51 @@ model Reward {
   title       String  @db.Text
   summary     String  @db.LongText
   description String  @db.LongText
+  redeem_info String?  @db.LongText
   logo_url    String  @db.Text
   banner_url  String  @db.Text
   digital     Boolean
   sponsor_id  String
+  required_prs Int @default(4)
 
-  sponsor    Sponsor      @relation(fields: [sponsor_id], references: [id], onDelete: Cascade)
-  RewardCode RewardCode[]
+  sponsor             Sponsor               @relation(fields: [sponsor_id], references: [id], onDelete: Cascade)
+  DigitalRewardCodes  DigitalRewardCodes[]
+  PhysicalRewardClaim PhysicalRewardClaim[]
 }
 
-model RewardCode {
-  id          String        @id @default(cuid())
+model DigitalRewardCodes {
+  id          String               @id @default(cuid())
   reward_id   String
-  code        String        @db.LongText
-  reward      Reward        @relation(fields: [reward_id], references: [id], onDelete: Cascade)
-  ClaimedCode ClaimedCode[]
+  code        String               @db.LongText
+  reward      Reward               @relation(fields: [reward_id], references: [id], onDelete: Cascade)
+  ClaimedCode DigitalRewardClaim?
 }
 
-model ClaimedCode {
-  code_id         String
-  claimed_user_id String
+model DigitalRewardClaim {
+  code_id    String @unique
+  claimer_id String
 
-  code         RewardCode @relation(fields: [code_id], references: [id], onDelete: Cascade)
-  claimed_user User       @relation(fields: [claimed_user_id], references: [id], onDelete: Cascade)
+  code    DigitalRewardCodes @relation(fields: [code_id], references: [id], onDelete: Cascade)
+  claimer User               @relation(fields: [claimer_id], references: [id], onDelete: Cascade)
 
-  @@id([code_id, claimed_user_id])
+  @@id([code_id, claimer_id])
+}
+
+model PhysicalRewardClaim {
+  id         String  @id @default(cuid())
+  reward_id  String
+  claimer_id String
+  firstName  String
+  lastName   String
+  address1   String
+  address2   String?
+  city       String
+  zip        String
+  state      String
+  country    String
+  email      String
+  phoneNumber String?
+
+  reward  Reward @relation(fields: [reward_id], references: [id], onDelete: Cascade)
+  claimer User   @relation(fields: [claimer_id], references: [id], onDelete: Cascade)
 }

@@ -1,24 +1,72 @@
 ---
+import type {Reward as RewardType} from "../../../lib/types";
 import {isUserAdmin} from "@lib/util";
 import Layout from "@layouts/Layout.astro";
 import PageTitle from "@components/ui/PageTitle.astro";
 import prisma from "@lib/db";
-import SponsorCard from "@components/ui/admin/SponsorCard.astro";
 import Reward from "../../../components/ui/admin/rewards/Reward.astro";
 const user = Astro.locals.user;
 if (!isUserAdmin(user)) {
     return Astro.redirect("/403?url=/admin/users")
 }
-const rewards = await prisma.reward.findMany({
+const rewards: RewardType[] = (await prisma.reward.findMany({
     select: {
-        id:true,
+        id: true,
         title: true,
         summary: true,
         description: true,
+        redeem_info: true,
         logo_url: true,
         banner_url: true,
         digital: true,
-        sponsor_id: true,
+        required_prs: true,
+        sponsor: {
+            select: {
+                name: true,
+                image_url: true,
+            }
+        },
+        DigitalRewardCodes: {
+            select: {
+                id: true,
+                code: true
+            },
+            where: {
+                ClaimedCode: {
+                    is: {
+                        claimer_id: user.id
+                    }
+                }
+            }
+        },
+        PhysicalRewardClaim: {
+            select: {
+                id: true,
+                reward_id: true,
+                firstName: true,
+                lastName: true,
+                address1: true,
+                address2: true,
+                city: true,
+                zip: true,
+                state: true,
+                country: true,
+                email: true,
+                phoneNumber: true
+            },
+            where: {
+                claimer: {
+                    id: user.id
+                }
+            }
+        }
+    },
+})).map<RewardType>(reward => {
+    const {DigitalRewardCodes, PhysicalRewardClaim, ...baseReward} = reward
+    return {
+        ...baseReward,
+        digitalRewardCode: DigitalRewardCodes ? DigitalRewardCodes[0] : undefined,
+        physicalRewardClaim: PhysicalRewardClaim ? PhysicalRewardClaim[0] : undefined
     }
 })
 ---

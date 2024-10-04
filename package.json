@@ -25,7 +25,7 @@
     "@lucia-auth/adapter-prisma": "^4.0.1",
     "@tailwindcss/typography": "^0.5.15",
     "arctic": "^1.9.2",
-    "astro": "^4.15.9",
+    "astro": "^4.15.11",
     "astro-icon": "^1.1.1",
     "astro-seo": "^0.8.4",
     "lucia": "^3.2.0",

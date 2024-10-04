@@ -1,0 +1,49 @@
+---
+import Layout from "@layouts/Layout.astro";
+import PageTitle from "@components/ui/PageTitle.astro";
+import {createMarkdownProcessor} from "@astrojs/markdown-remark";
+import Button from "@components/ui/Button.astro";
+import {actions} from "astro:actions";
+import ActionResult from "@components/ui/ActionResult.astro";
+import type {DigitalReward} from "../../../lib/types";
+
+interface Props {
+    reward: DigitalReward,
+    validPrs: number
+}
+
+const {reward, validPrs} = Astro.props
+
+const markdownProcessor = await createMarkdownProcessor({
+    syntaxHighlight: false,
+})
+
+const description = await markdownProcessor.render(reward.description)
+const redeem_info = await markdownProcessor.render(reward.redeem_info ?? "")
+---
+
+<Layout title = `Claim ${reward.title}` description = `Claim ${reward.title}` canonical = `/rewards/${reward.id}`>
+    <div class = "mx-auto">
+        <ActionResult action = {actions.rewards.claim_digital}/>
+        <PageTitle>{reward.title}</PageTitle>
+        <div class = "mx-auto prose max-w-none prose-invert prose-h2:mt-0 prose-h2:mb-2 prose-img:m-0 prose-p:mt-2 prose-p:mb-2 prose-li:m-0 prose-h2:text-center prose-blockquote:mb-0">
+            <img src = {reward.banner_url} alt = {reward.title}/>
+            <Fragment set:html = {description.code}/>
+            {reward.digitalRewardCode ?
+                    <div class = "justify-center flex flex-col text-center rounded-xl gap-y-2 mb-2">
+                        <h2>Your code is:</h2>
+                        <pre class = "p-2 bg-brand-800 rounded border border-brand-700 select-all not-prose"><code>{reward.digitalRewardCode.code}</code></pre>
+                    </div> :
+                    <form method = "post" action = {actions.rewards.claim_digital}>
+                        <input type = "hidden" value = {reward.id} name = "id"/>
+                        <Button classes = "mb-4" submit = {true}>Claim Code</Button>
+                    </form>}
+
+            {reward.redeem_info &&
+                    <Fragment set:html = {redeem_info.code}/>}
+        </div>
+        <a href = "/profile">
+            <Button animate = {false}>Back to Rewards</Button>
+        </a>
+    </div>
+</Layout>

@@ -1,0 +1,14 @@
+---
+interface Props {
+    action: any
+}
+const {action} = Astro.props
+const result = Astro.getActionResult(action);
+---
+
+{result && result.error &&
+<>
+    <div class = "border bg-red-800 border-red-700 bg-opacity-25 rounded p-2 my-4">
+        {result.error?.message}
+    </div>
+</>}

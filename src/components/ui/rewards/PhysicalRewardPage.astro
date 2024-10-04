@@ -1,0 +1,104 @@
+---
+import Layout from "@layouts/Layout.astro";
+import PageTitle from "@components/ui/PageTitle.astro";
+import {createMarkdownProcessor} from "@astrojs/markdown-remark";
+import Button from "@components/ui/Button.astro";
+import {actions} from "astro:actions";
+import ActionResult from "@components/ui/ActionResult.astro";
+import type { PhysicalReward} from "../../../lib/types";
+import FormInput from "../form/FormInput.astro";
+
+
+interface Props {
+    reward: PhysicalReward,
+    validPrs: number
+}
+
+const {reward, validPrs} = Astro.props
+
+const markdownProcessor = await createMarkdownProcessor({
+    syntaxHighlight: false,
+})
+
+const description = await markdownProcessor.render(reward.description)
+const claim = reward.physicalRewardClaim
+---
+
+<Layout title = `Claim ${reward.title}` description = `Claim ${reward.title}` canonical = `/rewards/${reward.id}`>
+    <div class = "mx-auto">
+        <ActionResult action = {actions.rewards.claim_physical}/>
+        <PageTitle>{reward.title}</PageTitle>
+        <div class = "mx-auto prose max-w-none prose-invert prose-h2:mt-0 prose-h2:mb-2 prose-img:m-0 prose-p:mt-2 prose-p:mb-2 prose-li:m-0 prose-h2:text-center prose-blockquote:mb-0">
+            <img src = {reward.banner_url} alt = {reward.title}/>
+            <Fragment set:html = {description.code}/>
+            {reward.physicalRewardClaim &&
+                    <div class = "text-xl text-orange-200 text-center">
+                        <p>You have claimed this reward! Your claim ID is <code class = "select-all">{reward.physicalRewardClaim.id}</code></p>
+                        <p>If you need to update your information, please reach out to us on <a href = "https://discord.modtoberfest.com" target = "_blank" rel = "noreferrer">Discord</a> with your claim ID</p>
+                    </div>}
+        </div>
+        <form method = "post" action = {actions.rewards.claim_physical} class = "flex flex-col gap-2 mb-8" id = "form">
+            <input type = "hidden" value = {reward.id} name = "id"/>
+            <FormInput disabled = {!!claim} value = {claim ? claim.email : undefined} name = "email" required = {true} labelText = "Email" type = "email"/>
+            <FormInput disabled = {!!claim} value = {claim ? claim.firstName : undefined} name = "firstName" required = {true} labelText = "First Name"/>
+            <FormInput disabled = {!!claim} value = {claim ? claim.lastName : undefined} name = "lastName" required = {true} labelText = "Last Name"/>
+            <FormInput disabled = {!!claim} value = {claim ? claim.address1 : undefined} name = "address1" required = {true} labelText = "Delivery Address"/>
+            <FormInput disabled = {!!claim} value = {claim && claim.address2 ? claim.address2 : undefined} name = "address2" required = {false} labelText = "Delivery Address Line 2 (Apt No., Suite)"/>
+            <FormInput disabled = {!!claim} value = {claim ? claim.zip : undefined} name = "zip" required = {true} labelText = "Zip"/>
+            <FormInput disabled = {!!claim} value = {claim ? claim.city : undefined} name = "city" required = {true} labelText = "City"/>
+            <FormInput disabled = {!!claim} value = {claim ? claim.state : undefined} name = "state" required = {true} labelText = "State"/>
+            <FormInput disabled = {!!claim} value = {claim ? claim.country : undefined} name = "country" required = {true} labelText = "Country"/>
+            <FormInput disabled = {!!claim} value = {claim && claim.phoneNumber ? claim.phoneNumber : undefined} name = "phone" required = {false} labelText = "Phone number (International Format)"/>
+
+            <div class = "font-semibold text-lg text-center">
+                <p>
+                    This is how your address is going to look on the shipping label given to the courier.
+                </p>
+                <p>
+                    Please make sure it is correct before claiming the reward!
+                </p>
+            </div>
+            <div class = "border p-2 flex flex-col" id = "shipping-preview">
+                <div>
+                    <span id = "preview-firstName">{claim ? claim.firstName : "First Name"}</span> <span id = "preview-lastName">{claim ? claim.lastName : "Last Name"}</span>
+                </div>
+
+                <span id = "preview-address1">{claim ? claim.address1 : "Delivery Address"}</span>
+
+                <span id = "preview-address2">{claim ? claim.address2 : ""}</span>
+
+                <div>
+                    <span id = "preview-city">{claim ? claim.city : "City"}</span> <span id = "preview-state">{claim ? claim.state : "State"}</span> <span id = "preview-zip">{claim ? claim.zip : "Zip"}</span>
+                </div>
+                <span id = "preview-country">{claim ? claim.country : "County"}</span>
+            </div>
+
+            {!claim && <Button animate = {false} submit = {true} classes = "mt-4">Claim Reward</Button>}
+        </form>
+
+        <a href = "/profile">
+            <Button animate = {false}>Back to Rewards</Button>
+        </a>
+    </div>
+    {!claim && <script>
+        const preview = document.getElementById('shipping-preview');
+        const form = document.getElementById("form");
+        if (preview && form) {
+            for (let child of form.children) {
+                for (let input of child.getElementsByTagName("input")) {
+                    input.addEventListener("input", (e) => {
+                        if(!e.target || !("value" in e.target) || !("id" in e.target)) {
+                            return;
+                        }
+                        const value = e.target.value;
+                        const id = e.target.id
+                        const previewElement = document.getElementById(`preview-${id}`);
+                        if(previewElement) {
+                            previewElement.innerText = `${value}`
+                        }
+                    })
+                }
+            }
+        }
+        </script>}
+</Layout>

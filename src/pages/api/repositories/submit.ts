@@ -1,7 +1,6 @@
 import type {APIContext} from "astro";
-import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
-import {Octokit} from "octokit";
 import prisma from "@lib/db.ts";
+import {Octokit} from "octokit";
 
 export async function POST({params, request, locals}: APIContext) {
 

@@ -2,13 +2,16 @@
 interface Props {
     classes?: string;
     size?: "xl" | "lg"
+    submit?:boolean,
+    animate?:boolean
 }
-const {size, classes} = Astro.props;
+const {size, classes, submit = false, animate = true} = Astro.props;
 ---
 
-<button class:list = {["lg:mt-0 text-white font-bold bg-orange-400 hover:bg-orange-600 px-4 py-2 rounded-full transition duration-200 ease-in-out transform hover:scale-105 w-full", {
+<button class:list = {["lg:mt-0 text-white font-bold bg-orange-400 hover:bg-orange-600 px-4 py-2 rounded-full w-full", {
     "px-8 py-4 text-xl": size === "lg",
-    "px-10 py-4 text-2xl": size === "xl"
-}, classes]}>
+    "px-10 py-4 text-2xl": size === "xl",
+    "transition duration-200 ease-in-out transform hover:scale-105": animate
+}, classes]} type={submit ? "submit" : undefined}>
     <slot/>
 </button>

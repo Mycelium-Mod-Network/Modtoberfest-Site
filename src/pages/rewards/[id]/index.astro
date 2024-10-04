@@ -1,0 +1,96 @@
+---
+import prisma from "@lib/db";
+const user = Astro.locals.user;
+import DigitalRewardPage from "@components/ui/rewards/DigitalRewardPage.astro";
+import PhysicalRewardPage from "@components/ui/rewards/PhysicalRewardPage.astro";
+import type {DigitalReward, PhysicalReward} from "../../../lib/types";
+
+if (!user) {
+    return Astro.redirect("/auth/github?url=/admin")
+}
+
+const validPrs = await prisma.pullRequest.count({
+    where: {
+        author_id: `${user.githubId}`,
+        PullRequestStatus: {
+            reviewed: true,
+            invalid: false
+        }
+    }
+})
+
+const {id} = Astro.params
+
+const dbReward = (await prisma.reward.findFirst({
+    select: {
+        id: true,
+        title: true,
+        summary: true,
+        description: true,
+        redeem_info: true,
+        logo_url: true,
+        banner_url: true,
+        digital: true,
+        required_prs: true,
+        sponsor: {
+            select: {
+                name: true,
+                image_url: true,
+            }
+        },
+        DigitalRewardCodes: {
+            select: {
+                id: true,
+                code: true
+            },
+            where: {
+                ClaimedCode: {
+                    claimer: {
+                        id: user.id
+                    }
+                }
+            }
+        },
+        PhysicalRewardClaim: {
+            select: {
+                id: true,
+                reward_id: true,
+                firstName: true,
+                lastName: true,
+                address1: true,
+                address2: true,
+                city: true,
+                zip: true,
+                state: true,
+                country: true,
+                email: true,
+                phoneNumber: true
+            },
+            where: {
+                claimer: {
+                    id: user.id
+                }
+            }
+        },
+    },
+    where: {
+        id: id,
+    }
+}))
+if (!dbReward) {
+    return Astro.redirect("/profile?error=reward_not_found")
+}
+
+if (validPrs < dbReward.required_prs) {
+    return Astro.redirect("/profile?error=not_enough_prs")
+}
+
+const {DigitalRewardCodes, PhysicalRewardClaim, ...baseReward} = dbReward
+const reward = {
+    ...baseReward,
+    digitalRewardCode: DigitalRewardCodes ? DigitalRewardCodes[0] : undefined,
+    physicalRewardClaim: PhysicalRewardClaim ? PhysicalRewardClaim[0] : undefined,
+}
+
+---
+{reward.digital ? <DigitalRewardPage reward={reward as DigitalReward} validPrs={validPrs}/> : <PhysicalRewardPage reward={reward as PhysicalReward} validPrs={validPrs}/>}

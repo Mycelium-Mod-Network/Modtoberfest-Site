@@ -1,0 +1,39 @@
+---
+import type { Reward} from "@lib/types";
+import {Icon} from "astro-icon/components";
+interface Props {
+    reward: Reward
+    validPrs: number
+}
+
+const {reward, validPrs} = Astro.props
+const claimed = !!reward.digitalRewardCode || !!reward.physicalRewardClaim
+const clampedPrs = Math.min(validPrs, reward.required_prs)
+const completed = clampedPrs === reward.required_prs
+const Element = completed ? "a" : "div"
+let rewardText = `${clampedPrs} / ${reward.required_prs} Pull Requests`
+if (completed) {
+    if (!claimed) {
+        rewardText = "Claim Reward!"
+    } else {
+        rewardText = "Reward claimed!"
+    }
+}
+---
+<Element class = "border-2 border-orange-400 flex flex-col mx-auto w-64 sm:w-5/12 md:w-48 text-center relative no-underline group transition" href = {completed ? `/rewards/${reward.id}` : undefined}>
+    <div class:list = {["font-semibold place-items-center p-1", {"bg-green-800": claimed, "bg-brand-800": !claimed}]}>
+        <p>{reward.title}</p>
+        <span class = "text-sm">By {reward.sponsor.name}</span>
+    </div>
+    <div class:list = {"aspect-square border-t-2 border-orange-400"}>
+        <img src = {reward.logo_url} alt = {reward.title}>
+    </div>
+    <div class = "relative h-5">
+        <progress class = "w-full h-full absolute left-0 top-0" value = {clampedPrs} max = {reward.required_prs}>asd</progress>
+        <span class = "absolute w-full h-full flex items-center justify-center text-black text-sm">{rewardText} </span>
+    </div>
+    <p class = "text-sm p-1 leading-tight">{reward.summary}</p>
+
+    <img src = {reward.sponsor.image_url} class = "absolute -left-4 -top-4 h-8 w-8 bg-brand-800 p-1 rounded-full border-2 border-orange-400" alt = {reward.sponsor.name}/>
+    <Icon name = `octicon:${reward.digital ? "cloud-16" : "package-16"}` class = "absolute -right-4 -top-4 h-8 w-8 bg-brand-800 p-1 rounded-full border-2 border-orange-400"/>
+</Element>

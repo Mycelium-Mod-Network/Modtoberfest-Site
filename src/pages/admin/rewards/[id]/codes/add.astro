@@ -4,6 +4,8 @@ import PageTitle from "@components/ui/PageTitle.astro";
 import Layout from "@layouts/Layout.astro";
 import {actions} from "astro:actions";
 import prisma from "@lib/db";
+import Button from "../../../../../components/ui/Button.astro";
+import ActionResult from "@components/ui/ActionResult.astro";
 
 const user = Astro.locals.user;
 if (!isUserAdmin(user)) {
@@ -19,12 +21,19 @@ const reward = await prisma.reward.findUnique({
 if (!reward) {
     return Astro.redirect("/admin/rewards?error=not_found")
 }
-//TODO show codes
 ---
 <Layout title = `Add ${reward.title} codes` description = `Add ${reward.title} codes` canonical = `/admin/rewards/${id}/codes/add`>
     <div class = "mx-auto max-w-none">
+        <ActionResult action={actions.rewards.add_codes}/>
         <PageTitle>Add {reward.title} codes </PageTitle>
-        <form method="post" action="post"></form>
+        <form method="post" action={`/admin/rewards/${id}/codes` + actions.rewards.add_codes} class="flex flex-col gap-2 my-2">
+            <input type="hidden" name="id" value={reward.id}/>
+            <label for="codes">Enter Codes</label>
+            <textarea name="codes" id="codes" class="min-h-32 bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300" required/>
+            <button type = "submit" class = "w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-green-500 bg-opacity-25">
+                Add codes
+            </button>
+        </form>
         <a href = `/admin/rewards/${id}/codes` class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-red-500 bg-opacity-25 hover:text-white"> Cancel </a>
 
     </div>

@@ -1,9 +1,11 @@
 ---
+import type {AdminDigitalRewardCode} from "@lib/types";
 import {isUserAdmin} from "@lib/util";
 import PageTitle from "@components/ui/PageTitle.astro";
 import Layout from "@layouts/Layout.astro";
 import {actions} from "astro:actions";
 import prisma from "@lib/db";
+import Code from "../../../../../components/ui/admin/rewards/Code.astro";
 
 const user = Astro.locals.user;
 if (!isUserAdmin(user)) {
@@ -19,30 +21,57 @@ const reward = await prisma.reward.findUnique({
 if (!reward) {
     return Astro.redirect("/admin/rewards?error=not_found")
 }
-const codes = []
-// const codes = await prisma.rewardCode.findMany({
-//     select: {
-//         id: true,
-//         code: true,
-//         user: {
-//             select: {
-//                 username: true,
-//                 avatar: true,
-//             }
-//
-//         }
-//     },
-//     where: {
-//         reward_id: id
-//     }
-// })
-//TODO show codes
+const codes: AdminDigitalRewardCode[] = (await prisma.digitalRewardCodes.findMany({
+    select: {
+        id: true,
+        code: true,
+        reward: {
+            select: {
+                logo_url: true,
+                title: true,
+                sponsor: {
+                    select: {
+                        name: true,
+                        image_url: true
+                    }
+                }
+            }
+        },
+        ClaimedCode: {
+            select: {
+                claimer: {
+                    select: {
+                        username: true,
+                        avatar: true
+                    }
+                }
+            }
+        }
+    },
+    where: {
+        reward_id: id
+    }
+})).map<AdminDigitalRewardCode>(code => {
+    return {
+        id: code.id,
+        code: code.code,
+        reward_name: code.reward.title,
+        reward_logo: code.reward.logo_url,
+        claimer_image: code.ClaimedCode ? code.ClaimedCode.claimer.avatar : undefined,
+        claimer_name: code.ClaimedCode ? code.ClaimedCode.claimer.username : undefined,
+        sponsor_image: code.reward.sponsor.image_url,
+        sponsor_name: code.reward.sponsor.name
+    }
+})
 ---
 <Layout title = `${reward.title} codes` description = `${reward.title} codes` canonical = `/admin/rewards/${id}/codes`>
     <div class = "mx-auto max-w-none">
         <PageTitle>{reward.title} Codes ({codes.length})</PageTitle>
         <a href = `/admin/rewards/${id}/codes/add` class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600"> Add Codes </a>
 
+        <div class = "mt-4 flex gap-4 flex-col">
+            {codes.map(code => <Code code={code}/>)}
+        </div>
     </div>
 
 </Layout>

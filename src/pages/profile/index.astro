@@ -3,26 +3,74 @@ import PageTitle from "@components/ui/PageTitle.astro";
 import Layout from "@layouts/Layout.astro";
 import prisma from "@lib/db";
 import PullRequest from "@components/ui/profile/PullRequest.astro"
-import type {SimpleUser, PullRequest as PR} from "../../lib/types";
+import type { PullRequest as PR, Reward as RewardType} from "@lib/types";
+import Reward from "../../components/ui/rewards/Reward.astro";
+
 const user = Astro.locals.user;
 if (!user) {
     return Astro.redirect("/auth/github?url=/admin")
 }
 
-function generateLabel(prs: number): string {
-    switch (prs) {
-        case 0:
-            return "No detected pull requests.";
-        case 1:
-            return "Now you're getting somewhere! Only 3 left!";
-        case 2:
-            return "Half way!";
-        case 3:
-            return "One more to go!";
-        default:
-            return "You've completed the event!";
+const rewards: RewardType[] = (await prisma.reward.findMany({
+    select: {
+        id: true,
+        title: true,
+        summary: true,
+        description: true,
+        redeem_info: true,
+        logo_url: true,
+        banner_url: true,
+        digital: true,
+        required_prs: true,
+        sponsor: {
+            select: {
+                name: true,
+                image_url: true,
+            }
+        },
+        DigitalRewardCodes: {
+            select: {
+                id: true,
+                code: true
+            },
+            where: {
+                ClaimedCode: {
+                    is: {
+                        claimer_id: user.id
+                    }
+                }
+            }
+        },
+        PhysicalRewardClaim: {
+            select: {
+                id: true,
+                reward_id: true,
+                firstName: true,
+                lastName: true,
+                address1: true,
+                address2: true,
+                city: true,
+                zip: true,
+                state: true,
+                country: true,
+                email: true,
+                phoneNumber: true
+            },
+            where: {
+                claimer: {
+                    id: user.id
+                }
+            }
+        }
+    },
+})).map<RewardType>(reward => {
+    const {DigitalRewardCodes, PhysicalRewardClaim, ...baseReward} = reward
+    return {
+        ...baseReward,
+        digitalRewardCode: DigitalRewardCodes ? DigitalRewardCodes[0] : undefined,
+        physicalRewardClaim: PhysicalRewardClaim ? PhysicalRewardClaim[0] : undefined
     }
-}
+})
 
 const prs: PR[] = (await prisma.pullRequest.findMany({
     select: {
@@ -87,19 +135,13 @@ const validPrs = prs.filter(pr => pr.reviewed ? !pr.invalid : false);
             </div>
         </PageTitle>
 
-        <h2 class = "text-3xl text-center p-2">Your event progress</h2>
-
-        <div class = "flex flex-col gap-y-2 pb-6">
-            <h3 class = "text-xl font-semibold text-center flex flex-col">
-                <span>{validPrs.length} / 4 Completed PRs</span>
-
-                {generateLabel(validPrs.length)}
-                {validPrs.length >=4 && <a href="/profile/rewards" class="nav-link">Please claim your rewards here</a>}
-            </h3>
-
-            <progress class = "w-full" value = {validPrs.length} max = "4"></progress>
-
+        <h2 class = "text-3xl text-center p-2 font-semibold font-brand my-4">Rewards</h2>
+        <div class = "flex flex-col sm:flex-row gap-8 flex-wrap w-full pt-2 justify-between">
+            {rewards.map(reward =>
+                    <Reward reward = {reward} validPrs = {validPrs.length}/>)}
         </div>
+        <h2 class = "text-3xl text-center p-2 font-semibold font-brand my-4">Pull Requests</h2>
+
         <div class = "flex flex-wrap gap-4 justify-center">
             {prs.map(pr =>
                     <PullRequest pr = {pr}/>)}

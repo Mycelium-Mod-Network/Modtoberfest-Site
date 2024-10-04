@@ -1,0 +1,28 @@
+---
+import type {AdminDigitalRewardCode} from "../../../../lib/types";
+interface Props {
+    code: AdminDigitalRewardCode
+}
+const {code} = Astro.props
+---
+<div class:list = {["p-4 w-full border-2 relative"]}>
+    <div class = "bg-brand-900 p-1 absolute -top-4 -left-4 flex gap-x-1 text-xs border no-underline hover:border-orange-600 transition-transform hover:scale-125">
+        <img src = {code.sponsor_image} alt = {code.sponsor_name} class = "w-4 h-4 rounded-full my-auto"/>
+
+        <span>{code.sponsor_name} provided</span>
+    </div>
+    {code.claimer_name && code.claimer_image &&
+            <div class = "bg-brand-900 p-1 absolute -top-4 -right-4 flex gap-x-1 text-xs border transition-transform hover:scale-125">
+                <img src = {code.claimer_image} alt = {code.claimer_name} class = "w-4 h-4 rounded-full my-auto"/>
+
+                <span>{code.claimer_name} claimed</span>
+            </div>}
+
+    <div class = "flex gap-x-2">
+        <img src = {code.reward_logo} alt = {code.reward_name} class = "w-16 h-16"/>
+        <div class = "flex flex-col gap-y-1 flex-grow">
+            <p>Reward: {code.reward_name}</p>
+            <p>Code: <code class = "p-1 bg-brand-800 select-all">{code.code}</code></p>
+        </div>
+    </div>
+</div>

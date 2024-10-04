@@ -1,9 +1,10 @@
+import {type ActionErrorCode, ActionError} from 'astro:actions';
 import type {User} from "lucia";
 
 
 export function isUserAdmin(user: User | null): user is User {
-    if (user) {
-        return user.admin;
+    if (user && "admin" in user) {
+        return user.admin as boolean
     }
     return false;
 }
@@ -26,4 +27,26 @@ export function shuffleArray(array: any[]) {
         array[i] = array[j];
         array[j] = temp;
     }
+}
+
+export function errorIf(test: boolean, code: ActionErrorCode, message: string) {
+
+    if(test) {
+        throw new ActionError({code, message})
+    }
+
+}
+
+export function require<T>(thing: T | null | undefined, code: ActionErrorCode, message: string): T {
+    if(!thing) {
+        throw new ActionError({code, message})
+    }
+    return thing;
+}
+
+export function check<T>(thing: T, precondition: (t: T) => boolean, code: ActionErrorCode, message: string): T {
+    if(!precondition(thing)) {
+        throw new ActionError({code, message})
+    }
+    return thing;
 }

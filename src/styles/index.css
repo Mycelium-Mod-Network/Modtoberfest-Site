@@ -42,24 +42,20 @@ progress {
     color:         #FB923C;
     /* Firefox: Unfilled portion of the progress bar */
     background:    lightgrey;
-    border-radius: 10em;
 }
 
 /* Firefox: Filled portion of the progress bar */
 progress::-moz-progress-bar {
     background:    currentColor;
-    border-radius: 10em;
 }
 
 /* Chrome & Safari: Unfilled portion of the progress bar */
 progress::-webkit-progress-bar {
     background:    lightgrey;
-    border-radius: 10em;
 
 }
 
 /* Chrome & Safari: Filled portion of the progress bar */
 progress::-webkit-progress-value {
     background:    currentColor;
-    border-radius: 10em;
 }

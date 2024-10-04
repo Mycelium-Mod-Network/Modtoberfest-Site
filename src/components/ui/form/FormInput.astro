@@ -1,0 +1,17 @@
+---
+interface Props {
+    labelText:string,
+    name:string,
+    required:boolean
+    type?: "text" | "email"
+    disabled?:boolean
+    value?:string,
+}
+const {labelText, name, required, type="text", disabled = false, value} = Astro.props
+
+---
+<div class = "flex flex-col sm:flex-row gap-2 w-full">
+    <label for = {name} class="w-full sm:w-1/2">{labelText}: {required && <span class = "text-red-500">*</span>}</label>
+
+    <input disabled={disabled ? true : undefined} type = {type} name = {name} id = {name} required={required ? true : undefined} class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300 w-full sm:w-1/2" value={value}>
+</div>

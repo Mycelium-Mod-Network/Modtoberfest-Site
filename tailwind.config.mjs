@@ -43,6 +43,14 @@ export default {
                     '"Noto Color Emoji"',
                 ],
             },
+            typography: {
+                DEFAULT: {
+                    css: {
+                        'blockquote p:first-of-type::before': null,
+                        'blockquote p:last-of-type::after': null,
+                    },
+                },
+            },
         },
         animation: {
             'spin-slow': 'spin 3s linear infinite',

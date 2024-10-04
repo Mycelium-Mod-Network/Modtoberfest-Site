@@ -114,12 +114,58 @@ export interface RepoGroup<T> {
 export type SubmittingRepo = BaseRepository & { submitted: boolean, sponsor?: string, submitter?: string, reviewed?: boolean, reason?: string, invalid?: boolean };
 
 export interface Reward {
-    id?:string
+    id?: string
     title: string
     summary: string
     description: string
+    redeem_info?: string | null
     logo_url: string
     banner_url: string
     digital: boolean
-    sponsor_id: string
+    sponsor: SimpleSponsor
+    required_prs: number
+    digitalRewardCode?: DigitalRewardCode
+    physicalRewardClaim?: PhysicalRewardClaim
+}
+
+export interface DigitalReward extends Reward {
+    digital: true,
+    physicalRewardClaim: never
+}
+
+export interface PhysicalReward extends Reward {
+    digital: false
+    digitalRewardCode: never
+}
+
+export interface DigitalRewardCode {
+    id?: string
+    code: string
+}
+
+export interface PhysicalRewardClaim {
+    id?: string
+    reward_id: string
+    claimer_github_id?: string
+    firstName: string
+    lastName: string
+    address1: string
+    address2?: string | null
+    city: string
+    zip: string
+    state: string
+    country: string
+    email: string
+    phoneNumber?: string | null
+}
+
+export interface AdminDigitalRewardCode {
+    id: string,
+    code: string,
+    reward_name:string
+    reward_logo:string
+    sponsor_name: string,
+    sponsor_image: string,
+    claimer_name?: string,
+    claimer_image?: string
 }

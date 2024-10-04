@@ -48,16 +48,15 @@ const sponsors = await prisma.sponsor.findMany({
                             <option class = "text-black" value = {sponsor.id}>{sponsor.name}</option>)}
                 </select>
 
-                <div class = "flex flex-col">
+                <div class = "flex flex-col col-span-2">
                     <label for = "description">Description: <span class = "text-red-500">*</span></label>
 
                     <textarea name = "description" required id = "description" class = "min-h-64 bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300"/>
-
                 </div>
-                <div>
-                    <h2 class = "text-center text-3xl">Description Preview</h2>
-                    <div id = "description_preview" class = "prose prose-invert mx-auto">
-                    </div>
+                <div class = "flex flex-col col-span-2">
+                    <label for = "redeem_info">How to redeem:</label>
+
+                    <textarea name = "redeem_info" id = "redeem_info" class = "min-h-64 bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300"/>
                 </div>
             </div>
 
@@ -69,15 +68,4 @@ const sponsors = await prisma.sponsor.findMany({
 
 
     </div>
-    <script>
-        const description = document.getElementById('description');
-        const descTarget = document.getElementById("description_preview");
-        if (description && descTarget) {
-            description.addEventListener('input', (e) => {
-                if (e.target && "value" in e.target) {
-                    descTarget.innerHTML = e.target.value as string
-                }
-            })
-        }
-    </script>
 </Layout>

@@ -100,11 +100,23 @@ export async function POST({params, request}: APIContext) {
             const prData = getRepoData(pull);
             const existingId = existingIds[prData.pr_id];
             const isBot = pull.user.type === "Bot"
+            const ownerOrCollab = pull.author_association === "OWNER" || pull.author_association === "COLLABORATOR" || pull.author_association === "MEMBER"
             const isInvalid = pull.labels.some(value => /.*(spam|invalid).*/.test(value.name))
+            let reason = null;
+            if(isBot) {
+                reason = "Pull request was made by a bot account."
+            }
+            if(ownerOrCollab) {
+                reason = "Pull requests for your own projects or projects you maintain will not count towards your progress in the challenge."
+            }
+            if(isInvalid) {
+                reason = "Pull request has been marked as spam or invalid."
+            }
+
             const prStatus = {
-                invalid: isBot || isInvalid,
-                reason: isBot ? "Pull request was made by a bot account" : isInvalid ? "The repository owner has marked this PR as spam or invalid" : null,
-                reviewed: isBot || isInvalid
+                invalid: reason !== null,
+                reason: reason,
+                reviewed: reason !== null
             }
             if (!existingId) {
                 const pr = await prisma.pullRequest.create({

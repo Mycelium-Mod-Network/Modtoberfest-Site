@@ -24,7 +24,7 @@ const sponsors = await prisma.sponsor.findMany({
         <PageTitle>Sponsors ({sponsors.length})</PageTitle>
         <a href = "/admin/sponsors/create" class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600"> Add Sponsor </a>
         <div class="mt-4 flex gap-4 flex-col">
-            {sponsors.map((sponsor) =>
+            {sponsors.sort((a, b) => a.name.localeCompare(b.name)).map((sponsor) =>
                     <>
                         <SponsorCard sponsor = {sponsor}/>
                     </>)}

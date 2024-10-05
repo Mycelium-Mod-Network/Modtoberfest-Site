@@ -30,7 +30,7 @@ const sponsors = await prisma.sponsor.findMany({
                 <label for = "sponsor">Sponsor: <span class = "text-red-500">*</span></label>
                 <select name="sponsor" id="sponsor" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
                     <option label=""></option>
-                    {sponsors.map(sponsor => <><option value={sponsor.id} class="text-black">{sponsor.name}</option> </>)}
+                    {sponsors.sort((a, b) => a.name.localeCompare(b.name)).map(sponsor => <><option value={sponsor.id} class="text-black">{sponsor.name}</option> </>)}
                 </select>
 
             </div>

@@ -371,23 +371,6 @@ export const repository = {
                     repository_id: repository_id
                 }
             })
-            // The repo exists, so if this fails, it means the user does not have permission to remove the repo
-            const id = await prisma.repository.delete({
-                select: {
-                    repository_id: true
-                },
-                where: {
-                    repository_id: repository_id,
-                    OR: [
-                        {user: null},
-                        {
-                            user: {
-                                id: user.id
-                            }
-                        }
-                    ]
-                }
-            })
 
             return `Ok`
         }

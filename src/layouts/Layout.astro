@@ -43,7 +43,7 @@ const seo: SEOProps = {
 <html lang = "en">
 <head>
     <meta charset = "UTF-8"/>
-    <meta name = "description" content = "Astro description"/>
+    <meta name = "description" content = "Modtoberfest is an annual celebration of open source projects in the Minecraft Community!"/>
     <meta name = "viewport" content = "width=device-width"/>
     <link rel = "icon" type = "image/svg+xml" href = "/favicon.svg?v=1"/>
     <meta name = "generator" content = {Astro.generator}/>
@@ -59,6 +59,21 @@ const seo: SEOProps = {
     <link rel = "manifest" href = "/site.webmanifest"/>
     <link rel="icon" type="image/x-icon" href="/favicon.ico?v=1">
     <SEO {...seo}/>
+
+    <!-- Facebook/OpenGraph Meta Tags -->
+    <meta property="og:url" content="https://modtoberfest.com/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Modtoberfest">
+    <meta property="og:description" content="Modtoberfest is an annual celebration of open source projects in the Minecraft Community!">
+    <meta property="og:image" content="https://modtoberfest.com/logo/png/full/2024.png">
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="modtoberfest.com">
+    <meta property="twitter:url" content="https://modtoberfest.com/">
+    <meta name="twitter:title" content="Modtoberfest">
+    <meta name="twitter:description" content="Modtoberfest is an annual celebration of open source projects in the Minecraft Community!">
+    <meta name="twitter:image" content="https://modtoberfest.com/logo/png/full/2024.png">
 
 </head>
 <body class = "bg-brand-900 flex flex-col min-h-screen">

@@ -15,7 +15,7 @@ To setup the Modtoberfest-Site to run locally for development, you will first ne
 2. Click on the "New OAuth App" button.
 3. Fill in the required elements for the OAuth app:
     - Set the "Application name" to anything (though likely use an identifiable name like "Modtoberfest-Site-Dev").
-    - Set the "Homepage URL" to `http://127.0.0.1:3000`.
+    - Set the "Homepage URL" to `http://127.0.0.1:4321`.
     - Set the "Authorization callback URL" to `http://localhost:4321/auth/github/callback`.
     - Leave un-ticked the "Enable Device Flow" checkbox.
 4. Click on the "Register application" button.

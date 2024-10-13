@@ -37,6 +37,11 @@ export async function GET(context: APIContext): Promise<Response> {
                     id: existingUser.id
                 },
                 data: {
+                    github_id: githubUser.id,
+                    username: githubUser.login,
+                    name: githubUser.name || "NA",
+                    avatar: githubUser.avatar_url,
+                    email: githubUser.email || "NA",
                     access_token: tokens.accessToken,
                 }
             })

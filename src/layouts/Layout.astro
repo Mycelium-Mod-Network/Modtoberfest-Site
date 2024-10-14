@@ -11,6 +11,7 @@ interface Props {
 }
 
 const {title, description, canonical} = Astro.props;
+const image = "https://modtoberfest.com/logo/png/full/2024.png";
 
 const seo: SEOProps = {
     title,
@@ -20,13 +21,20 @@ const seo: SEOProps = {
         basic: {
             title: title,
             type: "website",
-            image: "https://modtoberfest.com/logo/png/badge/2024.png",
+            image,
             url: `https://modtoberfest.com${canonical}`
         },
         optional: {
             description,
             siteName: "Modtoberfest",
         },
+    },
+    twitter : {
+       card: "summary_large_image",
+       title,
+       description,
+       image,
+       imageAlt: "Modtoberfest Logo",
     },
     extend: {
         meta: [
@@ -43,7 +51,7 @@ const seo: SEOProps = {
 <html lang = "en">
 <head>
     <meta charset = "UTF-8"/>
-    <meta name = "description" content = "Astro description"/>
+    <meta name = "description" content = "Modtoberfest is an annual celebration of open source projects in the Minecraft Community!"/>
     <meta name = "viewport" content = "width=device-width"/>
     <link rel = "icon" type = "image/svg+xml" href = "/favicon.svg?v=1"/>
     <meta name = "generator" content = {Astro.generator}/>

@@ -26,6 +26,8 @@ const prs: PullRequest[] = (await prisma.pullRequest.findMany({
         owner_avatar_url: true,
         title: true,
         state: true,
+        draft : true,
+
         Repository: {
             select: {
                 cache: {
@@ -39,7 +41,9 @@ const prs: PullRequest[] = (await prisma.pullRequest.findMany({
     where: {
         PullRequestStatus: {
             reviewed: false
-        }
+        },
+        drafts : false
+
     }
 })).map<PullRequest>(pr => ({
     pr_id: pr.pr_id,

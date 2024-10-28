@@ -41,6 +41,12 @@ const [totalPRs, approvedPRs, rejectedPRs, pendingPRs, topContributors, totalRep
             },
         },
         take: 10,
+        where: {
+            PullRequestStatus: {
+                invalid: false,
+                reviewed: true,
+            }
+        }
     }),
     prisma.repository.count(),
 ]);

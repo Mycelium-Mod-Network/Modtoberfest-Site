@@ -67,7 +67,7 @@ export async function POST({params, request}: APIContext) {
             pr_id: true
         }
     })).reduce<Record<number, string>>((previousValue, currentValue) => {
-        previousValue[currentValue.pr_id] = currentValue.id;
+        previousValue[Number(currentValue.pr_id)] = currentValue.id;
         return previousValue;
     }, {});
 
@@ -103,13 +103,13 @@ export async function POST({params, request}: APIContext) {
             const ownerOrCollab = pull.author_association === "OWNER" || pull.author_association === "COLLABORATOR" || pull.author_association === "MEMBER"
             const isInvalid = pull.labels.some(value => /.*(spam|invalid).*/.test(value.name))
             let reason = null;
-            if(isBot) {
+            if (isBot) {
                 reason = "Pull request was made by a bot account."
             }
-            if(ownerOrCollab) {
+            if (ownerOrCollab) {
                 reason = "Pull requests for your own projects or projects you maintain will not count towards your progress in the challenge."
             }
-            if(isInvalid) {
+            if (isInvalid) {
                 reason = "Pull request has been marked as spam or invalid."
             }
 

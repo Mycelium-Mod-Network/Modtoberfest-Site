@@ -1,0 +1,32 @@
+---
+interface Props {
+    contributors: any[];
+}
+
+const { contributors } = Astro.props;
+---
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {contributors.map((contributor, index) => {
+        const iconColor = index === 0 ? 'text-yellow-500' : index === 1 ? 'text-gray-400' : 'text-yellow-700';
+        return (
+                <div class="flex items-center p-4 rounded-lg shadow-md bg-[#27323b]">
+                    <div class="relative mr-4">
+                        <img src={`https://github.com/${contributor.author}.png`} alt={contributor.author} class="w-16 h-16 rounded-full"/>
+                        {index < 3 && (
+                                <div class="absolute -top-2 -right-2 w-6 h-6">
+                                    <svg class={`w-6 h-6 ${iconColor}`} fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2a1 1 0 011.902 0l.7 2.152a1 1 0 00.95.69h2.264a1 1 0 01.592 1.806l-1.83 1.364a1 1 0 00-.364 1.118l.7 2.152a1 1 0 01-1.54 1.118L10 10.727l-1.82 1.355a1 1 0 01-1.54-1.118l.7-2.152a1 1 0 00-.364-1.118L5.146 6.648a1 1 0 01.592-1.806h2.264a1 1 0 00.95-.69L9.049 2z"/>
+                                    </svg>
+                                </div>
+                        )}
+                    </div>
+                    <div>
+                        <a href={`https://github.com/${contributor.author}`} target="_blank" rel="noopener noreferrer" class="text-xl font-semibold text-blue-600 hover:underline">
+                            {contributor.author}
+                        </a>
+                        <p class="text-gray-600">PRs Submitted: {contributor._count.author}</p>
+                    </div>
+                </div>
+        );
+    })}
+</div>

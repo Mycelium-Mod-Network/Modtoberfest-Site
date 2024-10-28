@@ -1,0 +1,90 @@
+---
+import Layout from '@layouts/Layout.astro';
+import StatsCard from '@components/ui/StatsCard.astro';
+import prisma from '@lib/db';
+import { isUserAdmin } from '@lib/util';
+import ContributorTable from '@components/ui/ContributorTable.astro';
+import PageTitle from "../../components/ui/PageTitle.astro";
+
+const user = Astro.locals.user;
+if (!isUserAdmin(user)) {
+    return Astro.redirect('/403?url=/admin/stats');
+}
+
+const [totalPRs, approvedPRs, rejectedPRs, pendingPRs, topContributors, totalRepositories] = await Promise.all([
+    prisma.pullRequest.count(),
+    prisma.pullRequestStatus.count({
+        where: {
+            reviewed: true,
+            invalid: false,
+        },
+    }),
+    prisma.pullRequestStatus.count({
+        where: {
+            reviewed: true,
+            invalid: true,
+        },
+    }),
+    prisma.pullRequestStatus.count({
+        where: {
+            reviewed: false,
+        },
+    }),
+    prisma.pullRequest.groupBy({
+        by: ['author'],
+        _count: {
+            author: true,
+        },
+        orderBy: {
+            _count: {
+                author: 'desc',
+            },
+        },
+        take: 10,
+        where: {
+            PullRequestStatus: {
+                invalid: false,
+                reviewed: true,
+            }
+        }
+    }),
+    prisma.repository.count(),
+]);
+
+const totalReviewedPRs = approvedPRs + rejectedPRs;
+const approvedPercentage = totalReviewedPRs > 0 ? (approvedPRs / totalReviewedPRs) * 100 : 0;
+const rejectedPercentage = totalReviewedPRs > 0 ? (rejectedPRs / totalReviewedPRs) * 100 : 0;
+const pendingPercentage = totalPRs > 0 ? (pendingPRs / totalPRs) * 100 : 0;
+---
+<Layout title="Statistics" description="Overview of statistics for the Modtoberfest event." canonical="/admin/stats">
+    <PageTitle>Statistics</PageTitle>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <StatsCard title="Total PRs" value={totalPRs} icon="octicon:git-pull-request-24" color="bg-blue-500" />
+        <StatsCard title="Approved PRs" value={approvedPRs} icon="octicon:check-circle-24" color="bg-green-500" />
+        <StatsCard title="Rejected PRs" value={rejectedPRs} icon="octicon:x-24" color="bg-red-500" />
+        <StatsCard title="Pending PRs" value={pendingPRs} icon="octicon:clock-24" color="bg-yellow-500" />
+        <StatsCard title="Total Repositories" value={totalRepositories} icon="octicon:repo-24" color="bg-purple-500" />
+    </div>
+
+    <div class="mt-12">
+
+    <h2 class="text-white text-3xl font-semibold border-b-2 tracking-wide mb-4 pb-4 font-brand">PR Review Progress</h2>
+        <div class="w-full bg-gray-200 rounded-full h-6 overflow-hidden flex">
+            <div class="bg-green-500 h-6" style={`width: ${approvedPercentage}%`}></div>
+            <div class="bg-red-500 h-6" style={`width: ${rejectedPercentage}%`}></div>
+            <div class="bg-yellow-500 h-6" style={`width: ${pendingPercentage}%`}></div>
+        </div>
+        <div class="flex justify-between text-sm mt-2">
+            <span>Approved: {approvedPercentage.toFixed(1)}%</span>
+            <span>Rejected: {rejectedPercentage.toFixed(1)}%</span>
+            <span>Pending: {pendingPercentage.toFixed(1)}%</span>
+        </div>
+    </div>
+
+    <div class="mt-12">
+        <h2 class="text-white text-3xl font-semibold border-b-2 tracking-wide mb-4 pb-4 font-brand">Top Contributors</h2>
+        <ContributorTable contributors={topContributors} />
+    </div>
+
+</Layout>

@@ -42,7 +42,7 @@ const prs: PullRequest[] = (await prisma.pullRequest.findMany({
         }
     }
 })).map<PullRequest>(pr => ({
-    pr_id: pr.pr_id,
+    pr_id: Number(pr.pr_id),
     author: pr.author,
     created_at: new Date(pr.created_at).getTime(),
     html_url: pr.html_url,

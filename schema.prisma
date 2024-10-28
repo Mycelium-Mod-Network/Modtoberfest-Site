@@ -118,7 +118,7 @@ model RepositoryCache {
 
 model PullRequest {
   id                String             @id @default(cuid())
-  pr_id             Int                @unique
+  pr_id             BigInt                @unique
   html_url          String
   number            Int
   state             String
@@ -139,7 +139,7 @@ model PullRequest {
 
 model PullRequestStatus {
   id          String      @id @default(cuid())
-  pr_id       Int         @unique
+  pr_id       BigInt         @unique
   invalid     Boolean
   reason      String?     @db.Text
   reviewed    Boolean     @default(false)

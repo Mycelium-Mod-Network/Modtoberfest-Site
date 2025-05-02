@@ -13,7 +13,16 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying docker container'
-                sh "docker compose build"
+                sh '''
+                docker build \
+                  --network=mariadb \
+                  --build-arg DATABASE_URL="$DATABASE_URL" \
+                  --build-arg GITHUB_ID="$GITHUB_ID" \
+                  --build-arg GITHUB_SECRET="$GITHUB_SECRET" \
+                  --build-arg ADMIN_SECRET="$ADMIN_SECRET" \
+                  --build-arg DISCORD_WEBHOOK_URL="$DISCORD_WEBHOOK_URL" \
+                  -t modtoberfest .
+                '''
                 sh "docker compose up -d"
             }
         }

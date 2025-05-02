@@ -14,6 +14,7 @@ pipeline {
             steps {
                 echo 'Deploying docker container'
                 sh '''
+                export DOCKER_BUILDKIT=0
                 docker build \
                   --network=mariadb \
                   --build-arg DATABASE_URL="$DATABASE_URL" \

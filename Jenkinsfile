@@ -15,6 +15,7 @@ pipeline {
                 echo 'Deploying docker container'
                 sh '''
                 docker build \
+                  --no-cache \
                   --build-arg DATABASE_URL="$DATABASE_URL" \
                   --build-arg GITHUB_ID="$GITHUB_ID" \
                   --build-arg GITHUB_SECRET="$GITHUB_SECRET" \

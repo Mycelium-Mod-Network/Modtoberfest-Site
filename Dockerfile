@@ -15,9 +15,7 @@ ENV DISCORD_WEBHOOK_URL $DISCORD_WEBHOOK_URL
 
 WORKDIR /app
 COPY package.json package-lock.json schema.prisma ./
-COPY migrations ./migrations
 RUN npm ci
-RUN npm run deploy-db
 
 # Rebuild the source code only when needed
 FROM node:lts AS builder
@@ -53,6 +51,8 @@ ENV GITHUB_SECRET $GITHUB_SECRET
 ENV DATABASE_URL $DATABASE_URL
 ENV ADMIN_SECRET $ADMIN_SECRET
 ENV DISCORD_WEBHOOK_URL $DISCORD_WEBHOOK_URL
+ENV HOST 0.0.0.0
+ENV PORT 4321
 
 WORKDIR /app
 
@@ -60,7 +60,13 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 
-ENV HOST=0.0.0.0
-ENV PORT=4321
+COPY migrations ./migrations
+COPY schema.prisma ./schema.prisma
+
+# Copy entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 EXPOSE 4321
-CMD node ./dist/server/entry.mjs
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["node", "./dist/server/entry.mjs"]

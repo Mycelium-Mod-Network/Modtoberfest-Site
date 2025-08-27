@@ -1,0 +1,23 @@
+---
+import QRCode from 'qrcode'
+import type {PhysicalRewardClaim} from "../../../../lib/types";
+interface Props {
+    claim: Omit<PhysicalRewardClaim, "reward_id" | "claimer_github_id">
+}
+
+const {claim} = Astro.props
+const code = await QRCode.toDataURL(`{F=, FA1=, FA2=, FC=, FP=, FPC=, T=${claim.firstName} ${claim.lastName}, TA1=${claim.address1}, TA2=${claim.address2}, TC=${claim.city}, TSP=${claim.state}, TZPC=${claim.zip}, TCO=${claim.country}, TPN=0, TPE=, ND=1, R=0, OE=, Q1=, D1=, V1=, T1=, Q2=, D2=, V2=, T2=, Q3=, D3=, V3=, T3=, Q4=, D4=, V4=, T4=, Q5=, D5=, V5=, T5=, Q6=, D6=, V6=, T6=, GT=}`)
+---
+
+<div class = "border-2 border-gray-200 flex flex-col items-center no-underline text-2xl gap-y-2 p-4 w-96" data-claim = {JSON.stringify(claim)} data-reward id = {claim.id}>
+    <span class = "flex-none text-sm" id = `${claim.id}-name`>{claim.firstName} {claim.lastName}</span>
+
+    <img src = {code} alt = "code" id = `${claim.id}-code`/>
+</div>
+
+
+<script define:vars = {{claim}}>
+    document.getElementById(`${claim.id}`).addEventListener("click", e => {
+        document.getElementById(`${claim.id}-code`).classList.toggle("hidden");
+    })
+</script>

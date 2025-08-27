@@ -1,0 +1,135 @@
+---
+import {isUserAdmin} from "@lib/util";
+import Layout from "@layouts/Layout.astro";
+import PageTitle from "@components/ui/PageTitle.astro";
+import prisma from "@lib/db";
+import type {PhysicalRewardClaim} from "../../../lib/types";
+import CustomsQR from "../../../components/ui/admin/customs/CustomsQR.astro";
+const user = Astro.locals.user;
+if (!isUserAdmin(user)) {
+    return Astro.redirect("/403?url=/admin/customs")
+}
+
+function replaceCommasWithDots(obj: any): any {
+    if (typeof obj === 'string') {
+        return obj.replace(/,/g, '.');
+    } else if (Array.isArray(obj)) {
+        return obj.map(replaceCommasWithDots);
+    } else if (obj !== null && typeof obj === 'object') {
+        return Object.fromEntries(
+            Object.entries(obj).map(([key, value]) => [
+                key,
+                replaceCommasWithDots(value),
+            ])
+        );
+    }
+    return obj;
+}
+
+const rewards: Omit<PhysicalRewardClaim, "reward_id" | "claimer_github_id">[] = (await prisma.physicalRewardClaim.findMany({
+    select: {
+        id:true,
+        firstName: true,
+        lastName: true,
+        address1: true,
+        address2: true,
+        city: true,
+        zip: true,
+        state: true,
+        country: true,
+        email: true,
+        phoneNumber: true
+    }
+})).map(replaceCommasWithDots)
+---
+
+<Layout title = "Customs" description = "Customs" canonical = "/admin/customs">
+    <div class = "mx-auto max-w-none">
+        <PageTitle>Customs ({rewards.length})</PageTitle>
+            <div class="grid grid-cols-2 gap-2 mb-4 pb-4 border-b-2">
+
+                <label for = "name">Name: <span class = "text-red-500">*</span></label>
+                <input type = "text" name = "name" required id = "name" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <label for = "address1">Address 1: <span class = "text-red-500">*</span></label>
+                <input type = "text" name = "address1" required id = "address1" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <label for = "address2">Address 2: <span class = "text-red-500">*</span></label>
+                <input type = "text" name = "address2" required id = "address2" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <label for = "city">City: <span class = "text-red-500">*</span></label>
+                <input type = "text" name = "city" required id = "city" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <label for = "province">Province: <span class = "text-red-500">*</span></label>
+                <input type = "text" name = "province" required id = "province" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <label for = "po">PO Code: <span class = "text-red-500">*</span></label>
+                <input type = "text" name = "po" required id = "po" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <label for = "quantity1">First Quantity: <span class = "text-red-500">*</span></label>
+                <input type = "text" name = "quantity1" required id = "quantity1" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <label for = "description1">First Description: <span class = "text-red-500">*</span></label>
+                <input type = "text" name = "description1" required id = "description1" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <label for = "value1">First Value: <span class = "text-red-500">*</span></label>
+                <input type = "text" name = "value1" required id = "value1" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <label for = "quantity2">Second Quantity: <span class = "text-red-500">*</span></label>
+                <input type = "text" name = "quantity2" required id = "quantity2" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <label for = "description2">Second Description: <span class = "text-red-500">*</span></label>
+                <input type = "text" name = "description2" required id = "description2" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <label for = "value2">Second Value: <span class = "text-red-500">*</span></label>
+                <input type = "text" name = "value2" required id = "value2" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+
+                <label for = "defaultNumber">Default Phone Number: <span class = "text-red-500">*</span></label>
+                <input type = "text" name = "defaultNumber" required id = "defaultNumber" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+
+                <button type = "button"  id="update" class = "w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-green-500 bg-opacity-25">
+                    Update
+                </button>
+            </div>
+
+
+        <div class = "flex flex-wrap place-items-center gap-4">
+            {rewards.map((user) =>
+                    <>
+                        <CustomsQR claim={user}/>
+                    </>)}
+        </div>
+
+    </div>
+    <script>
+        import QRCode from 'qrcode'
+        const update = document.getElementById("update")!;
+        update.addEventListener("click", async (e) => {
+            e.preventDefault();
+            const rewards =document.querySelectorAll("[data-reward]");
+
+            const name = document.querySelector<HTMLInputElement>("#name")!.value
+            const address1 = document.querySelector<HTMLInputElement>("#address1")!.value
+            const address2 = document.querySelector<HTMLInputElement>("#address2")!.value
+            const city = document.querySelector<HTMLInputElement>("#city")!.value
+            const province = document.querySelector<HTMLInputElement>("#province")!.value
+            const po = document.querySelector<HTMLInputElement>("#po")!.value
+            const quantity1 = document.querySelector<HTMLInputElement>("#quantity1")!.value
+            const description1 = document.querySelector<HTMLInputElement>("#description1")!.value
+            const value1 = document.querySelector<HTMLInputElement>("#value1")!.value
+            const quantity2 = document.querySelector<HTMLInputElement>("#quantity2")!.value
+            const description2 = document.querySelector<HTMLInputElement>("#description2")!.value
+            const value2 = document.querySelector<HTMLInputElement>("#value2")!.value
+            const defaultNumber = document.querySelector<HTMLInputElement>("#defaultNumber")!.value
+            const total1 = parseFloat(quantity1) * parseFloat(value1);
+            const total2 = parseFloat(quantity2) * parseFloat(value2)
+            for(let reward of rewards) {
+                const claim = JSON.parse(reward.getAttribute("data-claim")!)
+                const img = reward.lastElementChild!;
+                const code = await QRCode.toDataURL(`{F=${name}, FA1=${address1}, FA2=${address2}, FC=${city}, FP=${province}, FPC=${po}, T=${claim.firstName} ${claim.lastName}, TA1=${claim.address1}, TA2=${claim.address2}, TC=${claim.city}, TSP=${claim.state}, TZPC=${claim.zip}, TCO=${claim.country}, TPN=${claim.phoneNumber || defaultNumber}, TPE=, ND=1, R=0, OE=, Q1=${quantity1}, D1=${description1}, V1=${value1}, T1=${total1}, Q2=${quantity2}, D2=${description2}, V2=${value2}, T2=${total2}, Q3=, D3=, V3=, T3=, Q4=, D4=, V4=, T4=, Q5=, D5=, V5=, T5=, Q6=, D6=, V6=, T6=, GT=${total1 + total2}}`)
+                img.setAttribute("src", code)
+            }
+        })
+    </script>
+</Layout>

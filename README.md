@@ -1,2 +1,3 @@
 # Sponsor Modtoberfest
-This repo contains the source code for the sponsor information website hosted at https://sponsor.modtoberfest.net. This website was built using [AstroJS Starlight](https://github.com/withastro/starlight).
+This repo contains the source code for the sponsor information website hosted at https://sponsor.modtoberfest.net. 
+This website was built using [AstroJS Starlight](https://github.com/withastro/starlight).

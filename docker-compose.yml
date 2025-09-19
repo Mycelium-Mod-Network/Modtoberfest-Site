@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   modtoberfest:
+    image: modtoberfest
     build:
       context: .
       args:

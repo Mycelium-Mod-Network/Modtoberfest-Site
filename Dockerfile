@@ -36,6 +36,10 @@ FROM node:lts-alpine AS runner
 # Set the working directory
 WORKDIR /app
 
+# Install OpenSSL
+# This is crucial for Prisma to work correctly on Alpine
+RUN apk update && apk add --no-cache openssl ca-certificates
+
 # Set production environment variables
 # This is where your secrets should be defined
 ARG GITHUB_ID

@@ -10,6 +10,12 @@ pipeline {
         DISCORD_WEBHOOK_URL = credentials('DISCORD_WEBHOOK_URL')
     }
     stages {
+        stage('Clean Workspace') {
+            steps {
+                echo 'Cleaning workspace to ensure a fresh build'
+                cleanWs()
+            }
+        }
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image'

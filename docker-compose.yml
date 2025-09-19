@@ -21,8 +21,6 @@ services:
       - ADMIN_SECRET
       - DISCORD_WEBHOOK_URL
     container_name: modtoberfest
-    volumes:
-      - "/opt/modtoberfest:/app"
   modtoberfest_tasks:
     image: strm/tasker
     container_name: modtoberfest_tasks

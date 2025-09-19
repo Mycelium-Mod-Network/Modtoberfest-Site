@@ -1,72 +1,72 @@
-# Install dependencies only when needed
+# Stage 1: Install Dependencies
+# This stage only installs dependencies and caches them.
 FROM node:lts AS deps
 
-ARG GITHUB_ID
-ARG GITHUB_SECRET
-ARG DATABASE_URL
-ARG ADMIN_SECRET
-ARG DISCORD_WEBHOOK_URL
-
-ENV GITHUB_ID $GITHUB_ID
-ENV GITHUB_SECRET $GITHUB_SECRET
-ENV DATABASE_URL $DATABASE_URL
-ENV ADMIN_SECRET $ADMIN_SECRET
-ENV DISCORD_WEBHOOK_URL $DISCORD_WEBHOOK_URL
-
 WORKDIR /app
-COPY package.json package-lock.json schema.prisma ./
+
+# Copy the minimum files needed for dependency installation
+COPY package.json package-lock.json ./
+
+# Install project dependencies
 RUN npm ci
 
-# Rebuild the source code only when needed
+# Stage 2: Build the Application
+# This stage builds the Astro project and generates the Prisma client.
 FROM node:lts AS builder
 
-ARG GITHUB_ID
-ARG GITHUB_SECRET
-ARG DATABASE_URL
-ARG ADMIN_SECRET
-ARG DISCORD_WEBHOOK_URL
-
-ENV GITHUB_ID $GITHUB_ID
-ENV GITHUB_SECRET $GITHUB_SECRET
-ENV DATABASE_URL $DATABASE_URL
-ENV ADMIN_SECRET $ADMIN_SECRET
-ENV DISCORD_WEBHOOK_URL $DISCORD_WEBHOOK_URL
-
 WORKDIR /app
+
+# Copy dependencies from the previous stage
+COPY --from=deps /app/node_modules ./node_modules/
+
+# Copy the rest of the application source code
 COPY . .
-COPY --from=deps /app/node_modules ./node_modules
+
+# Generate the Prisma Client
+# This is crucial for your application to interact with the database
+RUN npx prisma generate
+
+# Build the Astro project for production
 RUN npm run build
 
-# Production image, copy all the files and run next
-FROM node:lts AS runner
+# Stage 3: The Production Runner Image
+# This is the final, slim image that will run your application.
+FROM node:lts-alpine AS runner
 
+# Set the working directory
+WORKDIR /app
+
+# Set production environment variables
+# This is where your secrets should be defined
 ARG GITHUB_ID
 ARG GITHUB_SECRET
 ARG DATABASE_URL
 ARG ADMIN_SECRET
 ARG DISCORD_WEBHOOK_URL
 
-ENV GITHUB_ID $GITHUB_ID
-ENV GITHUB_SECRET $GITHUB_SECRET
-ENV DATABASE_URL $DATABASE_URL
-ENV ADMIN_SECRET $ADMIN_SECRET
-ENV DISCORD_WEBHOOK_URL $DISCORD_WEBHOOK_URL
-ENV HOST 0.0.0.0
-ENV PORT 4321
+ENV GITHUB_ID=$GITHUB_ID
+ENV GITHUB_SECRET=$GITHUB_SECRET
+ENV DATABASE_URL=$DATABASE_URL
+ENV ADMIN_SECRET=$ADMIN_SECRET
+ENV DISCORD_WEBHOOK_URL=$DISCORD_WEBHOOK_URL
 
-WORKDIR /app
-
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/node_modules ./node_modules
+# Copy the build artifacts from the builder stage
+# We only need the compiled code and a lean set of dependencies.
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/public ./public
 
-COPY migrations ./migrations
-COPY schema.prisma ./schema.prisma
+# Copy only production dependencies and the Prisma client files
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/schema.prisma ./schema.prisma
+COPY --from=builder /app/package.json ./package.json
 
-# Copy entrypoint script
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+# You may also need to copy the Prisma engine binary.
+# The `prisma generate` command should handle this automatically by placing it in the correct path.
+# However, if you encounter errors, you may need to manually copy it.
+# COPY --from=builder /app/node_modules/.prisma/client ./node_modules/.prisma/client
 
+# Expose the port
 EXPOSE 4321
-ENTRYPOINT ["docker-entrypoint.sh"]
+
+# The command to run the Astro application
 CMD ["node", "./dist/server/entry.mjs"]

@@ -69,6 +69,8 @@ COPY --from=builder /app/package.json ./package.json
 # However, if you encounter errors, you may need to manually copy it.
 # COPY --from=builder /app/node_modules/.prisma/client ./node_modules/.prisma/client
 
+ENV HOST=0.0.0.0
+
 # Expose the port
 EXPOSE 4321
 

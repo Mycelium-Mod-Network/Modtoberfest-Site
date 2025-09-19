@@ -29,6 +29,7 @@ pipeline {
                 echo 'Running database migrations'
                 sh '''
                 docker run --rm \
+                  --network mariadb \
                   -e DATABASE_URL="$DATABASE_URL" \
                   -e GITHUB_ID="$GITHUB_ID" \
                   -e GITHUB_SECRET="$GITHUB_SECRET" \

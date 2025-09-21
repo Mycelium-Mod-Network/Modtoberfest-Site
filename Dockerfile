@@ -16,6 +16,20 @@ FROM node:lts AS builder
 
 WORKDIR /app
 
+# Set production environment variables
+# This is where your secrets should be defined
+ARG GITHUB_ID
+ARG GITHUB_SECRET
+ARG DATABASE_URL
+ARG ADMIN_SECRET
+ARG DISCORD_WEBHOOK_URL
+
+ENV GITHUB_ID=$GITHUB_ID
+ENV GITHUB_SECRET=$GITHUB_SECRET
+ENV DATABASE_URL=$DATABASE_URL
+ENV ADMIN_SECRET=$ADMIN_SECRET
+ENV DISCORD_WEBHOOK_URL=$DISCORD_WEBHOOK_URL
+
 # Copy dependencies from the previous stage
 COPY --from=deps /app/node_modules ./node_modules/
 

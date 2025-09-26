@@ -14,6 +14,7 @@ export const sponsor = {
             website: z.string().optional(),
             github: z.string().optional(),
             twitter: z.string().optional(),
+            bluesky: z.string().optional(),
             discord: z.string().optional(),
         }),
         handler: async (input, context) => {
@@ -41,6 +42,12 @@ export const sponsor = {
                 links.push({
                     name: "twitter",
                     value: input.twitter
+                });
+            }
+            if (input.bluesky) {
+                links.push({
+                    name: "bluesky",
+                    value: input.bluesky
                 });
             }
             if (input.discord) {
@@ -100,6 +107,7 @@ export const sponsor = {
             website: z.string().optional(),
             github: z.string().optional(),
             twitter: z.string().optional(),
+            bluesky: z.string().optional(),
             discord: z.string().optional(),
         }),
         handler: async (input, context) => {
@@ -128,6 +136,12 @@ export const sponsor = {
                 links.push({
                     name: "twitter",
                     value: input.twitter
+                });
+            }
+            if (input.bluesky) {
+                links.push({
+                    name: "bluesky",
+                    value: input.bluesky
                 });
             }
             if (input.discord) {

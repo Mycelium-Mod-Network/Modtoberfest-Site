@@ -27,6 +27,7 @@ const website = sponsor.links.find(value => value.name === "website") || {value:
 const github = sponsor.links.find(value => value.name === "github") || {value: ""}
 const discord = sponsor.links.find(value => value.name === "discord") || {value: ""}
 const twitter = sponsor.links.find(value => value.name === "twitter") || {value: ""}
+const bluesky = sponsor.links.find(value => value.name === "bluesky") || {value: ""}
 ---
 <Layout title = `Edit ${sponsor.name}` description = `Edit ${sponsor.name}` canonical = `/admin/sponsors/${sponsor.id}/edit` currentPage="admin">
     <div class = "mx-auto max-w-none">
@@ -48,6 +49,9 @@ const twitter = sponsor.links.find(value => value.name === "twitter") || {value:
                 <label for = "discord">Discord:</label> <input type = "text" name = "discord" id = "discord" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary" value = {discord.value}>
 
                 <label for = "twitter">Twitter:</label> <input type = "text" name = "twitter" id = "twitter" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary" value = {twitter.value}>
+
+                <label for = "bluesky">Bluesky:</label> <input type = "text" name = "bluesky" id = "bluesky" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary" value = {bluesky.value}>
+
             </div>
 
             <button type = "submit" class = "w-full p-1 border text-center font-semibold no-underline hover:border-orange-600 bg-green-500 bg-opacity-25">

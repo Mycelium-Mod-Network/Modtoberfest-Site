@@ -3,7 +3,6 @@ import {isUserAdmin} from "@lib/util";
 import Layout from "@layouts/Layout.astro";
 import PageTitle from "@components/ui/PageTitle.astro";
 import prisma from "@lib/db";
-import SponsorCard from "@components/ui/admin/SponsorCard.astro";
 import {actions} from "astro:actions";
 const user = Astro.locals.user;
 if (!isUserAdmin(user)) {

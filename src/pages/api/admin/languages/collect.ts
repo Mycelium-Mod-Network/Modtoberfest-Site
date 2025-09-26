@@ -4,7 +4,7 @@ import {Octokit} from "octokit";
 import prisma from "@lib/db.ts";
 import {parse} from 'yaml'
 
-export async function POST({params, request}: APIContext) {
+export async function POST({request}: APIContext) {
 
     const body = await request.json();
     if (body.secret !== import.meta.env.ADMIN_SECRET) {

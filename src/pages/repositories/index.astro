@@ -153,7 +153,7 @@ const user = Astro.locals.user;
     <script>
         const tags = document.getElementById("tags")!;
         const updatedWithin = document.getElementById("updated_within")!;
-        const url = new URL(window.location);
+        const url = new URL(window.location as unknown as string) ;
         tags.addEventListener("change", async (e) => {
             e.preventDefault();
             const select = e.target as HTMLSelectElement
@@ -163,7 +163,7 @@ const user = Astro.locals.user;
             } else {
                 url.searchParams.delete("tag");
             }
-            window.location = url;
+            window.location = url as unknown as Location;
         })
 
         updatedWithin.addEventListener("change", async (e) => {
@@ -175,7 +175,7 @@ const user = Astro.locals.user;
             } else {
                 url.searchParams.delete("updated_within");
             }
-            window.location = url;
+            window.location = url as unknown as Location;
         })
     </script>
 </Layout>

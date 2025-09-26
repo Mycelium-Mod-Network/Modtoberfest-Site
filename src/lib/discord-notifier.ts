@@ -23,7 +23,7 @@ async function send(embeds: any) {
         embeds
     };
 
-    const res = await fetch(WEBHOOK_URL, {
+    await fetch(WEBHOOK_URL, {
         method: "POST",
         body: JSON.stringify(body),
         headers: {

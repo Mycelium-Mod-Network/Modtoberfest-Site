@@ -11,7 +11,7 @@ interface Props {
     validPrs: number
 }
 
-const {reward, validPrs} = Astro.props
+const {reward} = Astro.props
 
 const markdownProcessor = await createMarkdownProcessor({
     syntaxHighlight: false,

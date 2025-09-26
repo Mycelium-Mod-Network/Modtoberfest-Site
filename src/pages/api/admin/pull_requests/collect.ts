@@ -27,7 +27,7 @@ function getRepoData(data: PullRequest) {
 const OCTOBER_START = new Date(Date.UTC(2025, 9, 1, 0, 0, 0) - (12 * 60 * 60 * 1000));
 const NOVEMBER_START = new Date(Date.UTC(2025, 10, 1, 12, 0, 0));
 
-export async function POST({params, request}: APIContext) {
+export async function POST({request}: APIContext) {
 
     const body = await request.json();
     if (body.secret !== import.meta.env.ADMIN_SECRET) {
@@ -119,7 +119,7 @@ export async function POST({params, request}: APIContext) {
                 reviewed: reason !== null
             }
             if (!existingId) {
-                const pr = await prisma.pullRequest.create({
+                await prisma.pullRequest.create({
                     data: {
                         ...prData,
                         PullRequestStatus: {

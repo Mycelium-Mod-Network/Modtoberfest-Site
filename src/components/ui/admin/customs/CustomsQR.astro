@@ -16,8 +16,8 @@ const code = await QRCode.toDataURL(`{F=, FA1=, FA2=, FC=, FP=, FPC=, T=${claim.
 </div>
 
 
-<script define:vars = {{claim}}>
-    document.getElementById(`${claim.id}`).addEventListener("click", e => {
+<script is:inline define:vars = {{claim}}>
+    document.getElementById(`${claim.id}`).addEventListener("click", () => {
         document.getElementById(`${claim.id}-code`).classList.toggle("hidden");
     })
 </script>

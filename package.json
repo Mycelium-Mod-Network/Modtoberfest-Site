@@ -37,7 +37,7 @@
     "yaml": "^2.5.1"
   },
   "devDependencies": {
-    "@astrojs/node": "^8.3.4",
+    "@astrojs/node": "^9.4.4",
     "@octokit/webhooks-types": "^7.5.1",
     "@prisma/client": "^5.20.0",
     "@types/qrcode": "^1.5.5",

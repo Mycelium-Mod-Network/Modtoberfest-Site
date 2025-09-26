@@ -2,9 +2,6 @@ import {ActionError, defineAction} from 'astro:actions';
 import {z} from 'astro:schema';
 import {isUserAdmin} from "@lib/util.ts";
 import prisma from "@lib/db.ts";
-import {Octokit} from "octokit";
-import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
-
 
 export const pull_request = {
     approve: defineAction({

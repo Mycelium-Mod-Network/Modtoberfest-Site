@@ -4,8 +4,6 @@ import Layout from "@layouts/Layout.astro";
 import PageTitle from "@components/ui/PageTitle.astro";
 import prisma from "@lib/db";
 import type {PullRequest, PRGroups} from "@lib/types";
-import AdminRepositoryCard from "@components/ui/AdminRepositoryCard.astro";
-import PRGroup from "../../../components/ui/admin/PRGroup.astro";
 import PRReviewGroup from "../../../components/ui/admin/PRReviewGroup.astro";
 
 const user = Astro.locals.user;
@@ -58,7 +56,7 @@ const prs: PullRequest[] = (await prisma.pullRequest.findMany({
     reviewed: false
 }))
 
-prs.sort((a,b) => a.owner.localeCompare(b.owner)).forEach(pr => {
+prs.sort((a, b) => a.owner.localeCompare(b.owner)).forEach(pr => {
     prGroups[`${pr.owner}/${pr.repo_name}`] = prGroups[`${pr.owner}/${pr.repo_name}`] || {
         owner: pr.owner,
         name: pr.repo_name,
@@ -70,7 +68,7 @@ prs.sort((a,b) => a.owner.localeCompare(b.owner)).forEach(pr => {
 })
 ---
 
-<Layout title = "Review Pull Requests" description = "Review Pull Requests" canonical = "/admin/pullrequests/review" currentPage="admin">
+<Layout title = "Review Pull Requests" description = "Review Pull Requests" canonical = "/admin/pullrequests/review" currentPage = "admin">
     <div class = "mx-auto max-w-none">
         <PageTitle>Pull Requests ({prs.length})</PageTitle>
         <div class = "mt-4 flex gap-6 flex-col">

@@ -42,7 +42,7 @@ const {currentPage} = Astro.props;
         const controller = document.getElementById('nav-controller');
         const navs = document.querySelectorAll(".nav");
         if (controller && navs) {
-            controller.addEventListener('click', (e) => {
+            controller.addEventListener('click', () => {
                 navs.forEach(nav => {
                     nav.classList.toggle("hidden")
                     nav.classList.toggle("flex");

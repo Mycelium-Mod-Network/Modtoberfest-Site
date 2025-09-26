@@ -2,7 +2,7 @@ import type {APIContext} from "astro";
 import prisma from "@lib/db.ts";
 import {Octokit} from "octokit";
 
-export async function POST({params, request, locals}: APIContext) {
+export async function POST({request, locals}: APIContext) {
 
     const body = await request.json();
     const user = locals.user

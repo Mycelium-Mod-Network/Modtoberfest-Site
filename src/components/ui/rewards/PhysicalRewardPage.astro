@@ -2,7 +2,6 @@
 import Layout from "@layouts/Layout.astro";
 import PageTitle from "@components/ui/PageTitle.astro";
 import {createMarkdownProcessor} from "@astrojs/markdown-remark";
-import Button from "@components/ui/Button.astro";
 import {actions} from "astro:actions";
 import ActionResult from "@components/ui/ActionResult.astro";
 import type { PhysicalReward} from "../../../lib/types";
@@ -14,7 +13,7 @@ interface Props {
     validPrs: number
 }
 
-const {reward, validPrs} = Astro.props
+const {reward} = Astro.props
 
 const markdownProcessor = await createMarkdownProcessor({
     syntaxHighlight: false,

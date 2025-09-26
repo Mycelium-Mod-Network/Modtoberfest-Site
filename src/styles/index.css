@@ -1,11 +1,59 @@
-@import url('https://fonts.googleapis.com/css2?family=Germania+One&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+
+@font-face {
+    font-family:  'Germania One';
+    src:          url('/germania_one.woff2') format('woff2');
+    font-weight:  400;
+    font-style:   normal;
+    font-display: block; /* critical: text stays invisible until font is ready */
+}
+
 .nav-link {
-    @apply no-underline font-bold text-orange-400 transition duration-200 ease-in-out transform hover:text-orange-600 hover:-translate-y-px;
+    @apply no-underline text-sm font-medium transition-colors hover:text-primary p-2 lg:p-0;
+}
+
+.animate-float {
+    animation: 3s ease-in-out infinite float;
+}
+
+.animate-glow {
+    animation: 2s ease-in-out infinite glow;
+}
+
+.animate-sm-glow {
+    animation: 2s ease-in-out infinite sm-glow;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 20px #FFA5004D;
+    }
+
+    50% {
+        box-shadow: 0 0 40px #FFA50099;
+    }
+}
+
+@keyframes sm-glow {
+    0%, 100% {
+        box-shadow: 0 0 5px #FFA5004D;
+    }
+
+    50% {
+        box-shadow: 0 0 10px #FFA50099;
+    }
 }
 
 .basic-link {
@@ -14,11 +62,11 @@
 
 a, #sign-out {
     overflow-wrap: anywhere;
-    @apply underline transition duration-200 ease-in-out transform hover:text-orange-600;
+    @apply underline transition duration-200 ease-in-out transform hover:text-secondary;
 }
 
 .font-brand {
-    font-family: "Germania One", system-ui;
+    font-family: "Germania One";
     font-weight: 400;
     font-style:  normal;
 }
@@ -35,27 +83,38 @@ a, #sign-out {
 
 }
 main {
-    @apply text-neutral-200 flex-1 w-full max-w-4xl p-4 mx-auto min-h-full;
+    min-height: calc(100vh - 4rem);
+    @apply text-neutral-200 flex-1 w-full p-4 mx-auto min-h-full;
+}
+
+main:not(.wide) {
+
+    @apply max-w-4xl;
+}
+
+main.wide {
+    min-height: calc(100vh - 4rem);
+    @apply max-w-7xl;
 }
 
 progress {
-    color:         #FB923C;
+    color:      #FB923C;
     /* Firefox: Unfilled portion of the progress bar */
-    background:    lightgrey;
+    background: lightgrey;
 }
 
 /* Firefox: Filled portion of the progress bar */
 progress::-moz-progress-bar {
-    background:    currentColor;
+    background: currentColor;
 }
 
 /* Chrome & Safari: Unfilled portion of the progress bar */
 progress::-webkit-progress-bar {
-    background:    lightgrey;
+    background: lightgrey;
 
 }
 
 /* Chrome & Safari: Filled portion of the progress bar */
 progress::-webkit-progress-value {
-    background:    currentColor;
+    background: currentColor;
 }

@@ -10,14 +10,14 @@ const {repo} = Astro.props;
 const sponsored = !!repo.sponsor
 ---
 
-<div class:list = {["border-2 w-full sm:w-5/12 md:w-48 flex flex-col gap-y-2 p-2 relative group transition", {"border-sky-400 hover:border-sky-600": sponsored, "border-orange-400 hover:border-orange-600": !sponsored}]}>
-    <img src = {repo.ownerAvatarUrl} alt = {repo.owner} class:list = {["absolute -top-4 -left-4 rounded-full w-8 h-8 bg-brand-900 border-2", {"border-sky-400 group-hover:border-sky-600": sponsored, "border-orange-400 group-hover:border-orange-600": !sponsored}]}/>
+<div class:list = {["border-2 hover:border-primary/50 w-full sm:w-5/12 md:w-72 flex flex-col gap-y-2 p-2 relative group transition-colors", {"border-sky-500/10 hover:border-sky-500 hover:bg-sky-500/10": sponsored, "border-white/10 hover:border-primary hover:bg-primary/10": !sponsored}]}>
+    <img src = {repo.ownerAvatarUrl} alt = {repo.owner} class:list = {["bg-neutral-950 absolute -top-4 -left-4 rounded-full w-8 h-8 border-2 transition-colors", {"border-sky-500/10 group-hover:border-sky-500": sponsored, "border-white/10 group-hover:border-primary": !sponsored}]}/>
 
     {sponsored &&
-            <Icon name = "octicon:verified-16" class = "absolute -top-3 -right-3 w-6 h-6 bg-brand-900"/>
+            <Icon name = "octicon:verified-16" class = "absolute -top-3 -right-3 w-6 h-6 bg-neutral-950"/>
     }
 
-    <div class:list = {["flex flex-col font-semibold text-center border-b border-b-orange-300", {"border-b-sky-300 group-hover:border-b-sky-400": sponsored, "border-b-orange-300  group-hover:border-orange-400": !sponsored}]}>
+    <div class:list = {["flex flex-col font-semibold text-center border-b border-b-orange-300", {"border-b-sky-400 group-hover:border-b-sky-500": sponsored, "border-b-orange-300 group-hover:border-orange-400": !sponsored}]}>
         <a href = {repo.ownerHtmlUrl} class:list = {["no-underline text-sm", {"text-sky-300 hover:text-sky-600": sponsored, "text-orange-300 hover:text-orange-600": !sponsored}]} target = "_blank" rel = "noreferrer">{repo.owner}</a>
 
         <a href = {repo.url} class:list = {["no-underline", {"text-sky-400 hover:text-sky-600": sponsored, "text-orange-400 hover:text-orange-600": !sponsored}]} target = "_blank" rel = "noreferrer">{repo.name}</a>

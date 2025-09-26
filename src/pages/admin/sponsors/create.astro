@@ -8,38 +8,38 @@ if (!isUserAdmin(user)) {
     return Astro.redirect("/403?url=/admin/users")
 }
 ---
-<Layout title = "Create Sponsor" description = "Create Sponsor" canonical = "/admin/sponsors/create">
+<Layout title = "Create Sponsor" description = "Create Sponsor" canonical = "/admin/sponsors/create" currentPage="admin">
     <div class = "mx-auto max-w-none">
         <PageTitle>Add sponsor</PageTitle>
         <form action = {"/admin/sponsors" +actions.sponsor.create} method = "post" class="flex flex-col gap-y-2">
             <div class="grid grid-cols-2 gap-2">
                 <label for = "name">Name: <span class = "text-red-500">*</span></label>
-                <input type = "text" name = "name" required id = "name" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+                <input type = "text" name = "name" required id = "name" class="bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary">
 
                 <label for = "summary">Summary: <span class = "text-red-500">*</span></label>
-                <textarea name = "summary"  required id = "summary" class = "min-h-16 bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300"/>
+                <textarea name = "summary"  required id = "summary" class = "min-h-16 bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary"/>
 
                 <label for = "image_url">Image Url: <span class = "text-red-500">*</span></label>
-                <input type = "text" name = "image_url" required id = "image_url" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+                <input type = "text" name = "image_url" required id = "image_url" class="bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary">
 
                 <label for = "website">Website:</label>
-                <input type = "text" name = "website" id = "website" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+                <input type = "text" name = "website" id = "website" class="bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary">
 
                 <label for = "github">Github:</label>
-                <input type = "text" name = "github" id = "github" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+                <input type = "text" name = "github" id = "github" class="bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary">
 
                 <label for = "discord">Discord:</label>
-                <input type = "text" name = "discord" id = "discord" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+                <input type = "text" name = "discord" id = "discord" class="bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary">
 
                 <label for = "twitter">Twitter:</label>
-                <input type = "text" name = "twitter" id = "twitter" class="bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+                <input type = "text" name = "twitter" id = "twitter" class="bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary">
 
             </div>
 
-            <button type="submit" class="w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-green-500 bg-opacity-25">
+            <button type="submit" class="w-full p-1 border text-center font-semibold no-underline hover:border-orange-600 bg-green-500 bg-opacity-25">
                 Add sponsor
             </button>
-            <a href = "/admin/sponsors" class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-red-500 bg-opacity-25 hover:text-white"> Cancel </a>
+            <a href = "/admin/sponsors" class = "block w-full p-1 border text-center font-semibold no-underline hover:border-orange-600 bg-red-500 bg-opacity-25 hover:text-white"> Cancel </a>
         </form>
 
 

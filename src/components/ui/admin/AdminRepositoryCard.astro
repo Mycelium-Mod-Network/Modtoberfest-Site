@@ -1,16 +1,16 @@
 ---
-import type {AdminRepository} from "../../lib/types";
+import type {AdminRepository} from "../../../lib/types";
 import {actions} from "astro:actions";
-import TagBadge from "./TagBadge.astro";
+import TagBadge from "../TagBadge.astro";
 interface Props {
     repository: AdminRepository
 }
 const {repository} = Astro.props;
 ---
 
-<div class:list = {["p-4 w-full border-2 relative", {"bg-red-900 bg-opacity-25": repository.invalid}]}>
+<div class:list = {["p-4 w-full border border-white/10 bg-white/5 relative", {"bg-red-900 bg-opacity-25": repository.invalid}]}>
     {
-        repository.submitter && <a class = "bg-brand-900 p-1 absolute -top-4 -left-4 flex gap-x-1 text-xs border no-underline hover:border-orange-600 transition-transform hover:scale-125" href = `https://github.com/${repository.submitter.username}` target = "_blank" rel="noreferrer">
+        repository.submitter && <a class = "bg-neutral-900 p-1 absolute -top-4 -left-4 flex gap-x-1 text-xs border border-white/10 no-underline hover:border-orange-600 transition-transform hover:scale-125" href = `https://github.com/${repository.submitter.username}` target = "_blank" rel="noreferrer">
 
                 <img src = {repository.submitter.avatar} alt = {repository.submitter.username} class = "w-4 h-4 rounded-full my-auto"/>
 
@@ -20,7 +20,7 @@ const {repository} = Astro.props;
     }
 
     {repository.reviewedBy &&
-            <div class = "bg-brand-900 p-1 absolute -top-4 -right-4 flex gap-x-1 text-xs border select-none transition-transform hover:scale-125">
+            <div class = "bg-neutral-900 p-1 absolute -top-4 -right-4 flex gap-x-1 text-xs border border-white/10 select-none transition-transform hover:scale-125">
                 <img src = {repository.reviewedBy.avatar} alt = {repository.reviewedBy.username} class = "w-4 h-4 rounded-full my-auto"/>
 
                 <span>{repository.reviewedBy.username} reviewed</span>
@@ -63,11 +63,11 @@ const {repository} = Astro.props;
                 {repository.invalid &&
                         <form method = "POST" action = {actions.repository.approve} class = "w-full">
                             <input type = "hidden" value = {repository.repository_id} name = "id"/>
-                            <button type = "submit" class = "w-full text-center border-2 border-emerald-400 bg-emerald-900 hover:bg-emerald-700 no-underline block">Approve</button>
+                            <button type = "submit" class = "w-full text-center border border-emerald-400 bg-emerald-900 hover:bg-emerald-700 no-underline block">Approve</button>
                         </form>}
                 <form method = "POST" action = {actions.repository.delete} class = "w-full">
                     <input type = "hidden" value = {repository.repository_id} name = "id"/>
-                    <button type = "submit" class = "w-full text-center border-2 border-rose-400 bg-rose-900 hover:bg-rose-700 no-underline block">Delete</button>
+                    <button type = "submit" class = "w-full text-center border border-rose-400 bg-rose-900 hover:bg-rose-700 no-underline block">Delete</button>
                 </form>
             </div>
         </div>

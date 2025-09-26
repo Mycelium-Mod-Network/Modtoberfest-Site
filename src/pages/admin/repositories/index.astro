@@ -8,7 +8,7 @@ import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
 import type {SimpleUser, AdminRepository} from "@lib/types";
 import type {Repository as GHRepo} from "@octokit/webhooks-types";
 import {formatDate} from "@lib/util";
-import AdminRepositoryCard from "@components/ui/AdminRepositoryCard.astro";
+import AdminRepositoryCard from "@components/ui/admin/AdminRepositoryCard.astro";
 
 const user = Astro.locals.user;
 if (!isUserAdmin(user)) {
@@ -138,7 +138,7 @@ const repos = await Promise.all(dbRepos.map<Promise<AdminRepository>>(async repo
 }))
 ---
 
-<Layout title = "Admin Repositories" description = "Admin Repositories" canonical = "/admin/repositories">
+<Layout title = "Admin Repositories" description = "Admin Repositories" canonical = "/admin/repositories" currentPage="admin">
     <div class = "mx-auto max-w-none">
         <PageTitle>Repositories ({repos.length})</PageTitle>
         <a href = "/admin/repositories/create" class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600"> Add Repo </a>

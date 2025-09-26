@@ -19,7 +19,7 @@ const sponsors = await prisma.sponsor.findMany({
 })
 ---
 
-<Layout title = "Admin Sponsors" description = "Admin Sponsors" canonical = "/admin/sponsors">
+<Layout title = "Admin Sponsors" description = "Admin Sponsors" canonical = "/admin/sponsors" currentPage="admin">
     <div class = "mx-auto max-w-none">
         <PageTitle>Sponsors ({sponsors.length})</PageTitle>
         <a href = "/admin/sponsors/create" class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600"> Add Sponsor </a>

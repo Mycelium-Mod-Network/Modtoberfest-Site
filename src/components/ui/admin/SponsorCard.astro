@@ -7,7 +7,7 @@ interface Props {
 const {sponsor} = Astro.props;
 ---
 
-<div class = "border-2 border-orange-400 flex flex-col gap-y-2 p-2">
+<div class = "border bg-white/5 border-white/10 flex flex-col gap-y-2 p-2">
 
     <p class = "text-center font-semibold text-3xl">
         {sponsor.name}
@@ -19,10 +19,10 @@ const {sponsor} = Astro.props;
         </p>
     </div>
     <div class = "flex gap-x-2 w-full">
-        <a class = "w-full text-center border-2 border-cyan-400 bg-cyan-900 hover:bg-cyan-700 no-underline block text-white hover:text-white" href = `/admin/sponsors/${sponsor.id}/edit`> Edit </a>
+        <a class = "w-full text-center border border-primary bg-primary/10 hover:bg-primary/50 no-underline block text-white hover:text-white" href = `/admin/sponsors/${sponsor.id}/edit`> Edit </a>
         <form method = "POST" action = {actions.sponsor.delete} class = "w-full">
             <input type = "hidden" value = {sponsor.id} name = "id"/>
-            <button type = "submit" class = "w-full text-center border-2 border-rose-400 bg-rose-900 hover:bg-rose-700 no-underline block">Delete</button>
+            <button type = "submit" class = "w-full text-center border border-rose-400 bg-rose-900/10 hover:bg-rose-900/50 no-underline block">Delete</button>
         </form>
     </div>
 </div>

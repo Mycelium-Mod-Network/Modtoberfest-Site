@@ -26,30 +26,30 @@ if (!reward) {
     return Astro.redirect("/admin/rewards?error=not_found")
 }
 ---
-<Layout title = `Edit ${reward.title}` description = "Edit ${reward.title}" canonical = `/admin/rewards/${id}/edit`>
+<Layout title = `Edit ${reward.title}` description = "Edit ${reward.title}" canonical = `/admin/rewards/${id}/edit` currentPage="admin">
     <div class = "mx-auto max-w-none">
         <PageTitle>Edit {reward.title}</PageTitle>
         <form action = {"/admin/rewards" + actions.rewards.edit} method = "post" class = "flex flex-col gap-y-2">
             <div class = "grid grid-cols-2 gap-2">
                 <input type = "hidden" value = {reward.id} name = "id"/> <label for = "title">Title: <span class = "text-red-500">*</span></label>
 
-                <input type = "text" name = "title" required id = "title" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300" value = {reward.title}>
+                <input type = "text" name = "title" required id = "title" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary" value = {reward.title}>
 
                 <label for = "summary">Summary: <span class = "text-red-500">*</span></label>
 
-                <textarea name = "summary" required id = "summary" class = "min-h-32 bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">{reward.summary}</textarea>
+                <textarea name = "summary" required id = "summary" class = "min-h-32 bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary">{reward.summary}</textarea>
 
                 <label for = "logo_url">Logo Url: <span class = "text-red-500">*</span></label>
 
-                <input type = "text" name = "logo_url" required id = "logo_url" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300" value = {reward.logo_url}>
+                <input type = "text" name = "logo_url" required id = "logo_url" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary" value = {reward.logo_url}>
 
                 <label for = "banner_url">Banner Url: <span class = "text-red-500">*</span></label>
 
-                <input type = "text" name = "banner_url" required id = "banner_url" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300" value = {reward.banner_url}>
+                <input type = "text" name = "banner_url" required id = "banner_url" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary" value = {reward.banner_url}>
 
                 <label for = "digital">Digital: <span class = "text-red-500">*</span></label>
 
-                <input type = "checkbox" name = "digital" id = "digital" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300" checked = {reward.digital}>
+                <input type = "checkbox" name = "digital" id = "digital" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary" checked = {reward.digital}>
 
                 <label for = "sponsor_id">Sponsor: <span class = "text-red-500">*</span></label>
 
@@ -61,21 +61,21 @@ if (!reward) {
                 <div class = "flex flex-col col-span-2">
                     <label for = "description">Description: <span class = "text-red-500">*</span></label>
 
-                    <textarea name = "description" required id = "description" class = "min-h-64 bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">{reward.description}</textarea>
+                    <textarea name = "description" required id = "description" class = "min-h-64 bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary">{reward.description}</textarea>
                 </div>
                 <div class = "flex flex-col col-span-2">
                     <label for = "redeem_info">How to redeem:</label>
 
-                    <textarea name = "redeem_info" id = "redeem_info" class = "min-h-64 bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">{reward.redeem_info}</textarea>
+                    <textarea name = "redeem_info" id = "redeem_info" class = "min-h-64 bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary">{reward.redeem_info}</textarea>
 
                 </div>
 
             </div>
 
-            <button type = "submit" class = "w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-green-500 bg-opacity-25">
+            <button type = "submit" class = "w-full p-1 border text-center font-semibold no-underline hover:border-orange-600 bg-green-500 bg-opacity-25">
                 Update Reward
             </button>
-            <a href = "/admin/rewards" class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-red-500 bg-opacity-25 hover:text-white"> Cancel </a>
+            <a href = "/admin/rewards" class = "block w-full p-1 border text-center font-semibold no-underline hover:border-orange-600 bg-red-500 bg-opacity-25 hover:text-white"> Cancel </a>
         </form>
 
     </div>

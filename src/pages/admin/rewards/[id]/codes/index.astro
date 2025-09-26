@@ -64,10 +64,10 @@ const codes: AdminDigitalRewardCode[] = (await prisma.digitalRewardCodes.findMan
     }
 })
 ---
-<Layout title = `${reward.title} codes` description = `${reward.title} codes` canonical = `/admin/rewards/${id}/codes`>
+<Layout title = `${reward.title} codes` description = `${reward.title} codes` canonical = `/admin/rewards/${id}/codes` currentPage="admin">
     <div class = "mx-auto max-w-none">
         <PageTitle>{reward.title} Codes ({codes.length})</PageTitle>
-        <a href = `/admin/rewards/${id}/codes/add` class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600"> Add Codes </a>
+        <a href = `/admin/rewards/${id}/codes/add` class = "block w-full p-1 border text-center font-semibold no-underline hover:border-orange-600"> Add Codes </a>
 
         <div class = "mt-4 flex gap-4 flex-col">
             {codes.map(code => <Code code={code}/>)}

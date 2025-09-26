@@ -7,11 +7,12 @@ interface Props {
     title: string;
     description: string;
     canonical: string;
-
+    currentPage?: "home" | "rules" | "sponsors" | "repositories" | "faq" | "admin";
+    wide?: boolean
 }
 
-const {title, description, canonical} = Astro.props;
-const image = "https://modtoberfest.com/logo/png/full/2024.png";
+const {title, description, canonical, currentPage, wide} = Astro.props;
+const image = "https://modtoberfest.com/logo/png/full/2025.png";
 
 const seo: SEOProps = {
     title,
@@ -57,9 +58,7 @@ const seo: SEOProps = {
     <meta name = "generator" content = {Astro.generator}/>
     <meta name = "darkreader-lock">
     <title>{title}</title>
-    <link rel = "preconnect" href = "https://fonts.googleapis.com">
-    <link rel = "preconnect" href = "https://fonts.gstatic.com" crossorigin>
-    <link href = "https://fonts.googleapis.com/css2?family=Germania+One&display=swap" rel = "preload" as="font">
+    <link rel="preload" href="/germania_one.woff2" as="font" type="font/woff2">
     <script async defer data-website-id = "d5a805fd-940e-4c3e-853a-9c5d0dd9febf" src = "https://nlytics.blmj.red/scrpt"/>
     <link rel = "apple-touch-icon" sizes = "180x180" href = "/apple-touch-icon.png?v=1"/>
     <link rel = "icon" type = "image/png" sizes = "32x32" href = "/favicon-32x32.png?v=1"/>
@@ -69,9 +68,9 @@ const seo: SEOProps = {
     <SEO {...seo}/>
 
 </head>
-<body class = "bg-brand-900 flex flex-col min-h-screen">
-<Navbar/>
-<main class = "flex-grow">
+<body class = "bg-neutral-950 flex flex-col min-h-screen">
+<Navbar currentPage={currentPage}/>
+<main class:list={[{"wide": wide}]}>
     <slot/>
 </main>
 <Footer/>

@@ -10,7 +10,7 @@ const {repository, tags} = Astro.props;
 ---
 
 
-<div class:list = {["p-4 w-full border-2 relative", {"bg-red-900 bg-opacity-25": repository.invalid}]}>
+<div class:list = {["p-4 w-full border relative bg-white/5 border-white/10", {"bg-red-900 bg-opacity-25": repository.invalid}]}>
     <div class = "flex gap-x-2">
         <img src = {repository.ownerAvatarUrl} alt = {repository.owner} class = "w-16 h-16 rounded-full"/>
         <div class = "flex flex-col gap-y-1 flex-grow">

@@ -4,7 +4,6 @@ import Layout from "@layouts/Layout.astro";
 import PageTitle from "@components/ui/PageTitle.astro";
 import prisma from "@lib/db";
 import type {PullRequest, PRGroups} from "@lib/types";
-import AdminRepositoryCard from "@components/ui/AdminRepositoryCard.astro";
 import PRGroup from "../../../components/ui/admin/PRGroup.astro";
 
 const user = Astro.locals.user;
@@ -80,7 +79,7 @@ prs.sort((a, b) => a.owner.localeCompare(b.owner)).forEach(pr => {
 })
 ---
 
-<Layout title = "Admin Pull Requests" description = "Admin Pull Requests" canonical = "/admin/pullrequests">
+<Layout title = "Admin Pull Requests" description = "Admin Pull Requests" canonical = "/admin/pullrequests" currentPage="admin">
     <div class = "mx-auto max-w-none">
         <PageTitle>Pull Requests ({prs.length})</PageTitle>
         <div class = "mt-4 flex gap-6 flex-col">

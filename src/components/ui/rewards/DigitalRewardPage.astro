@@ -2,7 +2,6 @@
 import Layout from "@layouts/Layout.astro";
 import PageTitle from "@components/ui/PageTitle.astro";
 import {createMarkdownProcessor} from "@astrojs/markdown-remark";
-import Button from "@components/ui/Button.astro";
 import {actions} from "astro:actions";
 import ActionResult from "@components/ui/ActionResult.astro";
 import type {DigitalReward} from "../../../lib/types";
@@ -32,18 +31,18 @@ const redeem_info = await markdownProcessor.render(reward.redeem_info ?? "")
             {reward.digitalRewardCode ?
                     <div class = "justify-center flex flex-col text-center rounded-xl gap-y-2 mb-2">
                         <h2>Your code is:</h2>
-                        <pre class = "p-2 bg-brand-800 rounded border border-brand-700 select-all not-prose"><code>{reward.digitalRewardCode.code}</code></pre>
+                        <pre class = "p-2 border-white/10 bg-white/5 shadow-sm border  rounded-md select-all not-prose"><code>{reward.digitalRewardCode.code}</code></pre>
                     </div> :
                     <form method = "post" action = {actions.rewards.claim_digital}>
                         <input type = "hidden" value = {reward.id} name = "id"/>
-                        <Button classes = "mb-4" submit = {true}>Claim Code</Button>
+                        <button class = "mb-4 px-4 py-2 w-full border border-white/10 rounded-md text-lg font-bold shadow-sm bg-primary text-black animate-sm-glow animate-sm-glow hover:bg-secondary hover:border-secondary transition-colors" type = "submit">Generate Code</button>
                     </form>}
 
             {reward.redeem_info &&
                     <Fragment set:html = {redeem_info.code}/>}
         </div>
         <a href = "/profile">
-            <Button animate = {false}>Back to Rewards</Button>
+            <button class = "px-4 py-2 w-full border border-primary rounded-md text-sm font-medium text-primary shadow-sm hover:bg-primary hover:text-black transition-colors">Back to Rewards</button>
         </a>
     </div>
 </Layout>

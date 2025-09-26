@@ -18,7 +18,7 @@ const username = user ? user.username : undefined
 const submitterByUser = !repo.submitter || repo.submitter === username
 ---
 
-<form class:list = {["border-2 w-full sm:w-5/12 md:w-48 flex flex-col gap-y-2 p-2 relative group transition", {"border-sky-400 hover:border-sky-600": sponsored, "border-orange-400 hover:border-orange-600": !sponsored}]} method = "post" action = {repo.submitted ? actions.repository.remove : actions.repository.submit}>
+<form class:list = {["border bg-white/5 w-full sm:w-5/12 md:w-48 flex flex-col gap-y-2 p-2 relative group transition", {"border-sky-400 hover:border-sky-600": sponsored, "border-white/10 hover:border-primary": !sponsored}]} method = "post" action = {repo.submitted ? actions.repository.remove : actions.repository.submit}>
     <input type = "hidden" value = {repo.repository_id} name = "repository_id"/>
 
     {sponsored &&
@@ -54,7 +54,7 @@ const submitterByUser = !repo.submitter || repo.submitter === username
                                     <p class = "text-xs italics">This repository has been denied because: <span class = "text-rose-400 font-mono">{repo.reason}</span></p> :
                             submitterByUser ?
                                     <button type = "submit" class = "w-full bg-rose-700 hover:bg-rose-600 text-white p-2 text-center">Remove Repository</button> :
-                                    <p>Only <span class = "text-sky-400">{repo.submitter} </span> can remove the repository.</p>
+                                    <p>Only <span class = "text-sky-400">{repo.submitter} </span> can remove this repository.</p>
                 }
 
 

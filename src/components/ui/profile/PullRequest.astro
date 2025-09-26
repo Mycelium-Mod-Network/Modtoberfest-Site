@@ -7,10 +7,10 @@ interface Props {
 const {pr} = Astro.props;
 ---
 
-<div class:list = {["p-2 border-2 flex w-64 bg-opacity-25 relative", {"bg-yellow-500": !pr.reviewed, "bg-green-500": pr.reviewed && !pr.invalid, "bg-rose-500": pr.reviewed && pr.invalid}]}>
+<div class:list = {["p-2 border-2 border-white/10 flex w-64 bg-opacity-25 relative", {"bg-yellow-500": !pr.reviewed, "bg-green-500": pr.reviewed && !pr.invalid, "bg-rose-500": pr.reviewed && pr.invalid}]}>
 
     <div class = "absolute -top-4 -left-4">
-        <img src = {pr.owner_avatar_url} alt = {pr.owner_name} class = "rounded-full w-8 h-8 border-2"/>
+        <img src = {pr.owner_avatar_url} alt = {pr.owner_name} class = "rounded-full w-8 h-8 border-2 border-white/10"/>
     </div>
     {pr.merged &&
             <Icon name = "octicon:git-merge-16" class = "absolute top-1 right-1 w-6 h-6 text-indigo-500"/>}
@@ -24,7 +24,7 @@ const {pr} = Astro.props;
 
         <a href = {pr.html_url} class = "no-underline text-orange-400 text-center" target = "_blank" rel = "noreferrer">{pr.repo_name}#{pr.number}</a>
 
-        <span class = "border-b text-sm text-brand-100">
+        <span class = "border-b border-white/10 text-sm text-brand-100">
             {new Date(pr.created_at).toLocaleString()}
         </span>
 
@@ -34,7 +34,7 @@ const {pr} = Astro.props;
         </span>
 
         {(!pr.reviewed || pr.invalid) &&
-                <div class = "mt-auto border-t flex flex-col p-2 text-sm">
+                <div class = "mt-auto border-t border-white/10 flex flex-col p-2 text-sm">
 
                     {
                         pr.reviewed ? (pr.invalid &&

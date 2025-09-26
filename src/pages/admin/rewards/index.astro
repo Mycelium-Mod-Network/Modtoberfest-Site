@@ -71,10 +71,10 @@ const rewards: RewardType[] = (await prisma.reward.findMany({
 })
 ---
 
-<Layout title = "Admin Rewards" description = "Admin Rewards" canonical = "/admin/rewards">
+<Layout title = "Admin Rewards" description = "Admin Rewards" canonical = "/admin/rewards" currentPage="admin">
     <div class = "mx-auto max-w-none">
         <PageTitle>Rewards </PageTitle>
-        <a href = "/admin/rewards/create" class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600"> Add Reward </a>
+        <a href = "/admin/rewards/create" class = "block w-full p-1 border text-center font-semibold no-underline hover:border-orange-600"> Add Reward </a>
         <div class = "mt-4 flex gap-4 flex-col">
             {rewards.map(reward => <Reward reward={reward}/>)}
         </div>

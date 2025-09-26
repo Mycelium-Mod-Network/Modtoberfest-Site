@@ -32,7 +32,7 @@ const claim = reward.physicalRewardClaim
             <img src = {reward.banner_url} alt = {reward.title}/>
             <Fragment set:html = {description.code}/>
             {reward.physicalRewardClaim &&
-                    <div class = "text-xl text-orange-200 text-center">
+                    <div class = "text-xl text-orange-200 text-center border bg-primary/10 border-primary mb-4">
                         <p>You have claimed this reward! Your claim ID is <code class = "select-all">{reward.physicalRewardClaim.id}</code></p>
                         <p>If you need to update your information, please reach out to us on <a href = "https://discord.modtoberfest.com" target = "_blank" rel = "noreferrer">Discord</a> with your claim ID</p>
                     </div>}
@@ -48,7 +48,7 @@ const claim = reward.physicalRewardClaim
             <FormInput disabled = {!!claim} value = {claim ? claim.city : undefined} name = "city" required = {true} labelText = "City"/>
             <FormInput disabled = {!!claim} value = {claim ? claim.state : undefined} name = "state" required = {true} labelText = "State"/>
             <FormInput disabled = {!!claim} value = {claim ? claim.country : undefined} name = "country" required = {true} labelText = "Country"/>
-            <FormInput disabled = {!!claim} value = {claim && claim.phoneNumber ? claim.phoneNumber : undefined} name = "phone" required = {false} labelText = "Phone number (International Format)"/>
+            <FormInput disabled = {!!claim} value = {claim && claim.phoneNumber ? claim.phoneNumber : undefined} name = "phone" required = {true} labelText = "Phone number (International Format)"/>
 
             <div class = "font-semibold text-lg text-center">
                 <p>
@@ -73,11 +73,11 @@ const claim = reward.physicalRewardClaim
                 <span id = "preview-country">{claim ? claim.country : "County"}</span>
             </div>
 
-            {!claim && <Button animate = {false} submit = {true} classes = "mt-4">Claim Reward</Button>}
+            {!claim && <button class = "px-4 py-1 w-full border border-white/10 rounded-md text-lg font-bold shadow-sm bg-primary text-black animate-sm-glow hover:bg-secondary hover:border-secondary transition-colors" type = "submit">Claim Reward</button>}
         </form>
 
         <a href = "/profile">
-            <Button animate = {false}>Back to Rewards</Button>
+            <button class = "px-4 py-2 w-full border border-primary rounded-md text-sm font-medium text-primary shadow-sm hover:bg-primary hover:text-black transition-colors">Back to Rewards</button>
         </a>
     </div>
     {!claim && <script>

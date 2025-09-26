@@ -14,7 +14,13 @@ export default {
                     700: '#353A41',
                     800: '#21262D',
                     900: '#0D1219'
+                },
+                primary: "#F28C34",
+                secondary: "#E44F09",
+                neutral: {
+                    450: "#8F8F8F"
                 }
+
             },
             fontFamily: {
                 mono: [

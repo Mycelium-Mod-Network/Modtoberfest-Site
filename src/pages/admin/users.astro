@@ -3,7 +3,7 @@ import {isUserAdmin} from "@lib/util";
 import Layout from "@layouts/Layout.astro";
 import PageTitle from "@components/ui/PageTitle.astro";
 import prisma from "@lib/db";
-import UserCard from "@components/ui/UserCard.astro";
+import UserCard from "@components/ui/admin/UserCard.astro";
 const user = Astro.locals.user;
 if (!isUserAdmin(user)) {
     return Astro.redirect("/403?url=/admin/users")
@@ -20,13 +20,15 @@ const users = await prisma.user.findMany({
 })
 ---
 
-<Layout title = "Users" description = "Users" canonical = "/admin/users">
+<Layout title = "Users" description = "Users" canonical = "/admin/users" currentPage="admin">
     <div class = "mx-auto max-w-none">
         <PageTitle>Users ({users.length})</PageTitle>
-        {users.map((user) =>
-                <>
-                    <UserCard user = {user}/>
-                </>)}
+        <div class="flex flex-col gap-2">
+            {users.map((user) =>
+                    <>
+                        <UserCard user = {user}/>
+                    </>)}
+        </div>
 
     </div>
 </Layout>

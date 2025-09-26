@@ -85,7 +85,7 @@ const tags = (await prisma.tag.findMany({
 })).map(value => value.name)
 ---
 
-<Layout title = "Tag Repositories" description = "Tag Repositories" canonical = "/admin/repositories/tag">
+<Layout title = "Tag Repositories" description = "Tag Repositories" canonical = "/admin/repositories/tag" currentPage="admin">
     <div class = "mx-auto max-w-none">
         <PageTitle>Repositories ({repos.length})</PageTitle>
         <div class = "mt-4 flex gap-4 flex-col">

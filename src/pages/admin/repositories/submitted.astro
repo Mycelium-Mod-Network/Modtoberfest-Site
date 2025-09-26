@@ -101,7 +101,7 @@ const repos = await Promise.all(dbRepos.map(async repo => {
 }))
 ---
 
-<Layout title = "Review Repositories" description = "Review Repositories" canonical = "/admin/repositories/submitted">
+<Layout title = "Review Repositories" description = "Review Repositories" canonical = "/admin/repositories/submitted" currentPage="admin">
     <div class = "mx-auto max-w-none">
         <PageTitle>Repositories ({repos.length})</PageTitle>
         <div class = "mt-4 flex gap-4 flex-col">

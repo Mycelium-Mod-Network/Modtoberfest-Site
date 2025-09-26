@@ -20,12 +20,12 @@ if (completed) {
     }
 }
 ---
-<Element class = "border-2 border-orange-400 flex flex-col mx-auto w-64 sm:w-5/12 md:w-48 text-center relative no-underline group transition" href = {completed ? `/rewards/${reward.id}` : undefined}>
+<Element class = "border-2 border-white/10  hover:border-primary/50 flex flex-col mx-auto w-64 sm:w-5/12 md:w-64 text-center relative no-underline group transition hover:text-current" href = {completed ? `/rewards/${reward.id}` : undefined}>
     <div class:list = {["font-semibold place-items-center p-1", {"bg-green-800": claimed, "bg-brand-800": !claimed}]}>
         <p>{reward.title}</p>
         <span class = "text-sm">By {reward.sponsor.name}</span>
     </div>
-    <div class:list = {"aspect-square border-t-2 border-orange-400"}>
+    <div class:list = {"aspect-square border-t-2 border-white/10"}>
         <img src = {reward.logo_url} alt = {reward.title}>
     </div>
     <div class = "relative h-5">
@@ -34,6 +34,6 @@ if (completed) {
     </div>
     <p class = "text-sm p-1 leading-tight">{reward.summary}</p>
 
-    <img src = {reward.sponsor.image_url} class = "absolute -left-4 -top-4 h-8 w-8 bg-brand-800 p-1 rounded-full border-2 border-orange-400" alt = {reward.sponsor.name}/>
-    <Icon name = `octicon:${reward.digital ? "cloud-16" : "package-16"}` class = "absolute -right-4 -top-4 h-8 w-8 bg-brand-800 p-1 rounded-full border-2 border-orange-400"/>
+    <img src = {reward.sponsor.image_url} class = "absolute -left-4 -top-4 h-8 w-8 bg-brand-800 p-1 rounded-full border-2 border-white/10" alt = {reward.sponsor.name}/>
+    <Icon name = `octicon:${reward.digital ? "cloud-16" : "package-16"}` class = "absolute -right-4 -top-4 h-8 w-8 bg-brand-800 p-1 rounded-full border-2 border-white/10"/>
 </Element>

@@ -2,7 +2,7 @@
 import Layout from "@layouts/Layout.astro";
 import PageTitle from "@components/ui/PageTitle.astro";
 import prisma from "@lib/db";
-import Sponsor from "../../components/ui/Sponsor.astro";
+import Sponsor from "@components/ui/Sponsor.astro";
 const sponsors = await prisma.sponsor.findMany({
     select: {
         id: true,
@@ -14,7 +14,7 @@ const sponsors = await prisma.sponsor.findMany({
 })
 ---
 
-<Layout title = "Sponsors" description = "Admin Dashboard" canonical = "/sponsors">
+<Layout title = "Sponsors" description = "Sponsors" canonical = "/sponsors" currentPage="sponsors">
     <div class = "mx-auto">
         <PageTitle>Sponsors</PageTitle>
         <div class="flex flex-col md:flex-row gap-8 flex-wrap justify-between w-full">

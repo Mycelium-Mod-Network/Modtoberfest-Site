@@ -16,30 +16,30 @@ const sponsors = await prisma.sponsor.findMany({
     }
 })
 ---
-<Layout title = "Add Reward" description = "Create Reward" canonical = "/admin/rewards/create">
+<Layout title = "Add Reward" description = "Create Reward" canonical = "/admin/rewards/create" currentPage="admin">
     <div class = "mx-auto max-w-none">
         <PageTitle>Add Reward</PageTitle>
         <form action = {"/admin/rewards" + actions.rewards.create} method = "post" class = "flex flex-col gap-y-2">
             <div class = "grid grid-cols-2 gap-2">
                 <label for = "title">Title: <span class = "text-red-500">*</span></label>
 
-                <input type = "text" name = "title" required id = "title" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+                <input type = "text" name = "title" required id = "title" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary">
 
                 <label for = "summary">Summary: <span class = "text-red-500">*</span></label>
 
-                <textarea name = "summary" required id = "summary" class = "min-h-16 bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300"/>
+                <textarea name = "summary" required id = "summary" class = "min-h-16 bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary"/>
 
                 <label for = "logo_url">Logo Url: <span class = "text-red-500">*</span></label>
 
-                <input type = "text" name = "logo_url" required id = "logo_url" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+                <input type = "text" name = "logo_url" required id = "logo_url" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary">
 
                 <label for = "banner_url">Banner Url: <span class = "text-red-500">*</span></label>
 
-                <input type = "text" name = "banner_url" required id = "banner_url" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+                <input type = "text" name = "banner_url" required id = "banner_url" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary">
 
                 <label for = "digital">Digital: <span class = "text-red-500">*</span></label>
 
-                <input type = "checkbox" name = "digital" id = "digital" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300">
+                <input type = "checkbox" name = "digital" id = "digital" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary">
 
                 <label for = "sponsor_id">Sponsor: <span class = "text-red-500">*</span></label>
 
@@ -51,19 +51,19 @@ const sponsors = await prisma.sponsor.findMany({
                 <div class = "flex flex-col col-span-2">
                     <label for = "description">Description: <span class = "text-red-500">*</span></label>
 
-                    <textarea name = "description" required id = "description" class = "min-h-64 bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300"/>
+                    <textarea name = "description" required id = "description" class = "min-h-64 bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary"/>
                 </div>
                 <div class = "flex flex-col col-span-2">
                     <label for = "redeem_info">How to redeem:</label>
 
-                    <textarea name = "redeem_info" id = "redeem_info" class = "min-h-64 bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300"/>
+                    <textarea name = "redeem_info" id = "redeem_info" class = "min-h-64 bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary"/>
                 </div>
             </div>
 
-            <button type = "submit" class = "w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-green-500 bg-opacity-25">
+            <button type = "submit" class = "w-full p-1 border text-center font-semibold no-underline hover:border-orange-600 bg-green-500 bg-opacity-25">
                 Add Reward
             </button>
-            <a href = "/admin/rewards" class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-red-500 bg-opacity-25 hover:text-white"> Cancel </a>
+            <a href = "/admin/rewards" class = "block w-full p-1 border text-center font-semibold no-underline hover:border-orange-600 bg-red-500 bg-opacity-25 hover:text-white"> Cancel </a>
         </form>
 
 

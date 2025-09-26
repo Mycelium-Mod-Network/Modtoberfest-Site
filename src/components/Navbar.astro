@@ -5,41 +5,48 @@ import UserButton from "./ui/UserButton.astro";
 
 const user = Astro.locals.user;
 const isAdmin = isUserAdmin(user);
+
+interface Props {
+    currentPage?: "home" | "rules" | "sponsors" | "repositories" | "faq" | "admin";
+}
+
+const {currentPage} = Astro.props;
 ---
+<header class = "backdrop-blur-md sticky w-full top-0 z-50 border border-white/10 bg-white/5">
+    <div class = "py-4 lg:py-0 lg:h-16 block lg:flex mx-auto px-8 max-w-7xl place-content-between items-center">
+        <div class = "flex gap-x-6 justify-between items-center">
+            <a href = "/" class = "font-brand text-primary text-3xl font-bold no-underline"> <span>Modtoberfest</span> </a>
 
-<header class = "py-4 px-6 bg-gradient-to-b from-brand-800 via-brand-800 to-brand-900">
-    <div class="block lg:flex lg:gap-x-6 max-w-6xl mx-auto my-auto lg:h-14">
-        <div class = "flex gap-x-6 justify-between">
-            <a href = "/" class = "my-auto"> <img src = "/logo/svg/full/2024.svg" alt = "logo" width = "88" height = "88"/> </a>
-
-                <svg id="nav-controller" class="block lg:hidden w-10 h-10 items-center text-orange-200 rounded border-2 border-orange-400 hover:text-white hover:border-white my-auto" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                </svg>
+            <svg id = "nav-controller" class = "block lg:hidden w-10 h-10 items-center text-orange-200 rounded border-2 border-primary hover:text-white hover:border-white my-auto" stroke = "currentColor" viewBox = "0 0 24 24" xmlns = "http://www.w3.org/2000/svg">
+                <path stroke-linecap = "round" stroke-linejoin = "round" stroke-width = "2" d = "M4 6h16M4 12h16M4 18h16"/>
+            </svg>
 
         </div>
-        <div class="flex-grow my-auto lg:flex flex-col lg:flex-row w-full hidden" id="nav">
-            <div class = "flex flex-col lg:flex-row gap-x-6 w-full text-center place-items-center">
-                <NavLink to = "/">Home</NavLink>
-                <NavLink to = "/rules">Rules</NavLink>
-                <NavLink to = "/sponsors">Sponsors</NavLink>
-                <NavLink to = "/repositories">Repositories</NavLink>
-                <NavLink to = "https://discord.modtoberfest.com">Discord</NavLink>
-                <NavLink to = "/faq">FAQ</NavLink>
+        <div class = "lg:flex flex-col lg:flex-row hidden nav">
+            <div class = "flex flex-col lg:flex-row w-full text-center lg:space-x-8">
+                <NavLink to = "/" current = {currentPage === "home"}>HOME</NavLink>
+                <NavLink to = "/rules" current = {currentPage === "rules"}>RULES</NavLink>
+                <NavLink to = "/sponsors" current = {currentPage === "sponsors"}>SPONSORS</NavLink>
+                <NavLink to = "/repositories" current = {currentPage === "repositories"}>REPOSITORIES</NavLink>
+                <NavLink to = "/faq" current = {currentPage === "faq"}>FAQ</NavLink>
                 {isAdmin &&
-                        <NavLink to = "/admin">Admin</NavLink>}
+                        <NavLink to = "/admin" current = {currentPage === "admin"}>ADMIN</NavLink>}
             </div>
 
-            <div class="w-full lg:w-auto flex-none">
+        </div>
+        <div class = "lg:w-auto flex-none lg:flex hidden nav">
                 <UserButton/>
-            </div>
         </div>
     </div>
     <script>
         const controller = document.getElementById('nav-controller');
-        const nav = document.getElementById("nav");
-        if (controller && nav) {
+        const navs = document.querySelectorAll(".nav");
+        if (controller && navs) {
             controller.addEventListener('click', (e) => {
-                nav.classList.toggle("hidden")
+                navs.forEach(nav => {
+                    nav.classList.toggle("hidden")
+                    nav.classList.toggle("flex");
+                })
             })
         }
     </script>

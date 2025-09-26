@@ -10,7 +10,7 @@ interface Props {
 const {pr} = Astro.props;
 ---
 
-<div class = "flex flex-col gap-y-2 border-2 border-orange-400 sm:flex-col p-2">
+<div class = "flex flex-col gap-y-2 border border-white/10 bg-white/5 sm:flex-col p-2">
 
     <div class = "flex flex-col flex-grow w-full">
 
@@ -31,7 +31,7 @@ const {pr} = Astro.props;
         <div class = "flex gap-x-2 mt-4">
             <form class = "flex flex-col gap-y-2 w-full" method="POST" action={actions.pull_request.approve}>
                 <input type="hidden" name="id" value={pr.pr_id}/>
-                <label><select class = "w-full bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300" name="reason">
+                <label><select class = "w-full bg-transparent focus:bg-black focus:bg-opacity-10 border border-primary" name="reason">
                     <option class="text-black">Bugfix</option>
                     <option class="text-black">Optimization</option>
                     <option class="text-black">Documentation</option>
@@ -40,12 +40,12 @@ const {pr} = Astro.props;
                     <option class="text-black">Port</option>
                     <option class="text-black">Other</option>
                 </select></label>
-                <button type = "submit" class = "w-full text-center border-2 border-rose-400 bg-green-900 hover:bg-green-700 no-underline block">Approve</button>
+                <button type = "submit" class = "w-full text-center border border-green-400 bg-green-900 hover:bg-green-700 no-underline block">Approve</button>
             </form>
             <form class = "flex flex-col gap-y-2 w-full" method="POST" action={actions.pull_request.deny}>
                 <input type="hidden" name="id" value={pr.pr_id}/>
                 <label>
-                    <select class = "w-full bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300" name="reason">
+                    <select class = "w-full bg-transparent focus:bg-black focus:bg-opacity-10 border border-primary" name="reason">
                         <option class = "text-black">Quality Control: Pull requests that have been scripted or automated.</option>
                         <option class = "text-black">Quality Control: Pull requests that focus on minor changes such as whitespace, indenting, typos, and optimizing assets and images.</option>
                         <option class = "text-black">Quality Control: Incomplete/Self-closed PR</option>
@@ -55,7 +55,7 @@ const {pr} = Astro.props;
                         <option class="text-black">Pull requests for your own projects or projects you maintain will not count towards your progress in the challenge.</option>
                     </select>
                 </label>
-                <button type = "submit" class = "w-full text-center border-2 border-rose-400 bg-rose-900 hover:bg-rose-700 no-underline block">Deny</button>
+                <button type = "submit" class = "w-full text-center border border-rose-400 bg-rose-900 hover:bg-rose-700 no-underline block">Deny</button>
             </form>
         </div>
     </div>

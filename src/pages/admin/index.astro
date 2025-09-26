@@ -2,7 +2,7 @@
 import {isUserAdmin} from "@lib/util";
 import Layout from "@layouts/Layout.astro";
 import PageTitle from "@components/ui/PageTitle.astro";
-import AdminCard from "@components/ui/AdminCard.astro";
+import AdminCard from "@components/ui/admin/AdminCard.astro";
 import {Icon} from 'astro-icon/components'
 const user = Astro.locals.user;
 if (!isUserAdmin(user)) {
@@ -10,7 +10,7 @@ if (!isUserAdmin(user)) {
 }
 ---
 
-<Layout title = "Admin dashboard" description = "Admin Dashboard" canonical = "/admin">
+<Layout title = "Admin dashboard" description = "Admin Dashboard" canonical = "/admin" currentPage="admin">
     <div class = "mx-auto max-w-none">
         <PageTitle>Admin Pages</PageTitle>
 

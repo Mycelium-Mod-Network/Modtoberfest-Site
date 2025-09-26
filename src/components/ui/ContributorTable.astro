@@ -9,7 +9,7 @@ const { contributors } = Astro.props;
     {contributors.map((contributor, index) => {
         const iconColor = index === 0 ? 'text-yellow-500' : index === 1 ? 'text-gray-400' : 'text-yellow-700';
         return (
-                <div class="flex items-center p-4 rounded-lg shadow-md bg-[#27323b]">
+                <div class="flex items-center p-4 rounded-lg shadow-md bg-white/5 border border-white/10">
                     <div class="relative mr-4">
                         <img src={`https://github.com/${contributor.author}.png`} alt={contributor.author} class="w-16 h-16 rounded-full"/>
                         {index < 3 && (

@@ -1,12 +1,31 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import prisma from "@lib/db";
+import prisma from "../../lib/db";
 import Repository from "@components/ui/repositories/Repository.astro";
 import type {DisplayRepository} from "@lib/types";
 import {shuffleArray} from "../../lib/util";
 
-
 let sponsoredCount = 0;
+
+const now = new Date();
+
+const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+const DATE_FILTERS = [
+    {display: "90 Days", id: "90d", date: now.getTime() - MILLISECONDS_PER_DAY * 90},
+    {display: "180 Days", id: "180d", date: now.getTime() - MILLISECONDS_PER_DAY * 180},
+    {display: "1 Year", id: "1y", date: now.getTime() - MILLISECONDS_PER_DAY * 365},
+    {display: "2 Years", id: "2y", date: now.getTime() - MILLISECONDS_PER_DAY * 730}];
+const url = Astro.url;
+
+const selectedDate = url.searchParams.get("updated_within")
+const selectedDateObj = new Date(DATE_FILTERS.find(x => x.id === selectedDate)?.date ?? 0);
+const selectedTag = url.searchParams.get("tag")
+const tags = (await prisma.tag.findMany({
+    select: {
+        name: true
+    }
+})).map(tag => tag.name);
+tags.sort()
 const dbRepos: DisplayRepository[] = (await prisma.repository.findMany({
     select: {
         repository_id: true,
@@ -38,6 +57,16 @@ const dbRepos: DisplayRepository[] = (await prisma.repository.findMany({
         tags: true
     },
     where: {
+        tags: {
+            some: {
+                tag_name: selectedTag ?? undefined
+            }
+        },
+        cache: {
+            updatedAt: {
+                gt: selectedDateObj
+            }
+        },
         RepositoryStatus: {
             reviewed: true,
             invalid: false
@@ -73,21 +102,45 @@ const dbRepos: DisplayRepository[] = (await prisma.repository.findMany({
 
 shuffleArray(dbRepos)
 const repos = dbRepos.reduce<DisplayRepository[]>((acc, cur) => {
-    if(cur.sponsor && sponsoredCount++ < 8) {
+    if (cur.sponsor && sponsoredCount++ < 8) {
         return [cur, ...acc]
     }
     return [...acc, cur]
 }, [])
 const user = Astro.locals.user;
 ---
-
-<Layout title = "Repositories" description = "Repositories" canonical = "/repositories">
+<Layout title = "Repositories" description = "Repositories" canonical = "/repositories" currentPage = "repositories" wide = {true}>
     <div class = "mx-auto">
         <h1 class:list = {["text-white text-3xl font-semibold font-brand border-b-2 tracking-wide mb-4 pb-4 font-brand", {"flex justify-between": user}]}>
             <span>Repositories</span>
 
-            {user && <a href = "/repositories/submit" class = "text-orange-400 no-underline"> Submit</a>}
+            {user && <a href = "/repositories/submit" class = "no-underline">
+                <button class = "px-4 border border-primary rounded-md text-lg font-bold shadow-sm bg-primary text-black animate-sm-glow hover:bg-secondary hover:border-secondary  transition-colors">Submit</button>
+            </a>}
         </h1>
+        <div class = "flex flex-col sm:flex-row gap-4">
+
+            <div class = "flex gap-x-2">
+                <label for = "tags">Tags:</label>
+
+                <select id = "tags" name = "tags" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary w-full sm:w-auto">
+                    <option label = ""></option>
+                    {tags.map((tag) =>
+                            <option value = {tag} class = "text-black" selected = {selectedTag === tag}>{tag}</option>
+                    )}
+                </select>
+            </div>
+
+            <div class = "flex gap-x-2">
+                <label for = "updated_within" class="flex-none">Updated Within:</label>
+
+                <select id = "updated_within" name = "updated_within" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary w-full sm:w-auto">
+                    <option label = ""></option>
+                    {DATE_FILTERS.map(date =>
+                            <option value = {date.id} class = "text-black" selected = {selectedDate === date.id}>{date.display}</option>)}
+                </select>
+            </div>
+        </div>
         <div class = "flex flex-col sm:flex-row gap-8 flex-wrap mt-6 w-full justify-between">
             {repos.map((repo) =>
                     <>
@@ -96,4 +149,33 @@ const user = Astro.locals.user;
         </div>
 
     </div>
+
+    <script>
+        const tags = document.getElementById("tags")!;
+        const updatedWithin = document.getElementById("updated_within")!;
+        const url = new URL(window.location);
+        tags.addEventListener("change", async (e) => {
+            e.preventDefault();
+            const select = e.target as HTMLSelectElement
+
+            if (select.value) {
+                url.searchParams.set("tag", select.value);
+            } else {
+                url.searchParams.delete("tag");
+            }
+            window.location = url;
+        })
+
+        updatedWithin.addEventListener("change", async (e) => {
+            e.preventDefault();
+            const select = e.target as HTMLSelectElement
+
+            if (select.value) {
+                url.searchParams.set("updated_within", select.value);
+            } else {
+                url.searchParams.delete("updated_within");
+            }
+            window.location = url;
+        })
+    </script>
 </Layout>

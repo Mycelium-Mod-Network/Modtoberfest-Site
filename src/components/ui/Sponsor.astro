@@ -21,8 +21,8 @@ sponsor.links.forEach(value => {
 })
 ---
 
-<div class = "border-2 p-4 flex flex-col md:w-48 lg:w-64 gap-y-2">
-    <div class = "mx-auto hover:scale-110 transition-transform">
+<div class = "border border-white/10 hover:bg-primary/10 hover:border-primary/50 p-4 flex flex-col md:w-48 lg:w-64 gap-y-2 rounded-xl transition-colors hover:shadow-lg hover:shadow-primary/10">
+    <div class = "mx-auto">
         <img src = {sponsor.image_url} alt = {sponsor.name} class = "w-32 h-32"/>
     </div>
     <p class = "text-center text-xl font-semibold">{sponsor.name}</p>
@@ -30,7 +30,7 @@ sponsor.links.forEach(value => {
 
     <div class = "flex flex-wrap gap-1">
         {Object.keys(links).map(link => {
-            return <a href = {links[link]}  target = "_blank" rel="noreferrer" class="p-1.5 mx-auto rounded-full">
+            return <a href = {links[link]}  target = "_blank" rel="noreferrer" class="p-1.5 mx-auto rounded-lg transition-colors hover:bg-secondary/15">
                 <Icon name = `pajamas:${link}` class = "w-6 h-6"/>
             </a>
         })}

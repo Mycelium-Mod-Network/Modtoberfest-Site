@@ -43,7 +43,7 @@ const rewards: Omit<PhysicalRewardClaim, "reward_id" | "claimer_github_id">[] = 
 })).map(replaceCommasWithDots)
 ---
 
-<Layout title = "Customs" description = "Customs" canonical = "/admin/customs">
+<Layout title = "Customs" description = "Customs" canonical = "/admin/customs" currentPage="admin">
     <div class = "mx-auto max-w-none">
         <PageTitle>Customs ({rewards.length})</PageTitle>
             <div class="grid grid-cols-2 gap-2 mb-4 pb-4 border-b-2">

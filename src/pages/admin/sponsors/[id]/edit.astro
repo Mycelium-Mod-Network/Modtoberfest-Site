@@ -28,32 +28,32 @@ const github = sponsor.links.find(value => value.name === "github") || {value: "
 const discord = sponsor.links.find(value => value.name === "discord") || {value: ""}
 const twitter = sponsor.links.find(value => value.name === "twitter") || {value: ""}
 ---
-<Layout title = `Edit ${sponsor.name}` description = `Edit ${sponsor.name}` canonical = `/admin/sponsors/${sponsor.id}/edit`>
+<Layout title = `Edit ${sponsor.name}` description = `Edit ${sponsor.name}` canonical = `/admin/sponsors/${sponsor.id}/edit` currentPage="admin">
     <div class = "mx-auto max-w-none">
         <PageTitle>Edit {sponsor.name}</PageTitle>
         <form action = {"/admin/sponsors" + actions.sponsor.edit} method = "post" class = "flex flex-col gap-y-2">
             <div class = "grid grid-cols-2 gap-2">
                 <input type="hidden" value={sponsor.id} name="id"/>
                 <label for = "name">Name: <span class = "text-red-500">*</span></label>
-                <input type = "text" name = "name" required id = "name" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300" value = {sponsor.name}>
+                <input type = "text" name = "name" required id = "name" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary" value = {sponsor.name}>
 
-                <label for = "summary">Summary: <span class = "text-red-500">*</span></label> <textarea name = "summary" required id = "summary" class = "min-h-16 bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300" >{sponsor.summary}</textarea>
+                <label for = "summary">Summary: <span class = "text-red-500">*</span></label> <textarea name = "summary" required id = "summary" class = "min-h-16 bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary" >{sponsor.summary}</textarea>
 
-                <label for = "image_url">Image Url: <span class = "text-red-500">*</span></label> <input type = "text" name = "image_url" required id = "image_url" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300" value = {sponsor.image_url}>
+                <label for = "image_url">Image Url: <span class = "text-red-500">*</span></label> <input type = "text" name = "image_url" required id = "image_url" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary" value = {sponsor.image_url}>
 
-                <label for = "website">Website:</label> <input type = "text" name = "website" id = "website" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300" value = {website.value}/>
+                <label for = "website">Website:</label> <input type = "text" name = "website" id = "website" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary" value = {website.value}/>
 
-                <label for = "github">Github:</label> <input type = "text" name = "github" id = "github" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300" value = {github.value}>
+                <label for = "github">Github:</label> <input type = "text" name = "github" id = "github" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary" value = {github.value}>
 
-                <label for = "discord">Discord:</label> <input type = "text" name = "discord" id = "discord" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300" value = {discord.value}>
+                <label for = "discord">Discord:</label> <input type = "text" name = "discord" id = "discord" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary" value = {discord.value}>
 
-                <label for = "twitter">Twitter:</label> <input type = "text" name = "twitter" id = "twitter" class = "bg-transparent focus:bg-black focus:bg-opacity-10 outline focus:outline-2 outline-orange-400 focus:outline-orange-300" value = {twitter.value}>
+                <label for = "twitter">Twitter:</label> <input type = "text" name = "twitter" id = "twitter" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary" value = {twitter.value}>
             </div>
 
-            <button type = "submit" class = "w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-green-500 bg-opacity-25">
+            <button type = "submit" class = "w-full p-1 border text-center font-semibold no-underline hover:border-orange-600 bg-green-500 bg-opacity-25">
                 Edit sponsor
             </button>
-            <a href = "/admin/sponsors" class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600 bg-red-500 bg-opacity-25 hover:text-white"> Cancel </a>
+            <a href = "/admin/sponsors" class = "block w-full p-1 border text-center font-semibold no-underline hover:border-orange-600 bg-red-500 bg-opacity-25 hover:text-white"> Cancel </a>
         </form>
 
 

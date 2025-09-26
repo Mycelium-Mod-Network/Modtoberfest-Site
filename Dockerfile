@@ -77,6 +77,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/schema.prisma ./schema.prisma
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/migrations ./migrations
 
 # You may also need to copy the Prisma engine binary.
 # The `prisma generate` command should handle this automatically by placing it in the correct path.

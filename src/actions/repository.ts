@@ -374,5 +374,81 @@ export const repository = {
 
             return `Ok`
         }
+    }),
+    sponsor: defineAction({
+        accept: 'form',
+        input: z.object({
+            repository_id: z.string(),
+            sponsor_id: z.string()
+        }),
+        handler: async (input, context) => {
+            const user = context.locals.user;
+            if (!user) {
+                throw new ActionError({
+                    code: "UNAUTHORIZED",
+                    message: "Not logged in",
+                });
+            }
+
+            const {repository_id, sponsor_id} = input;
+
+            const exists = await prisma.repository.count({
+                where: {
+                    repository_id: repository_id
+                }
+            })
+            if (!exists) {
+                throw new ActionError({
+                    code: "BAD_REQUEST",
+                    message: "Repository does not exist!",
+                });
+            }
+
+            await prisma.sponsoredRepository.create({
+                data: {
+                    repository_id,
+                    sponsor_id
+                }
+            })
+
+            return `Ok`
+        }
+    }),
+    unsponsor: defineAction({
+        accept: 'form',
+        input: z.object({
+            repository_id: z.string()
+        }),
+        handler: async (input, context) => {
+            const user = context.locals.user;
+            if (!user) {
+                throw new ActionError({
+                    code: "UNAUTHORIZED",
+                    message: "Not logged in",
+                });
+            }
+
+            const {repository_id} = input;
+
+            const exists = await prisma.repository.count({
+                where: {
+                    repository_id: repository_id
+                }
+            })
+            if (!exists) {
+                throw new ActionError({
+                    code: "BAD_REQUEST",
+                    message: "Repository does not exist!",
+                });
+            }
+
+            await prisma.sponsoredRepository.delete({
+                where: {
+                    repository_id
+                }
+            })
+
+            return `Ok`
+        }
     })
 }

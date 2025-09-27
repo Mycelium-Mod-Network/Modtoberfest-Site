@@ -8,6 +8,8 @@ import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
 import type {SimpleUser, AdminRepository} from "@lib/types";
 import type {Repository as GHRepo} from "@octokit/webhooks-types";
 import AdminRepositoryCard from "@components/ui/admin/AdminRepositoryCard.astro";
+import {actions} from "astro:actions";
+import ActionResult from "@components/ui/ActionResult.astro";
 
 const user = Astro.locals.user;
 if (!isUserAdmin(user)) {
@@ -65,6 +67,13 @@ const dbRepos = (await prisma.repository.findMany({
     return undefined;
 }))
 
+
+const sponsors = await prisma.sponsor.findMany({
+    select: {
+        id: true,
+        name: true
+    }
+})
 if(!dbRepos) {
     return;
 }
@@ -138,12 +147,13 @@ const repos = await Promise.all(dbRepos.map<Promise<AdminRepository>>(async repo
 ---
 
 <Layout title = "Admin Repositories" description = "Admin Repositories" canonical = "/admin/repositories" currentPage="admin">
+    <ActionResult action = {actions.rewards.claim_digital}/>
     <div class = "mx-auto max-w-none">
         <PageTitle>Repositories ({repos.length})</PageTitle>
         <a href = "/admin/repositories/create" class = "block w-full p-1 border-2 text-center font-semibold no-underline hover:border-orange-600"> Add Repo </a>
         <div class = "mt-4 flex gap-6 flex-col">
             {repos.map(repo =>
-                    <AdminRepositoryCard repository = {repo}/>)}
+                    <AdminRepositoryCard repository = {repo} sponsors={sponsors}/>)}
         </div>
 
     </div>

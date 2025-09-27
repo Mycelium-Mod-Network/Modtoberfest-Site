@@ -1,11 +1,12 @@
 ---
-import type {AdminRepository} from "../../../lib/types";
+import type {AdminRepository, SimpleSponsor, Sponsor} from "../../../lib/types";
 import {actions} from "astro:actions";
 import TagBadge from "../TagBadge.astro";
 interface Props {
-    repository: AdminRepository
+    repository: AdminRepository,
+    sponsors: Sponsor[]
 }
-const {repository} = Astro.props;
+const {repository, sponsors} = Astro.props;
 ---
 
 <div class:list = {["p-4 w-full border border-white/10 bg-white/5 relative", {"bg-red-900 bg-opacity-25": repository.invalid}]}>
@@ -69,6 +70,20 @@ const {repository} = Astro.props;
                     <input type = "hidden" value = {repository.repository_id} name = "id"/>
                     <button type = "submit" class = "w-full text-center border border-rose-400 bg-rose-900 hover:bg-rose-700 no-underline block">Delete</button>
                 </form>
+            </div>
+            <div class = "flex gap-x-2">
+                {repository.sponsor ? <form method = "POST" action = {actions.repository.unsponsor} class = "w-full flex gap-x-2">
+                    <input type = "hidden" value = {repository.repository_id} name = "repository_id"/>
+                    <button type = "submit" class = "w-full text-center border border-primary bg-primary/10 hover:bg-primary hover:text-black no-underline block">Unsponsor</button>
+                </form>  : <form method = "POST" action = {actions.repository.sponsor} class = "w-full flex gap-x-2">
+                    <input type = "hidden" value = {repository.repository_id} name = "repository_id"/>
+                    <select name="sponsor_id" id="sponsor_id" class="bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary w-full">
+                        <option label=""></option>
+                        {sponsors.sort((a, b) => a.name.localeCompare(b.name)).map(sponsor => <><option value={sponsor.id} class="text-black">{sponsor.name}</option> </>)}
+                    </select>
+                    <button type = "submit" class = "w-full text-center border border-primary bg-primary/10 hover:bg-primary hover:text-black no-underline block">Sponsor</button>
+                </form> }
+
             </div>
         </div>
     </div>

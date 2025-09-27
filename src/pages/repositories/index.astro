@@ -26,6 +26,12 @@ const tags = (await prisma.tag.findMany({
     }
 })).map(tag => tag.name);
 tags.sort()
+
+const tagsFilter = selectedTag ? {
+    some: {
+        tag_name: selectedTag ?? undefined
+    }
+} : undefined;
 const dbRepos: DisplayRepository[] = (await prisma.repository.findMany({
     select: {
         repository_id: true,
@@ -57,11 +63,7 @@ const dbRepos: DisplayRepository[] = (await prisma.repository.findMany({
         tags: true
     },
     where: {
-        tags: {
-            some: {
-                tag_name: selectedTag ?? undefined
-            }
-        },
+        tags: tagsFilter,
         cache: {
             updatedAt: {
                 gt: selectedDateObj
@@ -99,7 +101,7 @@ const dbRepos: DisplayRepository[] = (await prisma.repository.findMany({
     }
     return repos;
 }, [])
-
+console.log(dbRepos.length);
 shuffleArray(dbRepos)
 const repos = dbRepos.reduce<DisplayRepository[]>((acc, cur) => {
     if (cur.sponsor && sponsoredCount++ < 8) {

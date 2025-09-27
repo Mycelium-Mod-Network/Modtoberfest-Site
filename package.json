@@ -20,6 +20,7 @@
     "@digichanges/solid-multiselect": "^0.0.10",
     "@iconify-json/arcticons": "^1.2.1",
     "@iconify-json/mdi": "^1.2.0",
+    "@iconify-json/bi": "^1.2.6",
     "@iconify-json/octicon": "^1.2.0",
     "@iconify-json/pajamas": "^1.2.2",
     "@lucia-auth/adapter-prisma": "^4.0.1",

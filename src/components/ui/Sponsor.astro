@@ -31,7 +31,7 @@ sponsor.links.forEach(value => {
     <div class = "flex flex-wrap gap-1">
         {Object.keys(links).map(link => {
             return <a href = {links[link]}  target = "_blank" rel="noreferrer" class="p-1.5 mx-auto rounded-lg transition-colors hover:bg-secondary/15">
-                <Icon name = {link !== "bluesky" ? `pajamas:${link}` : `arcticons:bluesky`} class = "w-6 h-6"/>
+                <Icon name = {link !== "bluesky" ? `pajamas:${link}` : `bi:bluesky`} class = "w-6 h-6"/>
             </a>
         })}
     </div>

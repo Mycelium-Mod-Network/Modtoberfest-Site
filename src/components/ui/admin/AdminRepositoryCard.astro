@@ -4,7 +4,7 @@ import {actions} from "astro:actions";
 import TagBadge from "../TagBadge.astro";
 interface Props {
     repository: AdminRepository,
-    sponsors: Sponsor[]
+    sponsors: { id:string, name:string }[]
 }
 const {repository, sponsors} = Astro.props;
 ---

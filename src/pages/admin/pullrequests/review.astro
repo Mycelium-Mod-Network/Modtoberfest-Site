@@ -3,7 +3,7 @@ import {isUserAdmin} from "@lib/util";
 import Layout from "@layouts/Layout.astro";
 import PageTitle from "@components/ui/PageTitle.astro";
 import prisma from "@lib/db";
-import type {PullRequest, PRGroups} from "@lib/types";
+import type {PullRequest, PRGroups} from "../../../lib/types";
 import PRReviewGroup from "../../../components/ui/admin/PRReviewGroup.astro";
 
 const user = Astro.locals.user;
@@ -35,6 +35,7 @@ const prs: PullRequest[] = (await prisma.pullRequest.findMany({
         }
     },
     where: {
+        draft: false,
         PullRequestStatus: {
             reviewed: false
         }

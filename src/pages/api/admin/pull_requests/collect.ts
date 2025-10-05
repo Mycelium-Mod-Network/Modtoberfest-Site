@@ -20,7 +20,8 @@ function getRepoData(data: PullRequest) {
         "owner": data.base.user.login,
         "owner_id": data.base.user.id.toString(),
         "owner_avatar_url": data.base.user.avatar_url,
-        "merged": !!(data.merged_at ?? false)
+        "merged": !!(data.merged_at ?? false),
+        "draft": data.draft
     };
 }
 

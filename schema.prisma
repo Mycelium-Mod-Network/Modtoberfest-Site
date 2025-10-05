@@ -4,7 +4,7 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
@@ -119,7 +119,7 @@ model RepositoryCache {
 
 model PullRequest {
   id                String             @id @default(cuid())
-  pr_id             BigInt                @unique
+  pr_id             BigInt             @unique
   html_url          String
   number            Int
   state             String
@@ -132,6 +132,7 @@ model PullRequest {
   owner_avatar_url  String             @db.Text
   repository_id     String
   merged            Boolean
+  draft             Boolean            @default(false)
   PullRequestStatus PullRequestStatus?
   Repository        Repository         @relation(fields: [repository_id], references: [repository_id], onDelete: Cascade)
 
@@ -140,7 +141,7 @@ model PullRequest {
 
 model PullRequestStatus {
   id          String      @id @default(cuid())
-  pr_id       BigInt         @unique
+  pr_id       BigInt      @unique
   invalid     Boolean
   reason      String?     @db.Text
   reviewed    Boolean     @default(false)
@@ -172,16 +173,16 @@ model TaggedRepository {
 }
 
 model Reward {
-  id          String  @id @default(cuid())
-  title       String  @db.Text
-  summary     String  @db.LongText
-  description String  @db.LongText
-  redeem_info String?  @db.LongText
-  logo_url    String  @db.Text
-  banner_url  String  @db.Text
-  digital     Boolean
-  sponsor_id  String
-  required_prs Int @default(4)
+  id           String  @id @default(cuid())
+  title        String  @db.Text
+  summary      String  @db.LongText
+  description  String  @db.LongText
+  redeem_info  String? @db.LongText
+  logo_url     String  @db.Text
+  banner_url   String  @db.Text
+  digital      Boolean
+  sponsor_id   String
+  required_prs Int     @default(4)
 
   sponsor             Sponsor               @relation(fields: [sponsor_id], references: [id], onDelete: Cascade)
   DigitalRewardCodes  DigitalRewardCodes[]
@@ -189,10 +190,10 @@ model Reward {
 }
 
 model DigitalRewardCodes {
-  id          String               @id @default(cuid())
+  id          String              @id @default(cuid())
   reward_id   String
-  code        String               @db.LongText
-  reward      Reward               @relation(fields: [reward_id], references: [id], onDelete: Cascade)
+  code        String              @db.LongText
+  reward      Reward              @relation(fields: [reward_id], references: [id], onDelete: Cascade)
   ClaimedCode DigitalRewardClaim?
 }
 
@@ -207,18 +208,18 @@ model DigitalRewardClaim {
 }
 
 model PhysicalRewardClaim {
-  id         String  @id @default(cuid())
-  reward_id  String
-  claimer_id String
-  firstName  String
-  lastName   String
-  address1   String
-  address2   String?
-  city       String
-  zip        String
-  state      String
-  country    String
-  email      String
+  id          String  @id @default(cuid())
+  reward_id   String
+  claimer_id  String
+  firstName   String
+  lastName    String
+  address1    String
+  address2    String?
+  city        String
+  zip         String
+  state       String
+  country     String
+  email       String
   phoneNumber String?
 
   reward  Reward @relation(fields: [reward_id], references: [id], onDelete: Cascade)

@@ -87,6 +87,7 @@ export interface PullRequest {
     invalid?: boolean | null;
     reason?: string | null;
     reviewedBy?: SimpleUser | null
+    draft?: boolean;
 }
 
 export interface PRGroups {

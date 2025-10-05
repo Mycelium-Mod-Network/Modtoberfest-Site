@@ -2,8 +2,8 @@
 import PageTitle from "@components/ui/PageTitle.astro";
 import Layout from "@layouts/Layout.astro";
 import prisma from "@lib/db";
-import PullRequest from "@components/ui/profile/PullRequest.astro"
-import type { PullRequest as PR, Reward as RewardType} from "@lib/types";
+import PullRequest from "../../components/ui/profile/PullRequest.astro"
+import type { PullRequest as PR, Reward as RewardType} from "../../lib/types";
 import Reward from "../../components/ui/rewards/Reward.astro";
 
 const user = Astro.locals.user;
@@ -84,6 +84,7 @@ const prs: PR[] = (await prisma.pullRequest.findMany({
         title: true,
         state: true,
         owner: true,
+        draft: true,
         PullRequestStatus: {
             select: {
                 invalid: true,
@@ -119,7 +120,8 @@ const prs: PR[] = (await prisma.pullRequest.findMany({
         state: pr.state,
         reviewed: pr.PullRequestStatus?.reviewed || false,
         invalid: pr.PullRequestStatus?.invalid || false,
-        reason: pr.PullRequestStatus?.reason || undefined
+        reason: pr.PullRequestStatus?.reason || undefined,
+        draft: pr.draft
     }
 })
 

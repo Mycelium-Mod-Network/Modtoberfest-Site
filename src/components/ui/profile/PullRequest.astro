@@ -21,7 +21,6 @@ const {pr} = Astro.props;
 
         </a>
 
-
         <a href = {pr.html_url} class = "no-underline text-orange-400 text-center" target = "_blank" rel = "noreferrer">{pr.repo_name}#{pr.number}</a>
 
         <span class = "border-b border-white/10 text-sm text-brand-100">
@@ -42,7 +41,7 @@ const {pr} = Astro.props;
                                     <p>We have determined that this PR is not eligible, if you think this is a mistake, please reach out on discord:</p>
                                     <p class = "font-mono">{pr.reason}</p>
                                 </>
-                        ) : <p>This PR is awaiting manual review</p>
+                        ) : pr.draft ? <p>Draft PRs do not count towards the event.</p> : <p>This PR is awaiting manual review</p>
                     }
 
                 </div>}

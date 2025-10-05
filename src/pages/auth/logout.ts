@@ -10,8 +10,7 @@ export async function POST(context: APIContext): Promise<Response> {
     }
 
     await lucia.invalidateSession(context.locals.session.id);
-
     const sessionCookie = lucia.createBlankSessionCookie();
     context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-    return Response.redirect(import.meta.env.PROD ? "https://modtoberfest.com" : "http://localhost:4321");
+    return context.redirect(import.meta.env.PROD ? "https://modtoberfest.com" : "http://localhost:4321");
 }

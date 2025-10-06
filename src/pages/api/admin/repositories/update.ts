@@ -2,7 +2,7 @@ import type {Repository as GHRepo} from "@octokit/webhooks-types";
 import type {APIContext} from "astro";
 import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
 import {Octokit} from "octokit";
-import prisma from "@lib/db.ts";
+import prisma from "../../../../lib/db.ts";
 
 export async function POST({request}: APIContext) {
 
@@ -84,7 +84,7 @@ export async function POST({request}: APIContext) {
                             description: repoData.description,
                             stars: repoData.stargazers_count,
                             openIssues: repoData.open_issues_count,
-                            updatedAt: repoData.updated_at,
+                            updatedAt: repoData.pushed_at as string,
                             license: repoData.license ? repoData.license.name : undefined,
                             language: repoData.language ? {
                                 connect: {
@@ -101,7 +101,7 @@ export async function POST({request}: APIContext) {
                             description: repoData.description,
                             stars: repoData.stargazers_count,
                             openIssues: repoData.open_issues_count,
-                            updatedAt: repoData.updated_at,
+                            updatedAt: repoData.pushed_at as string,
                             language: repoData.language ? {
                                 connect: {
                                     name: repoData.language ?? ""

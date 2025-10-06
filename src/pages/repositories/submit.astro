@@ -90,7 +90,7 @@ const allRepos = (await octokit.paginate("GET /user/repos", {
             description: repo.description,
             stars: repo.stargazers_count,
             openIssues: repo.open_issues_count,
-            updatedAt: repo.updated_at ? new Date(repo.updated_at).getTime() : 0,
+            updatedAt: repo.pushed_at ? new Date(repo.pushed_at).getTime() : 0,
             language: languages[repo.language ?? ""],
             license: (repo.license ?? {name: null}).name,
             submitted: id in existing,

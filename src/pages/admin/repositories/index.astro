@@ -22,7 +22,6 @@ const octokit = new Octokit({
         clientSecret: import.meta.env.GITHUB_SECRET
     }
 });
-
 const dbRepos = (await prisma.repository.findMany({
     select: {
         id: true,
@@ -98,7 +97,7 @@ const repos = await Promise.all(dbRepos.map<Promise<AdminRepository>>(async repo
             id: repo.id,
             // Language requires more database lookups, it will be inserted when repos are updated later
             languageName: null,
-            updatedAt: new Date(repoData.updated_at),
+            updatedAt: new Date(repoData.pushed_at!),
             license: (repoData.license ?? {name: null}).name
         }
     }

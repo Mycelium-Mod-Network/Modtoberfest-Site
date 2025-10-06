@@ -253,7 +253,7 @@ export const repository = {
                                 }
                             } : undefined,
                             license: foundRepo.license ? foundRepo.license.name : undefined,
-                            updatedAt: foundRepo.updated_at ? new Date(foundRepo.updated_at) : undefined,
+                            updatedAt: foundRepo.pushed_at ? new Date(foundRepo.pushed_at) : undefined,
                         }
                     },
                     tags: {

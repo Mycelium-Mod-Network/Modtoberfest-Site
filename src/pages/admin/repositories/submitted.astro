@@ -65,7 +65,7 @@ const repos = await Promise.all(dbRepos.map(async repo => {
             openIssues: repoData.open_issues_count,
             repository_id: repo.repository_id,
             id: repo.id,
-            updatedAt: new Date(repoData.updated_at),
+            updatedAt: new Date(repoData.pushed_at!),
             license: (repoData.license ?? {name: null}).name,
             // Language requires more database lookups, it will be inserted when repos are updated later
             languageName: null

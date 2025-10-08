@@ -8,10 +8,11 @@ interface Props {
     description: string;
     canonical: string;
     currentPage?: "home" | "rules" | "sponsors" | "repositories" | "faq" | "admin";
-    wide?: boolean
+    wide?: boolean;
+    multiselect?: boolean;
 }
 
-const {title, description, canonical, currentPage, wide} = Astro.props;
+const {title, description, canonical, currentPage, wide, multiselect} = Astro.props;
 const image = "https://modtoberfest.com/logo/png/full/2025.png";
 
 const seo: SEOProps = {
@@ -65,6 +66,10 @@ const seo: SEOProps = {
     <link rel = "icon" type = "image/png" sizes = "16x16" href = "/favicon-16x16.png?v=1"/>
     <link rel = "manifest" href = "/site.webmanifest"/>
     <link rel="icon" type="image/x-icon" href="/favicon.ico?v=1">
+    {multiselect && <>
+        <link href="/styles/multiselect.css" rel="stylesheet" type="text/css">
+        <script src="../lib/multiselect.js" />
+    </>}
     <SEO {...seo}/>
 
 </head>

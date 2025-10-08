@@ -167,7 +167,7 @@ export const repository = {
         }
     }),
     submit: defineAction({
-        accept: 'form',
+        accept: 'json',
         input: z.object({
             repository_id: z.string(),
             tags: z.string().array()
@@ -270,7 +270,7 @@ export const repository = {
         }
     }),
     remove: defineAction({
-        accept: 'form',
+        accept: 'json',
         input: z.object({
             repository_id: z.string()
         }),

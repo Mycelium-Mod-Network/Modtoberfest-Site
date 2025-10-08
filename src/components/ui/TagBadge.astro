@@ -5,14 +5,16 @@ interface Props {
     color?: "none" | "yellow" | "green" | "teal" | "neutral"
     style?: string
     hoverEffects?: boolean
+    isRepoTag?: boolean
 }
 
-const {complex, color = "teal", style, hoverEffects = true} = Astro.props;
+const {complex, color = "teal", style, hoverEffects = true, isRepoTag} = Astro.props;
 
 const Element = complex ? "div" : "span"
 ---
 
 <Element class:list = {["px-1 text-sm cursor-default", {
+    "tag": isRepoTag,
     "bg-neutral-900 border border-neutral-700": color === "neutral",
     "bg-teal-900 border border-teal-700": color === "teal",
     "bg-yellow-700 border border-yellow-500": color === "yellow",

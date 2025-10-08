@@ -101,7 +101,6 @@ const dbRepos: DisplayRepository[] = (await prisma.repository.findMany({
     }
     return repos;
 }, [])
-console.log(dbRepos.length);
 shuffleArray(dbRepos)
 const repos = dbRepos.reduce<DisplayRepository[]>((acc, cur) => {
     if (cur.sponsor && sponsoredCount++ < 8) {

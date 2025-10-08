@@ -38,7 +38,7 @@ const existing: ExistingRepos = (await prisma.repository.findMany({
                 username: true
             }
         },
-        tags:true,
+        tags: true,
         RepositoryStatus: {
             select: {
                 invalid: true,
@@ -116,7 +116,7 @@ for (let repo of allRepos) {
     groups[repo.owner] = group;
 }
 ---
-<Layout title = "Submit Repositories" description = "Submit Repositories" canonical = "/repositories/submit" currentPage="repositories">
+<Layout title = "Submit Repositories" description = "Submit Repositories" canonical = "/repositories/submit" currentPage = "repositories" multiselect = {true}>
     <div class = "mx-auto">
         <PageTitle>Repositories</PageTitle>
         <h2 class = "text-white text-xl flex flex-col">
@@ -127,7 +127,8 @@ for (let repo of allRepos) {
         <h3 class = "text-white text-lg font-semibold mb-4 pb-4 border-b-2 flex flex-col">
             **Please note that repositories will need to be manually approved and will not appear instantly**
         </h3>
-        <div class = "flex gap-8 flex-wrap mt-6">
+
+        <div class = "flex gap-8 flex-wrap mt-6" id = "tag-holder" data-tags = {JSON.stringify(tags)} }>
             {
                 Object.values(groups).map(group =>
                         <GroupedRepositories group = {group} tags = {tags}/>)
@@ -135,4 +136,122 @@ for (let repo of allRepos) {
         </div>
 
     </div>
+
+    <script>
+        import {MultiSelect} from "../../lib/multiselect";
+        import {actions} from 'astro:actions';
+
+        function makeTag(name: string) {
+            return `<div class="px-1 text-sm cursor-default tag bg-teal-900 border border-teal-700 bg-opacity-50 hover:bg-opacity-100"> ${name} </div>`;
+        }
+
+        class Repository extends HTMLElement {
+            connectedCallback() {
+
+                const tagHolder = document.getElementById("tag-holder")!;
+                const tags = JSON.parse(tagHolder.getAttribute("data-tags")!);
+                const id = this.getAttribute("data-id")!;
+                const repoTags = this.querySelector("#repo-tags")!;
+                const canSubmit = this.getAttribute("data-can-submit")!;
+                const canRemove = this.getAttribute("data-can-remove")!;
+                const status = this.querySelector("#status")!;
+                let selected: string[] = [];
+                if (canSubmit === "true") {
+                    const selectTags = this.querySelector<HTMLSelectElement>("#tags")!;
+                    const submitBtn = this.querySelector<HTMLButtonElement>("#submit")!
+                    new MultiSelect(selectTags, {
+                        onSelect: (value: string) => {
+                            selected.push(value);
+                            submitBtn.removeAttribute("disabled");
+                            submitBtn.innerText = "Submit Repository"
+                        },
+                        onUnselect: (value: string) => {
+                            selected = selected.filter((x) => x !== value);
+                            if (selected.length === 0) {
+                                submitBtn.setAttribute("disabled", "disabled");
+                                submitBtn.innerText = "No tags selected"
+                            }
+                        }
+                    })
+                    submitBtn.addEventListener("click", async (e) => {
+                        e.preventDefault();
+                        const innerText = submitBtn.innerText;
+                        submitBtn.innerText = "Submitting..."
+                        selectTags.disabled = true;
+                        const {data, error} = await actions.repository.submit({repository_id: id, tags: selected});
+                        //TODO error handling
+                        submitBtn.innerText = innerText;
+                        selectTags.disabled = false;
+                        status.innerHTML = `<p>This repository has already been submitted and is awaiting review.</p>`
+                        const oldTags = repoTags.querySelectorAll<HTMLElement>(".tag");
+                        oldTags.forEach((tag) => {
+                            repoTags.removeChild(tag)
+                        })
+                        const newTagsHtml = selected.map(tag => makeTag(tag))
+                        repoTags.innerHTML = repoTags.innerHTML + newTagsHtml.join("\n");
+                    })
+
+                } else if (canRemove === "true") {
+                    const remove = this.querySelector<HTMLButtonElement>("#remove")!
+                    remove.addEventListener("click", async (e) => {
+                        e.preventDefault();
+                        const innerText = remove.innerText;
+                        remove.innerText = "Removing..."
+                        remove.disabled = true;
+                        const {data, error} = await actions.repository.remove({repository_id: id});
+                        //TODO error handling
+                        remove.innerText = innerText;
+                        remove.disabled = false;
+                        const oldTags = repoTags.querySelectorAll<HTMLElement>(".tag");
+                        oldTags.forEach((tag) => {
+                            repoTags.removeChild(tag)
+                        })
+                        const tagOptions = tags.map((tag: string) => `<option value="${tag}">${tag}</option>`);
+                        status.innerHTML = `<select id = "tags" name = "tags" data-placeholder = "Select Tags" multiple>
+                        ${tagOptions}
+                    </select>
+                    <button id = "submit" disabled class = "w-full bg-green-700 hover:bg-green-600 disabled:hover:bg-rose-700 disabled:bg-rose-700 text-white p-2 text-center">
+                        No tags selected
+                    </button>`
+
+                        const selectTags = this.querySelector<HTMLSelectElement>("#tags")!;
+                        const submitBtn = this.querySelector<HTMLButtonElement>("#submit")!
+                        new MultiSelect(selectTags, {
+                            onSelect: (value: string) => {
+                                selected.push(value);
+                                submitBtn.removeAttribute("disabled");
+                                submitBtn.innerText = "Submit Repository"
+                            },
+                            onUnselect: (value: string) => {
+                                selected = selected.filter((x) => x !== value);
+                                if (selected.length === 0) {
+                                    submitBtn.setAttribute("disabled", "disabled");
+                                    submitBtn.innerText = "No tags selected"
+                                }
+                            }
+                        })
+                        submitBtn.addEventListener("click", async (e) => {
+                            e.preventDefault();
+                            const innerText = submitBtn.innerText;
+                            submitBtn.innerText = "Submitting..."
+                            selectTags.disabled = true;
+                            const {data, error} = await actions.repository.submit({repository_id: id, tags: selected});
+                            //TODO error handling
+                            submitBtn.innerText = innerText;
+                            selectTags.disabled = false;
+                            status.innerHTML = `<p>This repository has already been submitted and is awaiting review.</p>`
+                            const oldTags = repoTags.querySelectorAll<HTMLElement>(".tag");
+                            oldTags.forEach((tag) => {
+                                repoTags.removeChild(tag)
+                            })
+                            const newTagsHtml = selected.map(tag => makeTag(tag))
+                            repoTags.innerHTML = repoTags.innerHTML + newTagsHtml.join("\n");
+                        })
+                    })
+                }
+            }
+        }
+
+        customElements.define('user-repository', Repository);
+    </script>
 </Layout>

@@ -135,6 +135,8 @@ export async function POST({request}: APIContext) {
                     select: {
                         pr_id: true
                     }
+                }).catch(reason1 => {
+                    console.log(`Error creating pull request ${pull.id}(${pull.html_url}) due to '${reason1}'`);
                 });
                 if (!isBot && repo.cache) {
                     await info("New PR!", null, [

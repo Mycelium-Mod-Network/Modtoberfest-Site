@@ -33,7 +33,7 @@ services:
     environment:
       configuration: |
         schedule:
-            - every: 15 minutes
+            - every: 45 minutes
               task: updatePrs
             - cron: 0 * * * *
               task: updateRepos

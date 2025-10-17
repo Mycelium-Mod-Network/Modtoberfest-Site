@@ -64,7 +64,7 @@ export const repository = {
                             url: data.html_url,
                             description: data.description,
                             stars: data.stargazers_count,
-                            openIssues: data.open_issues_count,
+                            openIssues: repoData.has_issues ? repoData.open_issues_count : 0,
                             language: data.language ? {
                                 connect: {
                                     name: data.language ?? ""

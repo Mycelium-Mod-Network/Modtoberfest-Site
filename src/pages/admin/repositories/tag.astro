@@ -50,7 +50,7 @@ const repos = await Promise.all(dbRepos.map(async repo => {
             url: repoData.html_url,
             description: repoData.description,
             stars: repoData.stargazers_count,
-            openIssues: repoData.open_issues_count,
+            openIssues: repoData.has_issues ? repoData.open_issues_count : 0,
             repository_id: repo.repository_id,
             id: repo.id,
             updatedAt: new Date(repoData.pushed_at!),

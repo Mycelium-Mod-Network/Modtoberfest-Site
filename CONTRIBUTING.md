@@ -35,7 +35,7 @@ After creating the OAuth app, you should have the _app client ID_ and _app clien
 3. Copy the `.env.example` file into an `.env` file. (The copied file is git-ignored.)
 4. In the newly-copied `.env` file:
     - Put the app client ID after the `GITHUB_ID=` line.
-    - Put the app client secret after the `GITHUB_SECRET=line`.
+    - Put the app client secret after the `GITHUB_SECRET=` line.
     - Put your own randomly-generated secret after the `ADMIN_SECRET=` line.
 5. Bring up the database through Docker:
    ```bash

@@ -51,7 +51,7 @@ export async function POST({request}: APIContext) {
                             url: repoData.html_url,
                             description: repoData.description,
                             stars: repoData.stargazers_count,
-                            openIssues: repoData.open_issues_count,
+                            openIssues: repoData.has_issues ? repoData.open_issues_count : 0,
                             language: repoData.language ? {
                                 connect: {
                                     name: repoData.language ?? ""
@@ -78,7 +78,7 @@ export async function POST({request}: APIContext) {
                                 url: repoData.html_url,
                                 description: repoData.description,
                                 stars: repoData.stargazers_count,
-                                openIssues: repoData.open_issues_count,
+                                openIssues: repoData.has_issues ? repoData.open_issues_count : 0,
                                 updatedAt: repoData.pushed_at as string,
                                 license: repoData.license ? repoData.license.name : undefined,
                                 language: repoData.language ? {
@@ -95,7 +95,7 @@ export async function POST({request}: APIContext) {
                                 url: repoData.html_url,
                                 description: repoData.description,
                                 stars: repoData.stargazers_count,
-                                openIssues: repoData.open_issues_count,
+                                openIssues: repoData.has_issues ? repoData.open_issues_count : 0,
                                 updatedAt: repoData.pushed_at as string,
                                 language: repoData.language ? {
                                     connect: {

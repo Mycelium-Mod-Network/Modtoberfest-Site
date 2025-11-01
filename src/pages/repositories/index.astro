@@ -11,6 +11,8 @@ const now = new Date();
 
 const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 const DATE_FILTERS = [
+    {display: "7 Days", id: "7d", date: now.getTime() - MILLISECONDS_PER_DAY * 7},
+    {display: "30 Days", id: "30d", date: now.getTime() - MILLISECONDS_PER_DAY * 30},
     {display: "90 Days", id: "90d", date: now.getTime() - MILLISECONDS_PER_DAY * 90},
     {display: "180 Days", id: "180d", date: now.getTime() - MILLISECONDS_PER_DAY * 180},
     {display: "1 Year", id: "1y", date: now.getTime() - MILLISECONDS_PER_DAY * 365},
@@ -144,7 +146,7 @@ const user = Astro.locals.user;
                 <label for = "tags">Tags:</label>
 
                 <select id = "tags" name = "tags" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary w-full sm:w-auto">
-                    <option label = ""></option>
+                    <option label = "All"></option>
                     {tags.map((tag) =>
                             <option value = {tag} class = "text-black" selected = {selectedTag === tag}>{tag}</option>
                     )}
@@ -155,7 +157,7 @@ const user = Astro.locals.user;
                 <label for = "updated_within" class="flex-none">Updated Within:</label>
 
                 <select id = "updated_within" name = "updated_within" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary w-full sm:w-auto">
-                    <option label = ""></option>
+                    <option label = "Any"></option>
                     {DATE_FILTERS.map(date =>
                             <option value = {date.id} class = "text-black" selected = {selectedDate === date.id}>{date.display}</option>)}
                 </select>

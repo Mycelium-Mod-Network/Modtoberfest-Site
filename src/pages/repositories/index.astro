@@ -114,12 +114,11 @@ const dbRepos: DisplayRepository[] = (await prisma.repository.findMany({
 }, [])
 
 dbRepos.sort((a, b) => {
-    if (sortBy == "Most Stars") return a.stars - b.stars
-    else if (sortBy == "Most Stars") return b.stars - a.stars
-    else if (sortBy == "Least Stars") return b.stars - a.stars
-    else if (sortBy == "Most Issues") return a.openIssues - b.openIssues
-    else if (sortBy == "Least Issues") return b.openIssues - a.openIssues
-    else if (sortBy == "Recently Updated") return a.updatedAt - b.updatedAt
+    if (sortBy == "Most Stars") return b.stars - a.stars
+    else if (sortBy == "Least Stars") return a.stars - b.stars
+    else if (sortBy == "Most Issues") return b.openIssues - a.openIssues
+    else if (sortBy == "Least Issues") return a.openIssues - b.openIssues
+    else if (sortBy == "Recently Updated") return b.updatedAt - a.updatedAt
     else return 0.5 - Math.random()
 })
 

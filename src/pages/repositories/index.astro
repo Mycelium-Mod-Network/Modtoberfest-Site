@@ -133,11 +133,11 @@ const user = Astro.locals.user;
 ---
 <Layout title = "Repositories" description = "Repositories" canonical = "/repositories" currentPage = "repositories" wide = {true}>
     <div class = "mx-auto">
-        <h1 class:list = {["text-white text-3xl font-semibold font-brand border-b-2 tracking-wide mb-4 pb-4 font-brand", {"flex justify-between": user}]}>
-            <span>Repositories</span>
+        <h1 class:list = {["text-white text-3xl font-semibold border-b-2 tracking-wide mb-4 pb-4", {"flex justify-between": user}]}>
+            <span class = "font-brand">Repositories</span>
 
             {user && <a href = "/repositories/submit" class = "no-underline">
-                <button class = "px-4 border border-primary rounded-md text-lg font-bold shadow-sm bg-primary text-black animate-sm-glow hover:bg-secondary hover:border-secondary  transition-colors">Submit</button>
+                <button class = "px-4 border border-primary rounded-md text-lg font-bold shadow-sm bg-primary text-black animate-sm-glow hover:bg-secondary hover:border-secondary transition-colors">Submit</button>
             </a>}
         </h1>
         <div class = "flex flex-col sm:flex-row gap-4">

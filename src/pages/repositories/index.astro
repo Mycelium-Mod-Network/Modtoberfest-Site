@@ -11,14 +11,25 @@ const now = new Date();
 
 const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 const DATE_FILTERS = [
+    {display: "7 Days", id: "7d", date: now.getTime() - MILLISECONDS_PER_DAY * 7},
+    {display: "30 Days", id: "30d", date: now.getTime() - MILLISECONDS_PER_DAY * 30},
     {display: "90 Days", id: "90d", date: now.getTime() - MILLISECONDS_PER_DAY * 90},
     {display: "180 Days", id: "180d", date: now.getTime() - MILLISECONDS_PER_DAY * 180},
     {display: "1 Year", id: "1y", date: now.getTime() - MILLISECONDS_PER_DAY * 365},
     {display: "2 Years", id: "2y", date: now.getTime() - MILLISECONDS_PER_DAY * 730}];
+const SORT_FILTERS = [
+    "Random",
+    "Recently Updated",
+    "Most Stars",
+    "Least Stars",
+    "Most Issues",
+    "Least Issues",
+];
 const url = Astro.url;
 
 const selectedDate = url.searchParams.get("updated_within")
 const selectedDateObj = new Date(DATE_FILTERS.find(x => x.id === selectedDate)?.date ?? 0);
+const sortBy = url.searchParams.get("sort_by")
 const selectedTag = url.searchParams.get("tag")
 const tags = (await prisma.tag.findMany({
     select: {
@@ -101,7 +112,17 @@ const dbRepos: DisplayRepository[] = (await prisma.repository.findMany({
     }
     return repos;
 }, [])
-shuffleArray(dbRepos)
+
+dbRepos.sort((a, b) => {
+    if (sortBy == "Most Stars") return a.stars - b.stars
+    else if (sortBy == "Most Stars") return b.stars - a.stars
+    else if (sortBy == "Least Stars") return b.stars - a.stars
+    else if (sortBy == "Most Issues") return a.openIssues - b.openIssues
+    else if (sortBy == "Least Issues") return b.openIssues - a.openIssues
+    else if (sortBy == "Recently Updated") return a.updatedAt - b.updatedAt
+    else return 0.5 - Math.random()
+})
+
 const repos = dbRepos.reduce<DisplayRepository[]>((acc, cur) => {
     if (cur.sponsor && sponsoredCount++ < 8) {
         return [cur, ...acc]
@@ -112,11 +133,11 @@ const user = Astro.locals.user;
 ---
 <Layout title = "Repositories" description = "Repositories" canonical = "/repositories" currentPage = "repositories" wide = {true}>
     <div class = "mx-auto">
-        <h1 class:list = {["text-white text-3xl font-semibold font-brand border-b-2 tracking-wide mb-4 pb-4 font-brand", {"flex justify-between": user}]}>
-            <span>Repositories</span>
+        <h1 class:list = {["text-white text-3xl font-semibold border-b-2 tracking-wide mb-4 pb-4", {"flex justify-between": user}]}>
+            <span class = "font-brand">Repositories</span>
 
             {user && <a href = "/repositories/submit" class = "no-underline">
-                <button class = "px-4 border border-primary rounded-md text-lg font-bold shadow-sm bg-primary text-black animate-sm-glow hover:bg-secondary hover:border-secondary  transition-colors">Submit</button>
+                <button class = "px-4 border border-primary rounded-md text-lg font-medium shadow-sm bg-primary text-black animate-sm-glow hover:bg-secondary hover:border-secondary transition-colors">Submit</button>
             </a>}
         </h1>
         <div class = "flex flex-col sm:flex-row gap-4">
@@ -125,7 +146,7 @@ const user = Astro.locals.user;
                 <label for = "tags">Tags:</label>
 
                 <select id = "tags" name = "tags" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary w-full sm:w-auto">
-                    <option label = ""></option>
+                    <option label = "All"></option>
                     {tags.map((tag) =>
                             <option value = {tag} class = "text-black" selected = {selectedTag === tag}>{tag}</option>
                     )}
@@ -136,9 +157,17 @@ const user = Astro.locals.user;
                 <label for = "updated_within" class="flex-none">Updated Within:</label>
 
                 <select id = "updated_within" name = "updated_within" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary w-full sm:w-auto">
-                    <option label = ""></option>
+                    <option label = "Any"></option>
                     {DATE_FILTERS.map(date =>
                             <option value = {date.id} class = "text-black" selected = {selectedDate === date.id}>{date.display}</option>)}
+                </select>
+            </div>
+            <div class = "flex gap-x-2">
+                <label for = "sort_by" class="flex-none">Sort By:</label>
+
+                <select id = "sort_by" name = "sort_by" class = "bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary w-full sm:w-auto">
+                    {SORT_FILTERS.map(sort =>
+                            <option value = {sort} class = "text-black" selected = {sortBy === sort}>{sort}</option>)}
                 </select>
             </div>
         </div>
@@ -154,6 +183,7 @@ const user = Astro.locals.user;
     <script>
         const tags = document.getElementById("tags")!;
         const updatedWithin = document.getElementById("updated_within")!;
+        const sortBy = document.getElementById("sort_by")!;
         const url = new URL(window.location as unknown as string) ;
         tags.addEventListener("change", async (e) => {
             e.preventDefault();
@@ -175,6 +205,18 @@ const user = Astro.locals.user;
                 url.searchParams.set("updated_within", select.value);
             } else {
                 url.searchParams.delete("updated_within");
+            }
+            window.location = url as unknown as Location;
+        })
+
+        sortBy.addEventListener("change", async (e) => {
+            e.preventDefault();
+            const select = e.target as HTMLSelectElement
+
+            if (select.value) {
+                url.searchParams.set("sort_by", select.value);
+            } else {
+                url.searchParams.delete("sort_by");
             }
             window.location = url as unknown as Location;
         })

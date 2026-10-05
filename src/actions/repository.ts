@@ -33,7 +33,13 @@ export const repository = {
                 }
             });
 
-            const data = (await octokit.rest.repos.get({owner: owner, repo: name})).data;
+            const data = (await octokit.rest.repos.get({
+                owner: owner,
+                repo: name,
+                headers: {
+                    'X-GitHub-Api-Version': '2026-03-10'
+                }
+            })).data;
             if (data.archived) {
                 throw new ActionError({
                     code: "BAD_REQUEST",

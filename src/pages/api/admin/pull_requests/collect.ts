@@ -1,4 +1,4 @@
-import type {PullRequest} from "@octokit/webhooks-types";
+import type {SimplePullRequest} from "@octokit/webhooks-types";
 import type {APIContext} from "astro";
 import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
 import {Octokit} from "octokit";
@@ -6,7 +6,7 @@ import prisma from "@lib/db.ts";
 import {info} from "@lib/discord-notifier.ts";
 
 
-function getRepoData(data: PullRequest) {
+function getRepoData(data: SimplePullRequest) {
 
     return {
         "pr_id": data.id,
@@ -74,7 +74,7 @@ export async function POST({request}: APIContext) {
 
     for (let repo of repos) {
 
-        const allPulls: PullRequest[] = [];
+        const allPulls: SimplePullRequest[] = [];
         let page = 1;
         // We only want this to run if the cache exists, used to be while true
         while (repo.cache) {
@@ -85,8 +85,11 @@ export async function POST({request}: APIContext) {
                 per_page: 100,
                 page: page++,
                 sort: "created",
-                direction: "desc"
-            })).data as PullRequest[];
+                direction: "desc",
+                headers: {
+                    'X-GitHub-Api-Version': '2026-03-10'
+                }
+            })).data as unknown as SimplePullRequest[];
             const octoberPulls = pagePulls.filter(value => {
                 const date = new Date(value.created_at);
                 return date > OCTOBER_START && date < NOVEMBER_START;

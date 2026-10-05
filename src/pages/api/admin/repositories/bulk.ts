@@ -26,7 +26,12 @@ export async function POST({request}: APIContext) {
     const result: any = {}
     for (let id of ids) {
         try {
-            const repoData: GHRepo | { error: boolean, reason: string } = await octokit.request("GET /repositories/{repository_id}", {repository_id: id}).then(value => {
+            const repoData: GHRepo | { error: boolean, reason: string } = await octokit.request("GET /repositories/{repository_id}", {
+                repository_id: id,
+                headers: {
+                    'X-GitHub-Api-Version': '2026-03-10'
+                }
+            }).then(value => {
                 return value.data;
             }).catch(reason => {
                 const err = reason.response.data.message

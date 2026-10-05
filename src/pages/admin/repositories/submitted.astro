@@ -52,7 +52,12 @@ const repos = await Promise.all(dbRepos.map(async repo => {
     let cache = repo.cache;
     //TODO delete?
     if (!cache) {
-        const repoInfo = await octokit.request("GET /repositories/{repository_id}", {repository_id: repo.repository_id});
+        const repoInfo = await octokit.request("GET /repositories/{repository_id}", {
+            repository_id: repo.repository_id,
+            headers: {
+                'X-GitHub-Api-Version': '2026-03-10'
+            }
+        });
         const repoData: GHRepo = repoInfo.data;
         cache = {
             name: repoData.name,

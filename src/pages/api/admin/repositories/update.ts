@@ -34,7 +34,12 @@ export async function POST({request}: APIContext) {
     });
     const result: any = {}
     for (let repo of repos) {
-        const repoData: GHRepo | { error: boolean, invalidate: boolean, reason: string } = await octokit.request("GET /repositories/{repository_id}", {repository_id: repo.repository_id}).then(value => {
+        const repoData: GHRepo | { error: boolean, invalidate: boolean, reason: string } = await octokit.request("GET /repositories/{repository_id}", {
+            repository_id: repo.repository_id,
+            headers: {
+                'X-GitHub-Api-Version': '2026-03-10'
+            }
+        }).then(value => {
             const data = value.data;
 
             if (data.disabled || data.archived) {

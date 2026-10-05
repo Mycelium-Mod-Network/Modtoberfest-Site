@@ -53,7 +53,7 @@ export async function POST({request}: APIContext) {
         }).catch(reason => {
             const err = reason.response.data.message
             // We only want to invalidate if it isn't found
-            return {error: true, invalidate: err === "Not Found", reason: err};
+            return {error: true, invalidate: err === "Not Found" || err === "Repository access blocked", reason: err};
         })
 
         if ("error" in repoData && "invalidate" in repoData && "reason" in repoData) {

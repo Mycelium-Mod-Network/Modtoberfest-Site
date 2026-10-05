@@ -78,26 +78,32 @@ export async function POST({request}: APIContext) {
         let page = 1;
         // We only want this to run if the cache exists, used to be while true
         while (repo.cache) {
-            const pagePulls = (await octokit.rest.pulls.list({
-                owner: repo.cache.owner,
-                repo: repo.cache.name,
-                state: "all",
-                per_page: 100,
-                page: page++,
-                sort: "created",
-                direction: "desc",
-                headers: {
-                    'X-GitHub-Api-Version': '2026-03-10'
+            try {
+                const pagePulls = (await octokit.rest.pulls.list({
+                    owner: repo.cache.owner,
+                    repo: repo.cache.name,
+                    state: "all",
+                    per_page: 100,
+                    page: page++,
+                    sort: "created",
+                    direction: "desc",
+                    headers: {
+                        'X-GitHub-Api-Version': '2026-03-10'
+                    }
+                })).data as unknown as SimplePullRequest[];
+                const octoberPulls = pagePulls.filter(value => {
+                    const date = new Date(value.created_at);
+                    return date > OCTOBER_START && date < NOVEMBER_START;
+                });
+                if (octoberPulls.length == 0) {
+                    break;
+                } else {
+                    allPulls.push(...octoberPulls)
                 }
-            })).data as unknown as SimplePullRequest[];
-            const octoberPulls = pagePulls.filter(value => {
-                const date = new Date(value.created_at);
-                return date > OCTOBER_START && date < NOVEMBER_START;
-            });
-            if (octoberPulls.length == 0) {
+            } catch (e) {
+                console.log(repo.cache);
+                console.log(e);
                 break;
-            } else {
-                allPulls.push(...octoberPulls)
             }
         }
         for (let pull of allPulls) {

@@ -45,6 +45,10 @@ export async function POST({request}: APIContext) {
             if (data.disabled || data.archived) {
                 return {error: false, invalidate: true, reason: "Repository is archived or disabled"}
             }
+
+            if (!data.has_pull_requests) {
+                return {error: false, invalidate: true, reason: "Repository does not allow pull requests"}
+            }
             return data;
         }).catch(reason => {
             const err = reason.response.data.message

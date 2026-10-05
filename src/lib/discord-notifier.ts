@@ -34,7 +34,7 @@ async function send(embeds: any) {
 
 export async function log(level: string, title: string, description: string | null, fields: any) {
     if (!WEBHOOK_URL) {
-        console.log(`[${level}]: ${title} (${description})`);
+        console.log(`[${level}]: ${title} (${description}) (${JSON.stringify(fields)})`);
         return;
     }
 

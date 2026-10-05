@@ -22,8 +22,14 @@ export async function POST({request}: APIContext) {
     });
 
     const yml = (await octokit.rest.repos.getContent({
-        owner: "github-linguist", repo: "linguist", path: "lib/linguist/languages.yml", mediaType: {
+        owner: "github-linguist",
+        repo: "linguist",
+        path: "lib/linguist/languages.yml",
+        mediaType: {
             format: "raw"
+        },
+        headers: {
+            'X-GitHub-Api-Version': '2026-03-10'
         }
     })).data.toString();
 

@@ -74,7 +74,10 @@ const rewards: RewardType[] = (await prisma.reward.findMany({
 
 const prs: PR[] = (await prisma.pullRequest.findMany({
     select: {
+        id: true,
         html_url: true,
+        author_id: true,
+        author: true,
         created_at: true,
         merged: true,
         number: true,
@@ -107,8 +110,10 @@ const prs: PR[] = (await prisma.pullRequest.findMany({
     }
 })).map(pr => {
     return {
-        pr_id: 0,
-        author: "",
+        pr_id: Number(pr.pr_id),
+        author: pr.author,
+        author_id: pr.author_id,
+        repository_id: pr.repository_id,
         created_at: new Date(pr.created_at).getTime(),
         html_url: pr.html_url,
         merged: pr.merged,

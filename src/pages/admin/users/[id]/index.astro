@@ -33,6 +33,8 @@ if (!currentUser) {
 const prs: PullRequest[] = (await prisma.pullRequest.findMany({
     select: {
         pr_id: true,
+        author_id: true,
+        repository_id: true,
         author: true,
         created_at: true,
         html_url: true,
@@ -70,6 +72,8 @@ const prs: PullRequest[] = (await prisma.pullRequest.findMany({
 })).map<PullRequest>(pr => {
     return {
         pr_id: Number(pr.pr_id),
+        author_id: pr.author_id,
+        repository_id: pr.repository_id,
         author: pr.author,
         created_at: new Date(pr.created_at).getTime(),
         html_url: pr.html_url,

@@ -1,9 +1,13 @@
 ---
 export interface Props {
-    date: number,
+    date?: number,
+    startDate?: number,
+    endDate?: number,
 }
 
-const {date} = Astro.props;
+const {date, startDate, endDate} = Astro.props;
+const targetStartDate = startDate ?? date ?? 0;
+const targetEndDate = endDate ?? 0;
 ---
 
 <div>
@@ -35,37 +39,75 @@ const {date} = Astro.props;
     <div class = "hidden completed">
         <slot name = "after"/>
     </div>
+
+    <div class = "hidden ended">
+        <slot name = "ended"/>
+    </div>
 </div>
 
-<script is:inline define:vars = {{date}}>
+<script is:inline define:vars = {{targetStartDate, targetEndDate}}>
+
+    let timerInterval = null;
 
     const updateCountdown = () => {
 
-        const total = date - new Date().getTime();
+        const now = new Date().getTime();
+
+        // Check if the event has ended.
+        if (targetEndDate && now >= targetEndDate) {
+
+            if (timerInterval) clearInterval(timerInterval);
+
+            const started = document.querySelector(".started");
+            const countdown = document.querySelector(".countdown");
+            const completed = document.querySelector(".completed");
+            const ended = document.querySelector(".ended");
+
+            if (started) started.style.display = 'none';
+            if (countdown) countdown.style.display = 'none';
+            if (completed) completed.style.display = 'none';
+            if (ended) ended.style.display = 'block';
+            return;
+        }
+
+        const total = targetStartDate - now;
+
+        // Start time reached / event is currently active.
+        if (total <= 0) {
+
+            if (!targetEndDate && timerInterval) {
+                clearInterval(timerInterval);
+            }
+
+            const started = document.querySelector(".started");
+            const countdown = document.querySelector(".countdown");
+            const completed = document.querySelector(".completed");
+            const ended = document.querySelector(".ended");
+
+            if (started) started.style.display = 'none';
+            if (countdown) countdown.style.display = 'none';
+            if (completed) completed.style.display = 'block';
+            if (ended) ended.style.display = 'none';
+            return;
+        }
 
         const seconds = Math.floor((total / 1000) % 60);
         const minutes = Math.floor((total / 1000 / 60) % 60);
         const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
         const days = Math.floor(total / (1000 * 60 * 60 * 24));
 
-        // Could I do this better?
-        document.querySelector(".days").innerText = days.toString().padStart(2, 0);
-        document.querySelector(".hours").innerText = hours.toString().padStart(2, 0);
-        document.querySelector(".minutes").innerText = minutes.toString().padStart(2, 0);
-        document.querySelector(".seconds").innerText = seconds.toString().padStart(2, 0);
+        const daysEl = document.querySelector(".days");
+        const hoursEl = document.querySelector(".hours");
+        const minutesEl = document.querySelector(".minutes");
+        const secondsEl = document.querySelector(".seconds");
 
-        // Stop updating if the timer hits 0.
-        if (total <= 0) {
-
-            clearInterval(updateCountdown);
-
-            document.querySelector(".started").style.display = 'none';
-            document.querySelector(".countdown").style.display = 'none'
-            document.querySelector(".completed").style.display = 'block'
-        }
+        if (daysEl) daysEl.innerText = days.toString().padStart(2, "0");
+        if (hoursEl) hoursEl.innerText = hours.toString().padStart(2, "0");
+        if (minutesEl) minutesEl.innerText = minutes.toString().padStart(2, "0");
+        if (secondsEl) secondsEl.innerText = seconds.toString().padStart(2, "0");
     };
 
     // Invoke immediately.
     updateCountdown();
-    setInterval(updateCountdown, 1000);
+    timerInterval = setInterval(updateCountdown, 1000);
 </script>

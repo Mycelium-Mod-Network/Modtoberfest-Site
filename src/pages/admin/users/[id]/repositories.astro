@@ -1,0 +1,153 @@
+---
+import {isUserAdmin} from "@lib/util";
+import Layout from "@layouts/Layout.astro";
+import PageTitle from "@components/ui/PageTitle.astro";
+import prisma from "@lib/db";
+import UserCard from "@components/ui/admin/UserCard.astro";
+import {Icon} from "astro-icon/components";
+import PRGroup from "@components/ui/admin/PRGroup.astro";
+import UserRelationRepository from "@components/ui/admin/repositories/UserRelationRepository.astro";
+import type {Language} from "@lib/types.ts";
+import type {Repository as GHRepo} from "@octokit/webhooks-types";
+import {Octokit} from "octokit";
+import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
+import {actions} from "astro:actions";
+import ActionResult from "@components/ui/ActionResult.astro";
+const user = Astro.locals.user;
+if (!isUserAdmin(user)) {
+    return Astro.redirect("/403?url=/admin/users")
+}
+const {id} = Astro.params
+const currentUser = await prisma.user.findFirst({
+    select: {
+        id: true,
+        name: true,
+        username: true,
+        email: true,
+        admin: true,
+        avatar: true,
+        Repository: {
+            select: {
+                id: true,
+                repository_id: true,
+                cache: true,
+                tags: true
+            }
+        }
+    },
+    where: {
+        id
+    }
+})
+if(!currentUser) {
+    return Astro.redirect("/404?url=/admin/users")
+}
+const octokit = new Octokit({
+    authStrategy: createOAuthAppAuth,
+    auth: {
+        clientId: import.meta.env.GITHUB_ID,
+        clientSecret: import.meta.env.GITHUB_SECRET
+    }
+});
+
+const repos = await Promise.all(currentUser.Repository.map(async repo => {
+    let cache = repo.cache;
+    //TODO delete?
+    if (!cache) {
+        const repoInfo = await octokit.request("GET /repositories/{repository_id}", {
+            repository_id: repo.repository_id,
+            headers: {
+                'X-GitHub-Api-Version': '2026-03-10'
+            }
+        });
+        const repoData: GHRepo = repoInfo.data;
+        cache = {
+            name: repoData.name,
+            owner: repoData.owner.login,
+            ownerHtmlUrl: repoData.owner.html_url,
+            ownerAvatarUrl: repoData.owner.avatar_url,
+            url: repoData.html_url,
+            description: repoData.description,
+            stars: repoData.stargazers_count,
+            openIssues: repoData.has_issues ? repoData.open_issues_count : 0,
+            repository_id: repo.repository_id,
+            id: repo.id,
+            updatedAt: new Date(repoData.pushed_at!),
+            license: (repoData.license ?? {name: null}).name,
+            // Language requires more database lookups, it will be inserted when repos are updated later
+            languageName: null
+        }
+    }
+
+    return {
+        id: repo.id,
+        repository_id: repo.repository_id,
+        url: cache.url,
+        description: cache.description ?? undefined,
+        name: cache.name,
+        owner: cache.owner,
+        ownerHtmlUrl: cache.ownerHtmlUrl,
+        ownerAvatarUrl: cache.ownerAvatarUrl,
+        stars: cache.stars,
+        openIssues: cache.openIssues,
+        updatedAt: cache.updatedAt.getTime(),
+        reason: undefined,
+        invalid: false,
+        tags: []
+    };
+}))
+
+const tags = (await prisma.tag.findMany({
+    select: {
+        name: true
+    }
+})).map(value => value.name)
+---
+
+<Layout title = "User Relation" description = "User Relation" canonical = `/admin/users/${currentUser.id}/repositories` currentPage = "admin">
+    <div class = "mx-auto max-w-none">
+        <ActionResult action = {actions.repository.delete}/>
+        <ActionResult action = {actions.repository.clear_submitter}/>
+        <PageTitle>{currentUser.username}</PageTitle>
+        <div class = "flex flex-col gap-x-2 rounded border border-white/10 bg-white/5 mb-2">
+            <div class = "flex w-full">
+                <img src = {currentUser.avatar} alt = {`${currentUser.name} image`} class = "m-4" width = "128" height = "128"/>
+
+                <div class = "flex flex-col gap-y-2 my-4">
+        <span class = "flex items-center space-x-2">
+            <span>Username: <code class = "p-0.5 bg-black bg-opacity-50 select-all">{currentUser.username}</code></span>
+            <a
+                    href = {`https://github.com/${currentUser.username}`}
+                    target = "_blank"
+                    rel = "noopener noreferrer"
+                    class = "text-blue-500 hover:underline"
+            >
+                <Icon name = "octicon:mark-github-16" class = "w-6 h-6"/>
+                <span class = "sr-only">GitHub Profile</span>
+            </a>
+        </span>
+
+                    <span>Name: <code class = "p-0.5 bg-black bg-opacity-50 select-all">{currentUser.name}</code></span>
+
+                    <span>Email: <code class = "p-0.5 bg-black bg-opacity-50 select-all">{currentUser.email}</code></span>
+
+                    <span>ID: <code class = "p-0.5 bg-black bg-opacity-50 select-all">{currentUser.id}</code></span>
+
+                </div>
+            </div>
+        </div>
+
+        <div class = "flex flex-col sm:flex-row gap-x-2 rounded text-center mb-2">
+            <a href = `/admin/users/${currentUser.id}` class = "basic-link w-full p-2  border border-white/10 bg-white/5 hover:bg-primary/20"> Pull Requests </a>
+            <div class = "w-full p-2 border border-white/10 bg-primary/10">
+                Repositories
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-2 rounded border border-white/10 bg-white/5 p-2">
+            {repos.length === 0 ? <span class="text-center">No Repositories</span> : repos.map(repo => {
+                return <UserRelationRepository repository={repo} />
+            })}
+        </div>
+    </div>
+</Layout>

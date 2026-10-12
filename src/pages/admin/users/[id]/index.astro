@@ -1,0 +1,148 @@
+---
+import {isUserAdmin} from "@lib/util";
+import Layout from "@layouts/Layout.astro";
+import PageTitle from "@components/ui/PageTitle.astro";
+import prisma from "@lib/db";
+import UserCard from "@components/ui/admin/UserCard.astro";
+import {Icon} from "astro-icon/components";
+import type {PRGroups, PullRequest} from "@lib/types.ts";
+import PRGroup from "@components/ui/admin/PRGroup.astro";
+const user = Astro.locals.user;
+if (!isUserAdmin(user)) {
+    return Astro.redirect("/403?url=/admin/users")
+}
+const {id} = Astro.params
+const currentUser = await prisma.user.findFirst({
+    select: {
+        id: true,
+        name: true,
+        username: true,
+        email: true,
+        admin: true,
+        avatar: true,
+        github_id: true
+    },
+    where: {
+        id
+    }
+})
+if (!currentUser) {
+    return Astro.redirect("/404?url=/admin/users")
+}
+
+const prs: PullRequest[] = (await prisma.pullRequest.findMany({
+    select: {
+        pr_id: true,
+        author: true,
+        created_at: true,
+        html_url: true,
+        merged: true,
+        number: true,
+        owner: true,
+        owner_avatar_url: true,
+        title: true,
+        state: true,
+        PullRequestStatus: {
+            select: {
+                invalid: true,
+                reason: true,
+                user: true,
+                reviewed: true
+            }
+        },
+        Repository: {
+            select: {
+                cache: {
+                    select: {
+                        name: true
+                    }
+                }
+
+            }
+        }
+
+    },
+    where: {
+        author_id: {
+            equals: `${currentUser.github_id}`
+        }
+    }
+})).map<PullRequest>(pr => {
+    return {
+        pr_id: Number(pr.pr_id),
+        author: pr.author,
+        created_at: new Date(pr.created_at).getTime(),
+        html_url: pr.html_url,
+        merged: pr.merged,
+        number: pr.number,
+        owner: pr.owner,
+        owner_avatar_url: pr.owner_avatar_url,
+        repo_name: (pr.Repository.cache || {name: ""}).name,
+        title: pr.title,
+        invalid: pr.PullRequestStatus ? pr.PullRequestStatus.invalid : false,
+        reason: pr.PullRequestStatus?.reason || "",
+        state: pr.state,
+        reviewed: pr.PullRequestStatus ? pr.PullRequestStatus.reviewed : false,
+        reviewedBy: pr.PullRequestStatus && pr.PullRequestStatus.user ? {
+            username: pr.PullRequestStatus.user.username,
+            avatar: pr.PullRequestStatus.user.avatar,
+        } : undefined
+    }
+})
+const prGroups: PRGroups = {}
+prs.sort((a, b) => a.owner.localeCompare(b.owner)).forEach(pr => {
+    prGroups[`${pr.owner}/${pr.repo_name}`] = prGroups[`${pr.owner}/${pr.repo_name}`] || {
+        owner: pr.owner,
+        name: pr.repo_name,
+        avatar: pr.owner_avatar_url,
+        prs: []
+    }
+
+    prGroups[`${pr.owner}/${pr.repo_name}`].prs.push(pr)
+})
+---
+
+<Layout title = "User Relation" description = "User Relation" canonical = `/admin/users/${currentUser.id}` currentPage = "admin">
+    <div class = "mx-auto max-w-none">
+        <PageTitle>{currentUser.username}</PageTitle>
+        <div class = "flex flex-col gap-x-2 rounded border border-white/10 bg-white/5 mb-2">
+            <div class = "flex w-full">
+                <img src = {currentUser.avatar} alt = {`${currentUser.name} image`} class = "m-4" width = "128" height = "128"/>
+
+                <div class = "flex flex-col gap-y-2 my-4">
+        <span class = "flex items-center space-x-2">
+            <span>Username: <code class = "p-0.5 bg-black bg-opacity-50 select-all">{currentUser.username}</code></span>
+            <a
+                    href = {`https://github.com/${currentUser.username}`}
+                    target = "_blank"
+                    rel = "noopener noreferrer"
+                    class = "text-blue-500 hover:underline"
+            >
+                <Icon name = "octicon:mark-github-16" class = "w-6 h-6"/>
+                <span class = "sr-only">GitHub Profile</span>
+            </a>
+        </span>
+
+                    <span>Name: <code class = "p-0.5 bg-black bg-opacity-50 select-all">{currentUser.name}</code></span>
+
+                    <span>Email: <code class = "p-0.5 bg-black bg-opacity-50 select-all">{currentUser.email}</code></span>
+
+                    <span>ID: <code class = "p-0.5 bg-black bg-opacity-50 select-all">{currentUser.id}</code></span>
+
+                </div>
+            </div>
+        </div>
+
+        <div class = "flex flex-col sm:flex-row gap-x-2 rounded text-center mb-2">
+            <div class = "w-full p-2 border border-white/10 bg-primary/10">
+                Pull Requests
+            </div>
+            <a href = `/admin/users/${currentUser.id}/repositories` class = "basic-link w-full p-2  border border-white/10 bg-white/5 hover:bg-primary/20"> Repositories </a>
+        </div>
+
+        <div class = "flex flex-col gap-2 rounded border border-white/10 bg-white/5 p-2">
+            {Object.keys(prGroups).length === 0 ? <span class = "text-center"> No PRs</span> : Object.values(prGroups).map(group =>
+                    <PRGroup group = {group}/>)}
+        </div>
+    </div>
+</Layout>

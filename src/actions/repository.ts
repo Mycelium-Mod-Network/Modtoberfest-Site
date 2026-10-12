@@ -189,7 +189,7 @@ export const repository = {
 
             const {repository_id, tags} = input;
 
-            if(tags.length === 0) {
+            if (tags.length === 0) {
                 throw new ActionError({
                     code: "BAD_REQUEST",
                     message: "No tags selected",
@@ -451,6 +451,48 @@ export const repository = {
             await prisma.sponsoredRepository.delete({
                 where: {
                     repository_id
+                }
+            })
+
+            return `Ok`
+        }
+    }),
+    clear_submitter: defineAction({
+        accept: 'form',
+        input: z.object({
+            id: z.string()
+        }),
+        handler: async (input, context) => {
+            const user = context.locals.user;
+            if (!user) {
+                throw new ActionError({
+                    code: "UNAUTHORIZED",
+                    message: "Not logged in",
+                });
+            }
+
+            const {id} = input;
+
+            const exists = await prisma.repository.count({
+                where: {
+                    repository_id: id
+                }
+            })
+            if (!exists) {
+                throw new ActionError({
+                    code: "BAD_REQUEST",
+                    message: "Repository does not exist!",
+                });
+            }
+
+            await prisma.repository.update({
+                data: {
+                    submitter: {
+                        set: null
+                    }
+                },
+                where: {
+                    repository_id: id
                 }
             })
 

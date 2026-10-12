@@ -11,7 +11,7 @@ const {user} = Astro.props;
 <div class = "flex flex-col gap-x-2 rounded border border-white/10 bg-white/5">
 
     <div class = "flex">
-        <img src = {user.avatar} alt = {`${user.name} image`} class = "m-4" width = "96" height = "96"/>
+        <img src = {user.avatar} alt = {`${user.name} image`} class = "m-4" width = "128" height = "128"/>
 
         <div class = "flex flex-col gap-y-2 my-4">
         <span class = "flex items-center space-x-2">
@@ -25,29 +25,40 @@ const {user} = Astro.props;
                 <Icon name = "octicon:mark-github-16" class = "w-6 h-6"/>
                 <span class = "sr-only">GitHub Profile</span>
             </a>
-        </span> <span>Name: <code class = "p-0.5 bg-black bg-opacity-50 select-all">{user.name}</code></span> <span>Email: <code class = "p-0.5 bg-black bg-opacity-50 select-all">{user.email}</code></span>
+        </span>
 
+            <span>Name: <code class = "p-0.5 bg-black bg-opacity-50 select-all">{user.name}</code></span>
+
+            <span>Email: <code class = "p-0.5 bg-black bg-opacity-50 select-all">{user.email}</code></span>
+
+            <span>ID: <code class = "p-0.5 bg-black bg-opacity-50 select-all">{user.id}</code></span>
 
         </div>
     </div>
-    <form method = "post" action = {actions.user[user.admin ? "demote" : "promote"]} class:list = {[" bg-green-500 border-t border-white/10", {
-        "bg-red-700 hover:bg-red-600": user.admin,
-        "bg-green-700 hover:bg-green-600": !user.admin
-    }]}>
-    <input type = "hidden" value = {user.id} name = "id"/>
-    <button type = "submit" class = "w-full h-full flex gap-x-1 justify-center place-items-center py-1">
-        {user.admin &&
-                <>
+    <div class="flex flex-col sm:flex-row gap-2">
+        <a href=`/admin/users/${user.id}` class = " bg-blue-700 hover:bg-blue-600 border-t border-white/10 w-full h-full flex gap-x-1 justify-center place-items-center py-1 basic-link">
+            <Icon name = "octicon:person-16" class = "w-4 h-4"/>
+            <span>User</span>
+        </a>
+        <form method = "post" action = {actions.user[user.admin ? "demote" : "promote"]} class:list = {[" bg-green-500 border-t border-white/10 w-full", {
+            "bg-red-700 hover:bg-red-600": user.admin,
+            "bg-green-700 hover:bg-green-600": !user.admin
+        }]}>
+            <input type = "hidden" value = {user.id} name = "id"/>
+            <button type = "submit" class = "w-full h-full flex gap-x-1 justify-center place-items-center py-1">
+                {user.admin &&
+                        <>
 
-                    <Icon name = "octicon:shield-slash-16" class = "w-4 h-4"/>
-                    <span>Demote</span>
-                </>}
+                            <Icon name = "octicon:shield-slash-16" class = "w-4 h-4"/>
+                            <span>Demote</span>
+                        </>}
 
-        {!user.admin &&
-                <>
-                    <Icon name = "octicon:shield-check-16" class = "w-4 h-4"/>
-                    <span>Promote</span>
-                </>}
-    </button>
-    </form>
+                {!user.admin &&
+                        <>
+                            <Icon name = "octicon:shield-check-16" class = "w-4 h-4"/>
+                            <span>Promote</span>
+                        </>}
+            </button>
+        </form>
+    </div>
 </div>

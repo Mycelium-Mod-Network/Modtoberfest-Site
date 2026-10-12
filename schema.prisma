@@ -9,20 +9,21 @@ generator client {
 }
 
 model User {
-  id                  String                @id
-  sessions            Session[]
-  github_id           Int                   @unique
-  name                String
-  username            String
-  email               String
-  admin               Boolean               @default(false)
-  avatar              String
-  access_token        String?               @db.Text
-  RepositoryStatus    RepositoryStatus[]
-  Repository          Repository[]
-  PullRequestStatus   PullRequestStatus[]
-  DigitalRewardClaim  DigitalRewardClaim[]
-  PhysicalRewardClaim PhysicalRewardClaim[]
+  id                     String                   @id
+  sessions               Session[]
+  github_id              Int                      @unique
+  name                   String
+  username               String
+  email                  String
+  admin                  Boolean                  @default(false)
+  avatar                 String
+  access_token           String?                  @db.Text
+  RepositoryStatus       RepositoryStatus[]
+  Repository             Repository[]
+  PullRequestStatus      PullRequestStatus[]
+  DigitalRewardClaim     DigitalRewardClaim[]
+  PhysicalRewardClaim    PhysicalRewardClaim[]
+  UserRepositoryRelation UserRepositoryRelation[]
 
   @@unique([id])
 }
@@ -60,15 +61,16 @@ model SponsorLinks {
 }
 
 model Repository {
-  id                  String               @id @default(cuid())
-  repository_id       String               @unique
-  submitter           String?
-  SponsoredRepository SponsoredRepository?
-  cache               RepositoryCache?
-  RepositoryStatus    RepositoryStatus?
-  user                User?                @relation(fields: [submitter], references: [id], onDelete: Cascade)
-  PullRequest         PullRequest[]
-  tags                TaggedRepository[]
+  id                     String                   @id @default(cuid())
+  repository_id          String                   @unique
+  submitter              String?
+  SponsoredRepository    SponsoredRepository?
+  cache                  RepositoryCache?
+  RepositoryStatus       RepositoryStatus?
+  user                   User?                    @relation(fields: [submitter], references: [id], onDelete: Cascade)
+  PullRequest            PullRequest[]
+  tags                   TaggedRepository[]
+  UserRepositoryRelation UserRepositoryRelation[]
 
   @@unique([id, repository_id])
 }
@@ -224,4 +226,15 @@ model PhysicalRewardClaim {
 
   reward  Reward @relation(fields: [reward_id], references: [id], onDelete: Cascade)
   claimer User   @relation(fields: [claimer_id], references: [id], onDelete: Cascade)
+}
+
+model UserRepositoryRelation {
+  user_id       String
+  repository_id String
+  reason        String
+
+  user       User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  repository Repository @relation(fields: [repository_id], references: [repository_id], onDelete: Cascade)
+
+  @@id([user_id, repository_id])
 }

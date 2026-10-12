@@ -92,7 +92,14 @@ if (!repository) {
 }
 
 const relations = await Promise.all(repository.relations.map(async relation => {
-    const user = (await octokit.rest.users.getById({account_id: parseInt(relation.github_user_id)})).data;
+    const user = (await octokit.rest.users.getById({account_id: parseInt(relation.github_user_id)}).then(value => {
+        return {
+            avatar_url: value.data.avatar_url,
+            login: value.data.login,
+        }
+    }).catch(reason => {
+        return undefined
+    }));
     return {
         ...relation,
         user: user,
@@ -141,14 +148,13 @@ const relations = await Promise.all(repository.relations.map(async relation => {
             {relations.map(relation => {
                 return <div class="flex flex-col gap-y-2 border border-white/10 sm:flex-col p-2 bg-opacity-25 relative">
                     <div class="flex gap-2">
-                        <img src = {relation.user.avatar_url} alt = {relation.user.login} class = "w-16 h-16 rounded-full"/>
+                        {relation.user &&  <img src = {relation.user.avatar_url} alt = {relation.user.login} class = "w-16 h-16 rounded-full"/>}
                         <div class="flex gap-1 flex-col">
-                            <p class="w-full">{relation.user.login}</p>
+                            {relation.user ? <p class="w-full">{relation.user.login}</p> : <p class="w-full">{relation.github_user_id}</p> }
                             <p class="w-full bg-red-500/25 p-2">
                                 {relation.relationship}
                             </p>
                         </div>
-
                     </div>
                     <form class = "flex flex-col sm:flex-row gap-y-2 w-full mt-4" method="POST" action={actions.repository.clear_relation}>
                         <input type="hidden" name="repository_id" value={relation.repository_id}/>

@@ -52,6 +52,12 @@ export async function POST({request}: APIContext) {
                     owner: true,
                     name: true
                 }
+            },
+            UserRepositoryRelation: {
+                select: {
+                    github_user_id: true,
+                    relationship: true
+                }
             }
         },
         where: {
@@ -121,6 +127,11 @@ export async function POST({request}: APIContext) {
             }
             if (isInvalid) {
                 reason = "Pull request has been marked as spam or invalid."
+            }
+            for (let relation of repo.UserRepositoryRelation) {
+                if(relation.github_user_id === prData.author_id) {
+                    reason = relation.relationship;
+                }
             }
 
             const prStatus = {

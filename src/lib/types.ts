@@ -73,6 +73,8 @@ export interface AdminRepository extends BaseRepository {
 
 export interface PullRequest {
     pr_id: number;
+    repository_id: string;
+    author_id: string;
     author: string;
     created_at: number;
     html_url: string;

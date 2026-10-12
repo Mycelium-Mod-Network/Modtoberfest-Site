@@ -498,5 +498,139 @@ export const repository = {
 
             return `Ok`
         }
+    }),
+    add_relation: defineAction({
+        accept: 'form',
+        input: z.object({
+            repository_id: z.string(),
+            user_id: z.string(),
+            relationship: z.string()
+        }),
+        handler: async (input, context) => {
+            const user = context.locals.user;
+            if (!user) {
+                throw new ActionError({
+                    code: "UNAUTHORIZED",
+                    message: "Not logged in",
+                });
+            }
+
+            const {repository_id, user_id, relationship} = input;
+
+            if (!await prisma.repository.count({
+                where: {
+                    repository_id
+                }
+            })) {
+                throw new ActionError({
+                    code: "BAD_REQUEST",
+                    message: "Repository does not exist!",
+                });
+            }
+
+            if (relationship.trim().length === 0) {
+                throw new ActionError({
+                    code: "BAD_REQUEST",
+                    message: "Relationship cannot be empty!",
+                });
+            }
+
+            await prisma.userRepositoryRelation.upsert({
+                create: {
+                    repository_id,
+                    github_user_id: user_id,
+                    relationship
+                },
+                update: {
+                    relationship,
+                },
+                where: {
+                    repository_id,
+                    github_user_id: user_id,
+                    repository_id_github_user_id: {
+                        repository_id,
+                        github_user_id: user_id
+                    }
+                },
+            });
+
+            await prisma.pullRequestStatus.updateMany({
+                data: {
+                    invalid: true,
+                    reason: relationship,
+                    reviewed: true,
+                    reviewed_by: user.id
+                },
+                where: {
+                    PullRequest: {
+                        repository_id,
+                        author_id: user_id
+                    }
+                }
+            })
+
+            return `Ok`
+        }
+    }),
+    clear_relation: defineAction({
+        accept: 'form',
+        input: z.object({
+            repository_id: z.string(),
+            user_id: z.string(),
+            relationship: z.string()
+        }),
+        handler: async (input, context) => {
+            const user = context.locals.user;
+            if (!user) {
+                throw new ActionError({
+                    code: "UNAUTHORIZED",
+                    message: "Not logged in",
+                });
+            }
+
+            const {repository_id, user_id, relationship} = input;
+
+            if (!await prisma.repository.count({
+                where: {
+                    repository_id
+                }
+            })) {
+                throw new ActionError({
+                    code: "BAD_REQUEST",
+                    message: "Repository does not exist!",
+                });
+            }
+
+            if (relationship.trim().length === 0) {
+                throw new ActionError({
+                    code: "BAD_REQUEST",
+                    message: "Relationship cannot be empty!",
+                });
+            }
+            await prisma.userRepositoryRelation.deleteMany({
+                where: {
+                    repository_id,
+                    github_user_id: user_id
+                }
+            });
+
+            await prisma.pullRequestStatus.updateMany({
+                data: {
+                    invalid: false,
+                    reason: null,
+                    reviewed: false,
+                    reviewed_by: null
+                },
+                where: {
+                    reason: relationship,
+                    PullRequest: {
+                        repository_id,
+                        author_id: user_id
+                    }
+                }
+            })
+
+            return `Ok`
+        }
     })
 }

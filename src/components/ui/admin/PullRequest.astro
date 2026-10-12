@@ -43,5 +43,11 @@ const {pr} = Astro.props;
                 <button type = "submit" class = "w-full text-center border border-rose-400 bg-rose-900 hover:bg-rose-700 no-underline block">Reset</button>
             </form>
             </>}
+        <form class = "flex flex-col sm:flex-row gap-y-2 w-full mt-4" method="POST" action={actions.repository.add_relation}>
+            <input type="hidden" name="repository_id" value={pr.repository_id}/>
+            <input type="hidden" name="user_id" value={pr.author_id}/>
+            <input type = "text" name = "relationship" required id = "relationship" class="bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary w-full">
+            <button type = "submit" class = "w-full text-center border border-blue-400 bg-blue-900 hover:bg-blue-700 no-underline block">Add Relation</button>
+        </form>
     </div>
 </div>

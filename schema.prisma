@@ -23,7 +23,6 @@ model User {
   PullRequestStatus      PullRequestStatus[]
   DigitalRewardClaim     DigitalRewardClaim[]
   PhysicalRewardClaim    PhysicalRewardClaim[]
-  UserRepositoryRelation UserRepositoryRelation[]
 
   @@unique([id])
 }
@@ -229,12 +228,11 @@ model PhysicalRewardClaim {
 }
 
 model UserRepositoryRelation {
-  user_id       String
-  repository_id String
-  reason        String
+  repository_id  String
+  github_user_id String
+  relationship   String
 
-  user       User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
   repository Repository @relation(fields: [repository_id], references: [repository_id], onDelete: Cascade)
 
-  @@id([user_id, repository_id])
+  @@id([repository_id, github_user_id])
 }

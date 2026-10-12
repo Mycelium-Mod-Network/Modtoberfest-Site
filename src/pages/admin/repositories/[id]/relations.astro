@@ -1,0 +1,163 @@
+---
+import {isUserAdmin} from "@lib/util";
+import Layout from "@layouts/Layout.astro";
+import PageTitle from "@components/ui/PageTitle.astro";
+import prisma from "@lib/db";
+import UserCard from "@components/ui/admin/UserCard.astro";
+import {Icon} from "astro-icon/components";
+import type {PRGroups, PullRequest} from "@lib/types.ts";
+import PRGroup from "@components/ui/admin/PRGroup.astro";
+import {Octokit} from "octokit";
+import {createOAuthAppAuth} from "@octokit/auth-oauth-app";
+import type {Repository as GHRepo} from "@octokit/webhooks-types";
+import {actions} from "astro:actions";
+import RepositorySubmitter from "@components/ui/repositories/RepositorySubmitter.tsx";
+import ActionResult from "@components/ui/ActionResult.astro";
+const user = Astro.locals.user;
+if (!isUserAdmin(user)) {
+    return Astro.redirect("/403?url=/admin/users")
+}
+const {id} = Astro.params
+const octokit = new Octokit({
+    authStrategy: createOAuthAppAuth,
+    auth: {
+        clientId: import.meta.env.GITHUB_ID,
+        clientSecret: import.meta.env.GITHUB_SECRET
+    }
+});
+
+const repository = await prisma.repository.findFirst({
+    select: {
+        id: true,
+        repository_id: true,
+        cache: true,
+        tags: true,
+        UserRepositoryRelation: true
+    },
+    where: {
+        id
+    }
+}).then(async repo => {
+    if(!repo) {
+        return null;
+    }
+    let cache = repo.cache;
+    //TODO delete?
+    if (!cache) {
+        const repoInfo = await octokit.request("GET /repositories/{repository_id}", {
+            repository_id: repo.repository_id,
+            headers: {
+                'X-GitHub-Api-Version': '2026-03-10'
+            }
+        });
+        const repoData: GHRepo = repoInfo.data;
+        cache = {
+            name: repoData.name,
+            owner: repoData.owner.login,
+            ownerHtmlUrl: repoData.owner.html_url,
+            ownerAvatarUrl: repoData.owner.avatar_url,
+            url: repoData.html_url,
+            description: repoData.description,
+            stars: repoData.stargazers_count,
+            openIssues: repoData.has_issues ? repoData.open_issues_count : 0,
+            repository_id: repo.repository_id,
+            id: repo.id,
+            updatedAt: new Date(repoData.pushed_at!),
+            license: (repoData.license ?? {name: null}).name,
+            // Language requires more database lookups, it will be inserted when repos are updated later
+            languageName: null
+        }
+    }
+
+    return {
+        id: repo.id,
+        repository_id: repo.repository_id,
+        url: cache.url,
+        description: cache.description ?? undefined,
+        name: cache.name,
+        owner: cache.owner,
+        ownerHtmlUrl: cache.ownerHtmlUrl,
+        ownerAvatarUrl: cache.ownerAvatarUrl,
+        stars: cache.stars,
+        openIssues: cache.openIssues,
+        updatedAt: cache.updatedAt.getTime(),
+        reason: undefined,
+        invalid: false,
+        tags: [],
+        relations: repo.UserRepositoryRelation
+    };
+});
+if (!repository) {
+    return Astro.redirect("/404?url=/admin/users")
+}
+
+const relations = await Promise.all(repository.relations.map(async relation => {
+    const user = (await octokit.rest.users.getById({account_id: parseInt(relation.github_user_id)})).data;
+    return {
+        ...relation,
+        user: user,
+    }
+}))
+---
+
+<Layout title = "Repository Relation" description = "User Relation" canonical = `/admin/repositories/${repository.id}/relations` currentPage = "admin">
+    <div class = "mx-auto max-w-none">
+        <ActionResult action = {actions.repository.clear_relation}/>
+        <PageTitle>{repository.name}</PageTitle>
+
+            <div class:list = {["p-4 w-full border relative bg-white/5 border-white/10 mb-2", {"bg-red-900 bg-opacity-25": repository.invalid}]}>
+                <div class = "flex gap-x-2">
+                    <img src = {repository.ownerAvatarUrl} alt = {repository.owner} class = "w-16 h-16 rounded-full"/>
+                    <div class = "flex flex-col gap-y-1 flex-grow">
+                        <a href = {repository.ownerHtmlUrl} target = "_blank" rel = "noreferrer">{repository.owner}</a>
+
+                        <a href = {repository.url} target = "_blank" rel = "noreferrer">{repository.name}</a>
+
+                        {repository.description &&
+                                <div class = "p-2 font-mono break-all bg-white bg-opacity-5">
+                                    {repository.description}
+                                </div>
+                        }
+
+                        <div class = "flex flex-col gap-y-2">
+                            <form method = "POST" action = {actions.repository.tag} class = "w-full">
+                                <input type = "hidden" value = {repository.repository_id} name = "repository_id"/>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        <div class = "flex flex-col sm:flex-row gap-x-2 rounded text-center mb-2">
+            <a href = `/admin/repositories/${repository.id}` class = "basic-link w-full p-2  border border-white/10 bg-white/5 hover:bg-primary/20"> Pull Requests </a>
+            <div class = "w-full p-2 border border-white/10 bg-primary/10">
+                User Relations
+            </div>
+        </div>
+
+        <div class = "flex flex-col gap-2 rounded border border-white/10 bg-white/5 p-2">
+            {relations.map(relation => {
+                return <div class="flex flex-col gap-y-2 border border-white/10 sm:flex-col p-2 bg-opacity-25 relative">
+                    <div class="flex gap-2">
+                        <img src = {relation.user.avatar_url} alt = {relation.user.login} class = "w-16 h-16 rounded-full"/>
+                        <div class="flex gap-1 flex-col">
+                            <p class="w-full">{relation.user.login}</p>
+                            <p class="w-full bg-red-500/25 p-2">
+                                {relation.relationship}
+                            </p>
+                        </div>
+
+                    </div>
+                    <form class = "flex flex-col sm:flex-row gap-y-2 w-full mt-4" method="POST" action={actions.repository.clear_relation}>
+                        <input type="hidden" name="repository_id" value={relation.repository_id}/>
+                        <input type="hidden" name="user_id" value={relation.github_user_id}/>
+                        <input type = "hidden" name = "relationship" id = "relationship" value={relation.relationship}/>
+                        <button type = "submit" class = "w-full text-center border border-blue-400 bg-blue-900 hover:bg-blue-700 no-underline block">Clear Relation</button>
+                    </form>
+                    </div>
+            })}
+        </div>
+    </div>
+</Layout>

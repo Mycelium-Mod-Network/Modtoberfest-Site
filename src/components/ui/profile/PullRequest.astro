@@ -1,10 +1,12 @@
 ---
 import type {PullRequest} from "../../../lib/types";
 import {Icon} from "astro-icon/components";
+import {formatDate} from "@lib/util";
 interface Props {
     pr: PullRequest,
 }
 const {pr} = Astro.props;
+const isoDate = new Date(pr.created_at).toISOString();
 ---
 
 <div class:list = {["p-2 border-2 border-white/10 flex w-64 bg-opacity-25 relative", {"bg-yellow-500": !pr.reviewed, "bg-green-500": pr.reviewed && !pr.invalid, "bg-rose-500": pr.reviewed && pr.invalid}]}>
@@ -23,9 +25,13 @@ const {pr} = Astro.props;
 
         <a href = {pr.html_url} class = "no-underline text-orange-400 text-center" target = "_blank" rel = "noreferrer">{pr.repo_name}#{pr.number}</a>
 
-        <span class = "border-b border-white/10 text-sm text-brand-100">
-            {new Date(pr.created_at).toLocaleString()}
-        </span>
+        <time
+            datetime={isoDate}
+            title={formatDate(pr.created_at)}
+            class="pr-created-at border-b border-white/10 text-sm text-brand-100"
+        >
+            {new Date(pr.created_at).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" })} UTC
+        </time>
 
 
         <span class = "font-mono">
@@ -48,3 +54,20 @@ const {pr} = Astro.props;
 
     </div>
 </div>
+
+<script>
+    function localizePRTimes() {
+        document.querySelectorAll<HTMLTimeElement>("time.pr-created-at").forEach((el) => {
+            if (el.dateTime) {
+                const date = new Date(el.dateTime);
+                el.textContent = date.toLocaleString(undefined, {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                });
+            }
+        });
+    }
+
+    localizePRTimes();
+    document.addEventListener("astro:page-load", localizePRTimes);
+</script>

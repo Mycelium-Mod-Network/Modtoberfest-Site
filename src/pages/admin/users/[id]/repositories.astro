@@ -104,7 +104,7 @@ const tags = (await prisma.tag.findMany({
 })).map(value => value.name)
 ---
 
-<Layout title = "User Relation" description = "User Relation" canonical = `/admin/users/${currentUser.id}/repositories` currentPage = "admin">
+<Layout title = "User Repositories" description = "User Repositories" canonical = `/admin/users/${currentUser.id}/repositories` currentPage = "admin">
     <div class = "mx-auto max-w-none">
         <ActionResult action = {actions.repository.delete}/>
         <ActionResult action = {actions.repository.clear_submitter}/>

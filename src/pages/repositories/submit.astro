@@ -5,10 +5,15 @@ import type {Language, RepoGroups, SubmittingRepo} from "../../lib/types";
 import prisma from "../../lib/db";
 import GroupedRepositories from "../../components/ui/repositories/GroupedRepositories.astro";
 import PageTitle from "../../components/ui/PageTitle.astro";
+import {isBanned} from "@lib/util.ts";
 const user = Astro.locals.user;
 
 if (!user) {
     return Astro.redirect("/auth/github")
+}
+
+if (await isBanned(user)) {
+    return Astro.redirect("/")
 }
 
 const octokit = new Octokit({

@@ -1,12 +1,15 @@
 ---
 import prisma from "@lib/db";
-const user = Astro.locals.user;
 import DigitalRewardPage from "@components/ui/rewards/DigitalRewardPage.astro";
 import PhysicalRewardPage from "@components/ui/rewards/PhysicalRewardPage.astro";
 import type {DigitalReward, PhysicalReward} from "../../../lib/types";
-
+import {isBanned} from "@lib/util.ts";
+const user = Astro.locals.user;
 if (!user) {
     return Astro.redirect("/auth/github?url=/admin")
+}
+if (await isBanned(user)) {
+    return Astro.redirect("/")
 }
 
 const validPrs = await prisma.pullRequest.count({
@@ -91,6 +94,7 @@ const reward = {
     digitalRewardCode: DigitalRewardCodes ? DigitalRewardCodes[0] : undefined,
     physicalRewardClaim: PhysicalRewardClaim ? PhysicalRewardClaim[0] : undefined,
 }
-
 ---
-{reward.digital ? <DigitalRewardPage reward={reward as DigitalReward} validPrs={validPrs}/> : <PhysicalRewardPage reward={reward as PhysicalReward} validPrs={validPrs}/>}
+{reward.digital ?
+<DigitalRewardPage reward = {reward as DigitalReward} validPrs = {validPrs}/> :
+<PhysicalRewardPage reward = {reward as PhysicalReward} validPrs = {validPrs}/>}

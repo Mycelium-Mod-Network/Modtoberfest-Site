@@ -68,6 +68,17 @@ export async function POST({request}: APIContext) {
         }
     })
 
+    const bannedUsers = (await prisma.userBan.findMany({
+        select: {
+            user: {
+                select: {
+                    github_id: true
+                }
+            }
+        }
+    })).map(value => {
+        return value.user.github_id.toString()
+    });
     const existingIds = (await prisma.pullRequest.findMany({
         select: {
             id: true,
@@ -114,6 +125,7 @@ export async function POST({request}: APIContext) {
         }
         for (let pull of allPulls) {
             const prData = getRepoData(pull);
+
             const existingId = existingIds[prData.pr_id];
             const isBot = pull.user.type === "Bot"
             const ownerOrCollab = pull.author_association === "OWNER" || pull.author_association === "COLLABORATOR" || pull.author_association === "MEMBER"
@@ -129,9 +141,12 @@ export async function POST({request}: APIContext) {
                 reason = "Pull request has been marked as spam or invalid."
             }
             for (let relation of repo.UserRepositoryRelation) {
-                if(relation.github_user_id === prData.author_id) {
+                if (relation.github_user_id === prData.author_id) {
                     reason = relation.relationship;
                 }
+            }
+            if(bannedUsers.includes(prData.author_id)) {
+                reason = "User has been banned from the event."
             }
 
             const prStatus = {

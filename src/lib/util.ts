@@ -1,10 +1,25 @@
 import {type ActionErrorCode, ActionError} from 'astro:actions';
 import type {User} from "lucia";
+import prisma from "@lib/db.ts";
 
 
 export function isUserAdmin(user: User | null): user is User {
     if (user && "admin" in user) {
         return user.admin as boolean
+    }
+    return false;
+}
+
+export async function isBanned(user: User | null) {
+    if(user) {
+        return (await prisma.userBan.findFirst({
+            select: {
+                reason: true
+            },
+            where: {
+                user_id: user.id,
+            }
+        }))?.reason
     }
     return false;
 }

@@ -5,10 +5,15 @@ import prisma from "@lib/db";
 import PullRequest from "../../components/ui/profile/PullRequest.astro"
 import type { PullRequest as PR, Reward as RewardType} from "../../lib/types";
 import Reward from "../../components/ui/rewards/Reward.astro";
+import {isBanned} from "@lib/util.ts";
 
 const user = Astro.locals.user;
 if (!user) {
     return Astro.redirect("/auth/github?url=/admin")
+}
+
+if (await isBanned(user)) {
+    return Astro.redirect("/")
 }
 
 const rewards: RewardType[] = (await prisma.reward.findMany({

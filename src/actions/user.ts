@@ -51,5 +51,43 @@ export const user = {
             })
             return `Ok`
         }
+    }),
+    ban: defineAction({
+        accept: 'form',
+        input: z.object({
+            id: z.string(),
+            reason: z.string()
+        }),
+        handler: async (input, context) => {
+            const user = context.locals.user;
+            if (!isUserAdmin(user)) {
+                throw new ActionError({
+                    code: "UNAUTHORIZED",
+                    message: "User is not an admin",
+                });
+            }
+            await prisma.userBan.create({
+               data: {
+                   user_id: input.id,
+                   reason: input.reason,
+                   date: new Date()
+               }
+            });
+
+            await prisma.pullRequestStatus.updateMany({
+                data: {
+                    invalid: true,
+                    reason: "User has been banned from the event.",
+                    reviewed: true,
+                    reviewed_by: user.id
+                },
+                where: {
+                    PullRequest: {
+                        author_id: input.id,
+                    }
+                }
+            })
+            return `Ok`
+        }
     })
 }

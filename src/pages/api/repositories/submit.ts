@@ -1,12 +1,18 @@
 import type {APIContext} from "astro";
 import prisma from "@lib/db.ts";
 import {Octokit} from "octokit";
+import {isBanned} from "@lib/util.ts";
 
 export async function POST({request, locals}: APIContext) {
 
     const body = await request.json();
     const user = locals.user
     if (!user) {
+        return new Response("forbidden", {
+            status: 404
+        })
+    }
+    if (await isBanned(user)) {
         return new Response("forbidden", {
             status: 404
         })

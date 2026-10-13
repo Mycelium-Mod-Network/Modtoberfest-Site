@@ -1,9 +1,10 @@
 ---
-import {isUserAdmin} from "@lib/util";
+import {isBanned, isUserAdmin} from "@lib/util";
 import NavLink from "./nav/NavLink.astro";
 import UserButton from "./ui/UserButton.astro";
 
 const user = Astro.locals.user;
+const banned = await isBanned(user);
 const isAdmin = isUserAdmin(user);
 
 interface Props {
@@ -26,8 +27,8 @@ const {currentPage} = Astro.props;
             <div class = "flex flex-col lg:flex-row w-full text-center lg:space-x-8">
                 <NavLink to = "/" current = {currentPage === "home"}>HOME</NavLink>
                 <NavLink to = "/rules" current = {currentPage === "rules"}>RULES</NavLink>
-                <NavLink to = "/sponsors" current = {currentPage === "sponsors"}>SPONSORS</NavLink>
-                <NavLink to = "/repositories" current = {currentPage === "repositories"}>REPOSITORIES</NavLink>
+                {!banned && <NavLink to = "/sponsors" current = {currentPage === "sponsors"}>SPONSORS</NavLink>}
+                {!banned && <NavLink to = "/repositories" current = {currentPage === "repositories"}>REPOSITORIES</NavLink>}
                 <NavLink to = "/faq" current = {currentPage === "faq"}>FAQ</NavLink>
                 {isAdmin &&
                         <NavLink to = "/admin" current = {currentPage === "admin"}>ADMIN</NavLink>}

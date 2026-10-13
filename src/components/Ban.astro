@@ -1,0 +1,31 @@
+---
+import prisma from "@lib/db.ts";
+const user = Astro.locals.user;
+let banReason = undefined;
+if (user) {
+    banReason = (await prisma.userBan.findFirst({
+        select: {
+            reason: true
+        },
+        where: {
+            user_id: user.id,
+        }
+    }))?.reason
+}
+---
+{banReason &&
+<div class = "border bg-red-800 border-red-700 bg-opacity-25 rounded p-2 w-full text-white text-center flex flex-col">
+    <h1 class = "text-7xl">
+        Banned
+    </h1>
+    <p class = "text-3xl">
+        You have been banned from the event for the following reason:
+    </p>
+    <p class = " text-xl font-mono">
+        {banReason}
+    </p>
+    <p class = "text-xl">
+        If you would like to appeal this ban, please join the <a href = "https://discord.modtoberfest.com" target = "_blank" rel = "noreferrer">discord</a>.
+    </p>
+
+</div>}

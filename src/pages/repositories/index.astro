@@ -3,7 +3,12 @@ import Layout from "@layouts/Layout.astro";
 import prisma from "../../lib/db";
 import Repository from "@components/ui/repositories/Repository.astro";
 import type {DisplayRepository} from "@lib/types";
-import {shuffleArray} from "../../lib/util";
+import {isBanned, shuffleArray} from "../../lib/util";
+
+const user = Astro.locals.user;
+if (await isBanned(user)) {
+    return Astro.redirect("/")
+}
 
 let sponsoredCount = 0;
 
@@ -128,7 +133,7 @@ const repos = dbRepos.reduce<DisplayRepository[]>((acc, cur) => {
     }
     return [...acc, cur]
 }, [])
-const user = Astro.locals.user;
+
 ---
 <Layout title = "Repositories" description = "Repositories" canonical = "/repositories" currentPage = "repositories" wide = {true}>
     <div class = "mx-auto">

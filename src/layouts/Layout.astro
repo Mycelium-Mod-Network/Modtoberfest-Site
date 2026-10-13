@@ -1,8 +1,12 @@
 ---
 import Navbar from "../components/Navbar.astro";
+import Ban from "../components/Ban.astro";
 import "../styles/index.css";
 import Footer from "../components/Footer.astro";
 import {SEO, type SEOProps} from "astro-seo";
+import {isUserAdmin} from "@lib/util.ts";
+import prisma from "@lib/db.ts";
+import {Icon} from "astro-icon/components";
 interface Props {
     title: string;
     description: string;
@@ -31,12 +35,12 @@ const seo: SEOProps = {
             siteName: "Modtoberfest",
         },
     },
-    twitter : {
-       card: "summary_large_image",
-       title,
-       description,
-       image,
-       imageAlt: "Modtoberfest Logo",
+    twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        image,
+        imageAlt: "Modtoberfest Logo",
     },
     extend: {
         meta: [
@@ -47,6 +51,18 @@ const seo: SEOProps = {
         ],
     },
 };
+const user = Astro.locals.user;
+let banReason = undefined;
+if (user) {
+    banReason = (await prisma.userBan.findFirst({
+        select: {
+            reason: true
+        },
+        where: {
+            user_id: user.id,
+        }
+    }))?.reason
+}
 ---
 
 <!doctype html>
@@ -59,23 +75,25 @@ const seo: SEOProps = {
     <meta name = "generator" content = {Astro.generator}/>
     <meta name = "darkreader-lock">
     <title>{title}</title>
-    <link rel="preload" href="/germania_one.woff2" as="font" type="font/woff2">
+    <link rel = "preload" href = "/germania_one.woff2" as = "font" type = "font/woff2">
     <script is:inline async defer data-website-id = "d5a805fd-940e-4c3e-853a-9c5d0dd9febf" src = "https://nlytics.blmj.red/scrpt"/>
     <link rel = "apple-touch-icon" sizes = "180x180" href = "/apple-touch-icon.png?v=1"/>
     <link rel = "icon" type = "image/png" sizes = "32x32" href = "/favicon-32x32.png?v=1"/>
     <link rel = "icon" type = "image/png" sizes = "16x16" href = "/favicon-16x16.png?v=1"/>
     <link rel = "manifest" href = "/site.webmanifest"/>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=1">
-    {multiselect && <>
-        <link href="/styles/multiselect.css" rel="stylesheet" type="text/css">
-        <script src="../lib/multiselect.js" />
-    </>}
+    <link rel = "icon" type = "image/x-icon" href = "/favicon.ico?v=1">
+    {multiselect &&
+            <>
+                <link href = "/styles/multiselect.css" rel = "stylesheet" type = "text/css">
+                <script src = "../lib/multiselect.js"/>
+            </>}
     <SEO {...seo}/>
 
 </head>
 <body class = "bg-neutral-950 flex flex-col min-h-screen">
-<Navbar currentPage={currentPage}/>
-<main class:list={[{"wide": wide}]}>
+<Ban/>
+<Navbar currentPage = {currentPage}/>
+<main class:list = {[{"wide": wide}]}>
     <slot/>
 </main>
 <Footer/>

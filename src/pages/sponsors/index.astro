@@ -3,6 +3,11 @@ import Layout from "@layouts/Layout.astro";
 import PageTitle from "@components/ui/PageTitle.astro";
 import prisma from "@lib/db";
 import Sponsor from "@components/ui/Sponsor.astro";
+import {isBanned} from "@lib/util.ts";
+const user = Astro.locals.user;
+if (await isBanned(user)) {
+    return Astro.redirect("/")
+}
 const sponsors = await prisma.sponsor.findMany({
     select: {
         id: true,

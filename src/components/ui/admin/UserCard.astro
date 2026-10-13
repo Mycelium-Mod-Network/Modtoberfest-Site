@@ -35,30 +35,37 @@ const {user} = Astro.props;
 
         </div>
     </div>
-    <div class="flex flex-col sm:flex-row gap-2">
-        <a href=`/admin/users/${user.id}` class = " bg-blue-700 hover:bg-blue-600 border-t border-white/10 w-full h-full flex gap-x-1 justify-center place-items-center py-1 basic-link">
-            <Icon name = "octicon:person-16" class = "w-4 h-4"/>
-            <span>User</span>
-        </a>
-        <form method = "post" action = {actions.user[user.admin ? "demote" : "promote"]} class:list = {[" bg-green-500 border-t border-white/10 w-full", {
-            "bg-red-700 hover:bg-red-600": user.admin,
-            "bg-green-700 hover:bg-green-600": !user.admin
-        }]}>
-            <input type = "hidden" value = {user.id} name = "id"/>
-            <button type = "submit" class = "w-full h-full flex gap-x-1 justify-center place-items-center py-1">
-                {user.admin &&
-                        <>
+    <div class="flex flex-col">
+        <div class="flex flex-col sm:flex-row gap-2">
+            <a href=`/admin/users/${user.id}` class = " bg-blue-700 hover:bg-blue-600 border-t border-white/10 w-full h-full flex gap-x-1 justify-center place-items-center py-1 basic-link">
+                <Icon name = "octicon:person-16" class = "w-4 h-4"/>
+                <span>User</span>
+            </a>
+            <form method = "post" action = {actions.user[user.admin ? "demote" : "promote"]} class:list = {[" bg-green-500 border-t border-white/10 w-full", {
+                "bg-red-700 hover:bg-red-600": user.admin,
+                "bg-green-700 hover:bg-green-600": !user.admin
+            }]}>
+                <input type = "hidden" value = {user.id} name = "id"/>
+                <button type = "submit" class = "w-full h-full flex gap-x-1 justify-center place-items-center py-1">
+                    {user.admin &&
+                            <>
 
-                            <Icon name = "octicon:shield-slash-16" class = "w-4 h-4"/>
-                            <span>Demote</span>
-                        </>}
+                                <Icon name = "octicon:shield-slash-16" class = "w-4 h-4"/>
+                                <span>Demote</span>
+                            </>}
 
-                {!user.admin &&
-                        <>
-                            <Icon name = "octicon:shield-check-16" class = "w-4 h-4"/>
-                            <span>Promote</span>
-                        </>}
-            </button>
+                    {!user.admin &&
+                            <>
+                                <Icon name = "octicon:shield-check-16" class = "w-4 h-4"/>
+                                <span>Promote</span>
+                            </>}
+                </button>
+            </form>
+        </div>
+        <form class = "flex flex-col sm:flex-row gap-2 w-full mt-4" method="POST" action={actions.user.ban}>
+            <input type="hidden" name="id" value={user.id}/>
+            <input type = "text" name = "reason" required id = "reason" class="bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary w-full">
+            <button type = "submit" class = "w-full text-center border border-red-400 bg-red-900 hover:bg-red-700 no-underline block">Ban</button>
         </form>
     </div>
 </div>

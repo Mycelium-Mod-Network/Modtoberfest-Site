@@ -2,8 +2,10 @@
 import Layout from '../layouts/Layout.astro';
 import UserButton from "../components/ui/UserButton.astro";
 import Timer from "../components/ui/Timer.astro";
+import {isBanned} from "@lib/util.ts";
 
 const user = Astro.locals.user;
+const banned = await isBanned(user);
 ---
 
 <Layout title = "Modtoberfest" description = "Modtoberfest" canonical = "/" currentPage = "home">
@@ -74,15 +76,15 @@ const user = Astro.locals.user;
             <p>
                 Those who complete our challenge will be rewarded with a prize pack that includes awesome stickers designed by the sponsors of our event! We will also be planting a tree for each person who completes the event in the <a href = "/modtoberforest" class="font-brand text-primary">Modtoberforest</a>.
             </p>
-            <Timer date = {Date.UTC(2026, 9, 1, 0, 0, 0) - (12 * 60 * 60 * 1000)}>
+            {!banned && <Timer date = {Date.UTC(2026, 9, 1, 0, 0, 0) - (12 * 60 * 60 * 1000)}>
                 <p slot = "before">The event starts in</p>
                 <p slot = "after" class = "text-primary font-brand">
                     The event has started, you can now submit pull requests!
                 </p>
-            </Timer>
+            </Timer>}
         </div>
 
-        <div class = "flex flex-col sm:flex-row text-center mx-auto gap-8 mb-32 text-xl">
+        {!banned && <div class = "flex flex-col sm:flex-row text-center mx-auto gap-8 mb-32 text-xl">
             <div class="flex flex-col gap-y-4">
                 <p class="text-2xl">Participants</p>
                 {user ?
@@ -100,7 +102,7 @@ const user = Astro.locals.user;
                     <button class = "px-4 h-12 border border-primary rounded-md text-lg font-bold text-primary shadow-sm hover:bg-primary hover:text-black">Submit your project</button>
                 </a>
             </div>
-        </div>
+        </div>}
 
     </div>
 </Layout>

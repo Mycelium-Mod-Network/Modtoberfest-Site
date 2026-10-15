@@ -3,7 +3,7 @@ import {actions} from "astro:actions"
 import type {User} from "../../../lib/types";
 import {Icon} from 'astro-icon/components'
 interface Props {
-    user: Omit<User, "github_id">;
+    user: User;
 }
 const {user} = Astro.props;
 ---
@@ -64,6 +64,7 @@ const {user} = Astro.props;
         </div>
         <form class = "flex flex-col sm:flex-row gap-2 w-full mt-4" method="POST" action={actions.user.ban}>
             <input type="hidden" name="id" value={user.id}/>
+            <input type="hidden" name="github_id" value={user.github_id}/>
             <input type = "text" name = "reason" required id = "reason" class="bg-transparent focus:bg-primary/10 outline outline-white/10 focus:outline-primary w-full">
             <button type = "submit" class = "w-full text-center border border-red-400 bg-red-900 hover:bg-red-700 no-underline block">Ban</button>
         </form>

@@ -14,6 +14,7 @@ if (!isUserAdmin(user)) {
 const users = await prisma.user.findMany({
     select: {
         id: true,
+        github_id: true,
         name: true,
         username: true,
         email: true,

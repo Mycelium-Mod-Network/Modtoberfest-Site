@@ -56,7 +56,8 @@ export const user = {
         accept: 'form',
         input: z.object({
             id: z.string(),
-            reason: z.string()
+            reason: z.string(),
+            github_id: z.string()
         }),
         handler: async (input, context) => {
             const user = context.locals.user;
@@ -83,7 +84,7 @@ export const user = {
                 },
                 where: {
                     PullRequest: {
-                        author_id: input.id,
+                        author_id: input.github_id,
                     }
                 }
             })

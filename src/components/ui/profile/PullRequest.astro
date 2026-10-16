@@ -14,7 +14,7 @@ const {pr} = Astro.props;
     </div>
     {pr.merged &&
             <Icon name = "octicon:git-merge-16" class = "absolute top-1 right-1 w-6 h-6 text-indigo-500"/>}
-    <div class = "flex flex-col w-full">
+    <div class = "flex flex-col w-full break-words">
         <a href = `https://github.com/${pr.owner}` class = "text-sm no-underline flex flex-col w-full text-center" target = "_blank" rel = "noreferrer">
 
             <span>{pr.owner}</span>

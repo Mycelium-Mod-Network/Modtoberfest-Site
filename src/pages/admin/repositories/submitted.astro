@@ -44,7 +44,8 @@ const dbRepos = (await prisma.repository.findMany({
     where: {
         RepositoryStatus: {
             reviewed: false
-        }
+        },
+        deleted: false
     }
 }))
 
@@ -101,7 +102,8 @@ const repos = await Promise.all(dbRepos.map(async repo => {
         reason: undefined,
         invalid: false,
         submitter: repo.user ? {username: repo.user.username, avatar: repo.user.avatar} : undefined,
-        tags: (repo.tags ?? []).map(tag => tag.tag_name)
+        tags: (repo.tags ?? []).map(tag => tag.tag_name),
+        deleted: false
     };
 }))
 ---

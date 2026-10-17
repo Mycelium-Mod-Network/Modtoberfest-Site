@@ -29,7 +29,7 @@ model User {
 }
 
 model UserBan {
-  user_id String    @id
+  user_id String   @id
   reason  String
   date    DateTime
 
@@ -78,6 +78,7 @@ model Repository {
   cache                  RepositoryCache?
   RepositoryStatus       RepositoryStatus?
   user                   User?                    @relation(fields: [submitter], references: [id], onDelete: Cascade)
+  deleted                Boolean @default(false)
   PullRequest            PullRequest[]
   tags                   TaggedRepository[]
   UserRepositoryRelation UserRepositoryRelation[]

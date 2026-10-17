@@ -104,7 +104,8 @@ const allRepos = (await octokit.paginate("GET /user/repos", {
             invalid: existing[id] ? existing[id].invalid : false,
             reviewed: existing[id] ? existing[id].reviewed : false,
             reason: existing[id] ? existing[id].reason : undefined,
-            tags: existing[id] ? existing[id].tags : []
+            tags: existing[id] ? existing[id].tags : [],
+            deleted: false
         })
     }
     return acc;

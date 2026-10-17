@@ -32,6 +32,9 @@ const currentUser = await prisma.user.findFirst({
                 repository_id: true,
                 cache: true,
                 tags: true
+            },
+            where: {
+                deleted: false
             }
         }
     },
@@ -93,7 +96,8 @@ const repos = await Promise.all(currentUser.Repository.map(async repo => {
         updatedAt: cache.updatedAt.getTime(),
         reason: undefined,
         invalid: false,
-        tags: []
+        tags: [],
+        deleted: false
     };
 }))
 

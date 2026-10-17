@@ -49,6 +49,7 @@ export interface BaseRepository {
     language?: Language | null | undefined;
     license?: string | null | undefined;
     tags: string[]
+    deleted: boolean;
 }
 
 export interface Repository extends BaseRepository {

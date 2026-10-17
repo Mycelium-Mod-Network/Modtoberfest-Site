@@ -291,43 +291,52 @@ export const repository = {
 
             const {repository_id} = input;
 
-            const exists = await prisma.repository.count({
+            const repoData = await prisma.repository.findFirst({
+                select: {
+                    RepositoryStatus: {
+                        select: {
+                            reviewed: true
+                        }
+                    },
+                    SponsoredRepository: {
+                        where: {
+                            repository_id: repository_id
+                        }
+                    },
+                    user: true
+                },
                 where: {
                     repository_id: repository_id
                 }
             })
-            if (!exists) {
+            console.log(repoData);
+
+            if (!repoData) {
                 throw new ActionError({
                     code: "BAD_REQUEST",
                     message: "Repository does not exist!",
                 });
             }
-            const sponsored = await prisma.sponsoredRepository.count({
-                where: {
-                    repository_id: repository_id
-                }
-            })
-            if (sponsored) {
+            if (repoData.SponsoredRepository) {
                 throw new ActionError({
                     code: "BAD_REQUEST",
                     message: "Cannot remove a sponsored repository!",
                 });
             }
             // The repo exists, so if this fails, it means the user does not have permission to remove the repo
-            await prisma.repository.delete({
-                select: {
-                    repository_id: true
+            if(repoData.user !== null && repoData.user.id !== user.id) {
+                throw new ActionError({
+                    code: "BAD_REQUEST",
+                    message: "User does not have permission to delete the repository!",
+                });
+            }
+            //TODO do we want to allow users to remove unreviewed repos? I don't really want to work on the ui for that right now, but that is why we pull reviewed from the db
+            await prisma.repository.update({
+                data: {
+                    deleted: true
                 },
                 where: {
-                    repository_id: repository_id,
-                    OR: [
-                        {user: null},
-                        {
-                            user: {
-                                id: user.id
-                            }
-                        }
-                    ]
+                    repository_id: repository_id
                 }
             })
 

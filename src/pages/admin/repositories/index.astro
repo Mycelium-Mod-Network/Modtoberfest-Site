@@ -26,6 +26,7 @@ const dbRepos = (await prisma.repository.findMany({
     select: {
         id: true,
         repository_id: true,
+        deleted: true,
         SponsoredRepository: {
             select: {
                 sponsor: {
@@ -145,7 +146,8 @@ const repos = await Promise.all(dbRepos.map<Promise<AdminRepository>>(async repo
         updatedAt: cache.updatedAt.getTime(),
         ...status,
         submitter: repo.user ? {username: repo.user.username, avatar: repo.user.avatar} : undefined,
-        tags: (repo.tags ?? []).map(tag => tag.tag_name)
+        tags: (repo.tags ?? []).map(tag => tag.tag_name),
+        deleted: repo.deleted
     };
 }))
 ---

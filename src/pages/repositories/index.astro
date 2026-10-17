@@ -88,7 +88,8 @@ const dbRepos: DisplayRepository[] = (await prisma.repository.findMany({
         RepositoryStatus: {
             reviewed: true,
             invalid: false
-        }
+        },
+        deleted: false
     },
 })).reduce<DisplayRepository[]>((repos, repo) => {
 
@@ -112,6 +113,7 @@ const dbRepos: DisplayRepository[] = (await prisma.repository.findMany({
             license: repo.cache.license,
             language: repo.cache.language,
             tags: (repo.tags ?? []).map(tag => tag.tag_name),
+            deleted: false
         });
 
     }

@@ -32,7 +32,8 @@ const dbRepos = (await prisma.repository.findMany({
         },
         tags: {
             none: {}
-        }
+        },
+        deleted: false
     }
 }))
 
@@ -79,7 +80,8 @@ const repos = await Promise.all(dbRepos.map(async repo => {
         updatedAt: cache.updatedAt.getTime(),
         reason: undefined,
         invalid: false,
-        tags: []
+        tags: [],
+        deleted: false
     };
 }))
 

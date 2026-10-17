@@ -64,7 +64,8 @@ export async function POST({request}: APIContext) {
             RepositoryStatus: {
                 reviewed: true,
                 invalid: false
-            }
+            },
+            deleted: false
         }
     })
 

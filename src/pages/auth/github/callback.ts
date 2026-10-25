@@ -39,7 +39,7 @@ export async function GET(context: APIContext): Promise<Response> {
                 data: {
                     github_id: githubUser.id,
                     username: githubUser.login,
-                    name: githubUser.name || "NA",
+                    name: githubUser.name || githubUser.login,
                     avatar: githubUser.avatar_url,
                     email: githubUser.email || "NA",
                     access_token: tokens.accessToken,
@@ -58,7 +58,7 @@ export async function GET(context: APIContext): Promise<Response> {
                 id: userId,
                 github_id: githubUser.id,
                 username: githubUser.login,
-                name: githubUser.name || "NA",
+                name: githubUser.name || githubUser.login,
                 avatar: githubUser.avatar_url,
                 email: githubUser.email || "NA",
                 access_token: tokens.accessToken,

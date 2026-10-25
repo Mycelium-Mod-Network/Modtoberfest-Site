@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Content-Signal: search=yes, ai-train=no
+
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: Anthropic-AI
+User-agent: Claude-Web
+User-agent: CCBot
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: Bytespider
+User-agent: FacebookBot
+User-agent: Cohere-ai
+Disallow: /

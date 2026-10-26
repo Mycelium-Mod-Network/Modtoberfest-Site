@@ -17,9 +17,12 @@ const {repo} = Astro.props;
             </TagBadge>}
 
     {repo.stars > 0 &&
-            <TagBadge complex = {true} color = "yellow"><a class = "flex place-items-center gap-x-1 no-underline cursor-pointer basic-link" href = {`${repo.url}/stargazers`} target = "_blank" rel = "noreferrer">
-                <Icon name = "octicon:star-fill-16" class = "w-4 h-4 fill-yellow-500"/>
-                <span>{repo.stars}</span> </a></TagBadge>}
+            <TagBadge complex = {true} color = "yellow" hoverEffects = {false}>
+                <div class = "flex place-items-center gap-x-1 cursor-default">
+                    <Icon name = "octicon:star-fill-16" class = "w-4 h-4 fill-yellow-500"/>
+                    <span>{repo.stars}</span> 
+                </div>
+            </TagBadge>}
 
     {repo.openIssues > 0 &&
             <TagBadge complex = {true} color = "green"><a class = "flex place-items-center gap-x-1 no-underline cursor-pointer basic-link" href = {`${repo.url}/issues`} target = "_blank" rel = "noreferrer">

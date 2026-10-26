@@ -24,7 +24,15 @@ const {pr} = Astro.props;
         <a href = {pr.html_url} class = "no-underline text-orange-400 text-center" target = "_blank" rel = "noreferrer">{pr.repo_name}#{pr.number}</a>
 
         <span class = "border-b border-white/10 text-sm text-brand-100">
-            {new Date(pr.created_at).toLocaleString()}
+            <time data-pr-time datetime={new Date(pr.created_at).toISOString()}>{new Date(pr.created_at).toLocaleString()}</time>
+            <script>
+                // Rewrite the datetime at the client-side so it properly uses the browser's locale (incl. timezone)
+                let timeElems = document.querySelectorAll("[data-pr-time]");
+                timeElems.forEach((elem) => {
+                    if (!(elem instanceof HTMLTimeElement)) return
+                    elem.textContent = new Date(elem.dateTime).toLocaleString() 
+                })
+            </script>
         </span>
 
 

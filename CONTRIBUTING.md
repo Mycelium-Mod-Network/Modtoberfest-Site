@@ -91,10 +91,9 @@ import the contents of the `.env` file into the shell environment:
 
 ### Obtaining admin access
 
-To gain access to the administrator panel, you can POST to the `/api/admin/givemethepower` API endpoint.
-
-The endpoint accepts a JSON object with `secret` and `github_id` fields. Fill the `secret` field with the value of
-`ADMIN_SECRET` (from your `.env` file) and the `github_id` field with your GitHub user ID.
+To gain access to the administrator panel for an initial user, you can POST to the `/api/admin/givemethepower` API 
+endpoint, with an additional required `github_id` property containing the GitHub user ID for the user to be given
+admin access.
 
 Your GitHub user ID can be found by visiting `https://api.github.com/users/<username>`, replacing `<username>` with
 your GitHub username, and checking the `id` field in the resulting JSON response.
@@ -124,8 +123,7 @@ your GitHub username, and checking the `id` field in the resulting JSON response
 ### Languages data
 
 Before any repository can be submitted or added, the database's languages data must be updated by a POST request to the
-`/api/admin/languages/collect` endpoint with the `ADMIN_SECRET` (from your `.env` file). If successful, it will return
-a JSONified representation of the languages data, which you can safely ignore.
+`/api/admin/languages/collect` endpoint.
 
 This must be done at least once after initial setup of the database, and should be done every so often to ensure the
 languages data is up to date with GitHub Linguist's data.
@@ -150,7 +148,7 @@ languages data is up to date with GitHub Linguist's data.
 
 The site does not collect pull requests from registered repositories on a real-time basis. Instead, it relies on an
 administrator-configured scheduled job (such as a `cron` job) to periodically POST to the 
-`/api/admin/pull_requests/collect` endpoint with the `ADMIN_SECRET` (from your `.env` file).
+`/api/admin/pull_requests/collect` endpoint.
 
 When testing the site, this should be done after creating any pull requests to registered repositories. The site will
 collect pull requests made within the hardcoded period between October and November; see the definitions in 

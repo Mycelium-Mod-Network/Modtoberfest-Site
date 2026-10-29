@@ -39,7 +39,7 @@ After creating the OAuth app, you should have the _app client ID_ and _app clien
     - Put your own randomly-generated secret after the `ADMIN_SECRET=` line.
 5. Bring up the database through Docker:
    ```bash
-   docker compose -f docker-compose-dev.yml up db
+   sudo docker compose -f docker-compose-dev.yml up db
    ```
 6. Initialize the database:
    ```bash
@@ -61,7 +61,7 @@ To bring the site down gracefully:
 
 1. Bring down the database:
    ```bash
-   docker compose -f docker-compose-dev.yml down db
+   sudo docker compose -f docker-compose-dev.yml down db
    ```
 2. Terminate the `npm run dev` command using the `CTRL + C` keyboard shortcut.
 

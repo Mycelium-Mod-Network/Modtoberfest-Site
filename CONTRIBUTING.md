@@ -98,6 +98,9 @@ To gain access to the administrator panel for an initial user, you can POST to t
 endpoint, with an additional required `github_id` property containing the GitHub user ID for the user to be given
 admin access.
 
+Once an initial user has administrator panel access, they can control further access by promoting and demoting users
+from the administrator panel.
+
 Your GitHub user ID can be found by visiting `https://api.github.com/users/<username>`, replacing `<username>` with
 your GitHub username, and checking the `id` field in the resulting JSON response.
 

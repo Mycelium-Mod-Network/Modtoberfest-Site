@@ -91,3 +91,30 @@ The following invocations are provided for convenience. Remember to replace the 
      -Body '{"secret":"<ADMIN_SECRET>","github_id":"<GITHUB_USER_ID>"}' `
      -Uri http://localhost:4321/api/admin/givemethepower
    ```
+
+### Languages data
+
+Before any repository can be submitted or added, the database's languages data must be updated by a POST request to the
+`/api/admin/languages/collect` endpoint with the `ADMIN_SECRET` (from your `.env` file). If successful, it will return
+a JSONified representation of the languages data, which you can safely ignore.
+
+This must be done at least once after initial setup of the database, and should be done every so often to ensure the
+languages data is up to date with GitHub Linguist's data.
+
+The following invocations are provided for convenience. Remember to replace the `<ADMIN_SECRET>` placeholder.
+
+- For Linux `bash`:
+   ```bash
+   curl \
+     -H "Content-Type: application/json" \
+     -d '{"secret":"<ADMIN_SECRET>"}' \
+     http://localhost:4321/api/admin/languages/collect
+   ```
+- For Windows PowerShell:
+   ```pwsh
+   Invoke-RestMethod `
+     -Method 'Post' `
+     -ContentType "application/json" `
+     -Body '{"secret":"<ADMIN_SECRET>"}' `
+     -Uri http://localhost:4321/api/admin/languages/collect
+   ```

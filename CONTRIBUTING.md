@@ -98,6 +98,8 @@ Granting access to the administrator panel for a user can be done by a POST requ
 endpoint, with an additional required `github_id` property containing the GitHub user ID for the user to be given
 admin access.
 
+The user being granted access must have logged in at least once before.
+
 Once an initial user has administrator panel access, they can control further access by promoting and demoting users
 from the administrator panel.
 

@@ -65,7 +65,7 @@ To bring the site down gracefully:
 
 ### Admin
 
-To gain access to the administrator panel, you can POST to the `/auth/admin/givemethepower` API endpoint.
+To gain access to the administrator panel, you can POST to the `/api/admin/givemethepower` API endpoint.
 
 The endpoint accepts a JSON object with `secret` and `github_id` fields. Fill the `secret` field with the value of
 `ADMIN_SECRET` (from your `.env` file) and the `github_id` field with your GitHub user ID.

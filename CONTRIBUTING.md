@@ -53,6 +53,8 @@ After creating the OAuth app, you should have the _app client ID_ and _app clien
 After those steps, you should have a local copy of the site accessible at http://localhost:4321/ (which should be noted
 in the console output.)
 
+Follow the section below on granting admin access through the API for an initial user.
+
 ### Shutdown
 
 To bring the site down gracefully:
@@ -63,7 +65,31 @@ To bring the site down gracefully:
    ```
 2. Terminate the `npm run dev` command using the `CTRL + C` keyboard shortcut.
 
-### Admin
+## Admin API endpoints
+
+The following sections involve the use of the admin API endpoints under `/api/admin`. These endpoints generally require
+a POST request with a JSON object payload, where the JSON object always has a `secret` property. That `secret` property
+should contain the value of the `ADMIN_SECRET` from the `.env` file.
+
+Certain admin API endpoints may require additional input data, which is supplied through the JSON object payload.
+
+For convenience, this guide will provide invocations to invoke the admin API endpoints. These invocations will assume
+that the shell environment contains the `ADMIN_SECRET` variable from the `.env` file. Use the following commands to 
+import the contents of the `.env` file into the shell environment:
+
+- For Linux `bash`:
+    ```bash
+    source .env
+    ```
+- For Windows PowerShell:
+    ```pwsh
+    Get-Content .env | foreach {
+        $name, $value = $_.split('=')
+        Set-Content env:$name $value
+    }
+    ```
+
+### Obtaining admin access
 
 To gain access to the administrator panel, you can POST to the `/api/admin/givemethepower` API endpoint.
 
@@ -73,22 +99,25 @@ The endpoint accepts a JSON object with `secret` and `github_id` fields. Fill th
 Your GitHub user ID can be found by visiting `https://api.github.com/users/<username>`, replacing `<username>` with
 your GitHub username, and checking the `id` field in the resulting JSON response.
 
-The following invocations are provided for convenience. Remember to replace the `<ADMIN_SECRET>` and 
-`<GITHUB_USER_ID>` placeholders.
-
-- For Linux `bash`:
+- For Linux `bash`: 
+   ```bash
+   export GITHUB_USER_ID=<replace with user ID>
+   ```
    ```bash
    curl \
      -H "Content-Type: application/json" \
-     -d '{"secret":"<ADMIN_SECRET>","github_id":"<GITHUB_USER_ID>"}' \
+     -d "{\"secret\":\"$ADMIN_SECRET\",\"github_id\":\"$GITHUB_USER_ID\"}" \
      http://localhost:4321/api/admin/givemethepower
    ```
 - For Windows PowerShell:
    ```pwsh
+   $env:GITHUB_USER_ID=<replace with user ID>
+   ```
+   ```pwsh
    Invoke-RestMethod `
      -Method 'Post' `
      -ContentType "application/json" `
-     -Body '{"secret":"<ADMIN_SECRET>","github_id":"<GITHUB_USER_ID>"}' `
+     -Body "{""secret"":""$env:ADMIN_SECRET"",""github_id"":""$env:GITHUB_USER_ID""}" `
      -Uri http://localhost:4321/api/admin/givemethepower
    ```
 
@@ -101,13 +130,11 @@ a JSONified representation of the languages data, which you can safely ignore.
 This must be done at least once after initial setup of the database, and should be done every so often to ensure the
 languages data is up to date with GitHub Linguist's data.
 
-The following invocations are provided for convenience. Remember to replace the `<ADMIN_SECRET>` placeholder.
-
 - For Linux `bash`:
    ```bash
    curl \
      -H "Content-Type: application/json" \
-     -d '{"secret":"<ADMIN_SECRET>"}' \
+     -d "{\"secret\":\"$ADMIN_SECRET\"}" \
      http://localhost:4321/api/admin/languages/collect
    ```
 - For Windows PowerShell:
@@ -115,7 +142,7 @@ The following invocations are provided for convenience. Remember to replace the 
    Invoke-RestMethod `
      -Method 'Post' `
      -ContentType "application/json" `
-     -Body '{"secret":"<ADMIN_SECRET>"}' `
+     -Body "{""secret"":""$env:ADMIN_SECRET""}" `
      -Uri http://localhost:4321/api/admin/languages/collect
    ```
 
@@ -129,13 +156,11 @@ When testing the site, this should be done after creating any pull requests to r
 collect pull requests made within the hardcoded period between October and November; see the definitions in 
 `src/pages/api/admin/pull_requests/collect.ts` for `OCTOBER_START` and `NOVEMBER_START` for the exact times.
 
-The following invocations are provided for convenience. Remember to replace the `<ADMIN_SECRET>` placeholder.
-
 - For Linux `bash`:
    ```bash
    curl \
      -H "Content-Type: application/json" \
-     -d '{"secret":"<ADMIN_SECRET>"}' \
+     -d "{\"secret\":\"$ADMIN_SECRET\"}" \
      http://localhost:4321/api/admin/pull_requests/collect
    ```
 - For Windows PowerShell:
@@ -143,6 +168,6 @@ The following invocations are provided for convenience. Remember to replace the 
    Invoke-RestMethod `
      -Method 'Post' `
      -ContentType "application/json" `
-     -Body '{"secret":"<ADMIN_SECRET>"}' `
+     -Body "{""secret"":""$env:ADMIN_SECRET""}" `
      -Uri http://localhost:4321/api/admin/pull_requests/collect
    ```

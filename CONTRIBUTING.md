@@ -118,3 +118,31 @@ The following invocations are provided for convenience. Remember to replace the 
      -Body '{"secret":"<ADMIN_SECRET>"}' `
      -Uri http://localhost:4321/api/admin/languages/collect
    ```
+
+### Pull requests collection
+
+The site does not collect pull requests from registered repositories on a real-time basis. Instead, it relies on an
+administrator-configured scheduled job (such as a `cron` job) to periodically POST to the 
+`/api/admin/pull_requests/collect` endpoint with the `ADMIN_SECRET` (from your `.env` file).
+
+When testing the site, this should be done after creating any pull requests to registered repositories. The site will
+collect pull requests made within the hardcoded period between October and November; see the definitions in 
+`src/pages/api/admin/pull_requests/collect.ts` for `OCTOBER_START` and `NOVEMBER_START` for the exact times.
+
+The following invocations are provided for convenience. Remember to replace the `<ADMIN_SECRET>` placeholder.
+
+- For Linux `bash`:
+   ```bash
+   curl \
+     -H "Content-Type: application/json" \
+     -d '{"secret":"<ADMIN_SECRET>"}' \
+     http://localhost:4321/api/admin/pull_requests/collect
+   ```
+- For Windows PowerShell:
+   ```pwsh
+   Invoke-RestMethod `
+     -Method 'Post' `
+     -ContentType "application/json" `
+     -Body '{"secret":"<ADMIN_SECRET>"}' `
+     -Uri http://localhost:4321/api/admin/pull_requests/collect
+   ```

@@ -73,6 +73,9 @@ should contain the value of the `ADMIN_SECRET` from the `.env` file.
 
 Certain admin API endpoints may require additional input data, which is supplied through the JSON object payload.
 
+You may see all extant admin API endpoints by looking under the `src/pages/api/admin` directory. For example, 
+`src/pages/api/admin/givemethepower.ts` corresponds to the `/api/admin/givemethepower` API endpoint.
+
 For convenience, this guide will provide invocations to invoke the admin API endpoints. These invocations will assume
 that the shell environment contains the `ADMIN_SECRET` variable from the `.env` file. Use the following commands to 
 import the contents of the `.env` file into the shell environment:

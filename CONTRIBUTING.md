@@ -3,7 +3,7 @@ OAuth app and a database backend using MariaDB and [Prisma](https://www.prisma.i
 
 ## Prerequisites
 
-To setup the Modtoberfest-Site to run locally for development, you will first need the following:
+To setup the Modtoberfest-Site to run locally for development, the following is required:
 
 - `npm`, particularly for running Astro (for the site itself) and Prisma (for database migrations).
 - Docker and docker-compose, to run the dev database.
@@ -23,7 +23,7 @@ To setup the Modtoberfest-Site to run locally for development, you will first ne
 6. Beside the "Client secrets" header, click the "Generate a new client secret" button.
 7. Copy the displayed **client secret** for later.
 
-After creating the OAuth app, you should have the _app client ID_ and _app client secret_.
+Store the _app client ID_ and _app client secret_ from creating the OAuth app; they will be used later in setup.
 
 ## Setup
 
@@ -36,7 +36,7 @@ After creating the OAuth app, you should have the _app client ID_ and _app clien
 4. In the newly-copied `.env` file:
     - Put the app client ID after the `GITHUB_ID=` line.
     - Put the app client secret after the `GITHUB_SECRET=` line.
-    - Put your own randomly-generated secret after the `ADMIN_SECRET=` line.
+    - Put a randomly-generated secret after the `ADMIN_SECRET=` line.
 5. Bring up the database through Docker:
    ```bash
    sudo docker compose -f docker-compose-dev.yml up db
@@ -50,8 +50,8 @@ After creating the OAuth app, you should have the _app client ID_ and _app clien
    npm run dev
    ```
 
-After those steps, you should have a local copy of the site accessible at http://localhost:4321/ (which should be noted
-in the console output.)
+After those steps, the site should be locally accessible at http://localhost:4321/ (which should be noted in the 
+console output.)
 
 Follow the section below on granting admin access through the API for an initial user.
 
@@ -73,7 +73,7 @@ should contain the value of the `ADMIN_SECRET` from the `.env` file.
 
 Certain admin API endpoints may require additional input data, which is supplied through the JSON object payload.
 
-You may see all extant admin API endpoints by looking under the `src/pages/api/admin` directory. For example, 
+All extant admin API endpoints can be seen by looking under the `src/pages/api/admin` directory. For example, 
 `src/pages/api/admin/givemethepower.ts` corresponds to the `/api/admin/givemethepower` API endpoint.
 
 For convenience, this guide will provide invocations to invoke the admin API endpoints. These invocations will assume
@@ -94,15 +94,15 @@ import the contents of the `.env` file into the shell environment:
 
 ### Obtaining admin access
 
-To gain access to the administrator panel for an initial user, you can POST to the `/api/admin/givemethepower` API 
+Granting access to the administrator panel for a user can be done by a POST request to the `/api/admin/givemethepower` 
 endpoint, with an additional required `github_id` property containing the GitHub user ID for the user to be given
 admin access.
 
 Once an initial user has administrator panel access, they can control further access by promoting and demoting users
 from the administrator panel.
 
-Your GitHub user ID can be found by visiting `https://api.github.com/users/<username>`, replacing `<username>` with
-your GitHub username, and checking the `id` field in the resulting JSON response.
+The GitHub user ID can be found by visiting `https://api.github.com/users/<username>`, replacing `<username>` with
+a GitHub username, and checking the `id` field in the resulting JSON response.
 
 - For Linux `bash`: 
    ```bash

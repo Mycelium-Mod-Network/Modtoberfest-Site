@@ -1,15 +1,21 @@
 ---
 export interface Props {
-    date: number,
+    start: number,
+    end: number,
 }
 
-const {date} = Astro.props;
+const {start, end} = Astro.props;
 ---
 
 <div>
-    <div class = "started">
+    <div class = "before">
         <slot name = "before"/>
     </div>
+
+    <div class = "hidden during">
+        <slot name = "during"/>
+    </div>
+
     <div class = "countdown inline-flex justify-center text-center gap-x-4 sm:gap-x-8 prose-p:mt-0 prose-p:mb-0 font-brand">
         <div class = "my-auto">
             <p class = "text-2xl lg:text-5xl days text-primary">0</p>
@@ -32,21 +38,23 @@ const {date} = Astro.props;
         </div>
     </div>
 
-    <div class = "hidden completed">
+    <div class = "hidden after">
         <slot name = "after"/>
     </div>
 </div>
 
-<script is:inline define:vars = {{date}}>
+<script is:inline define:vars = {{start, end}}>
 
     const updateCountdown = () => {
+        const untilStart = start - new Date().getTime();
+        const untilEnd = end - new Date().getTime();
 
-        const total = date - new Date().getTime();
+        const countTo = untilEnd <= 0 ? untilStart : untilEnd;
 
-        const seconds = Math.floor((total / 1000) % 60);
-        const minutes = Math.floor((total / 1000 / 60) % 60);
-        const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
-        const days = Math.floor(total / (1000 * 60 * 60 * 24));
+        const seconds = Math.floor((countTo / 1000) % 60);
+        const minutes = Math.floor((countTo / 1000 / 60) % 60);
+        const hours = Math.floor((countTo / (1000 * 60 * 60)) % 24);
+        const days = Math.floor(countTo / (1000 * 60 * 60 * 24));
 
         // Could I do this better?
         document.querySelector(".days").innerText = days.toString().padStart(2, 0);
@@ -54,14 +62,17 @@ const {date} = Astro.props;
         document.querySelector(".minutes").innerText = minutes.toString().padStart(2, 0);
         document.querySelector(".seconds").innerText = seconds.toString().padStart(2, 0);
 
-        // Stop updating if the timer hits 0.
-        if (total <= 0) {
-
+        if (untilStart <= 0) {
+            document.querySelector(".before").style.display = 'none';
+            document.querySelector(".during").style.display = 'block';
+        } else if (untilEnd <= 0) {
+            // Stop updating if the timer hits 0.
             clearInterval(updateCountdown);
 
-            document.querySelector(".started").style.display = 'none';
-            document.querySelector(".countdown").style.display = 'none'
-            document.querySelector(".completed").style.display = 'block'
+            document.querySelector(".before").style.display = 'none';
+            document.querySelector(".during").style.display = 'none';
+            document.querySelector(".countdown").style.display = 'none';
+            document.querySelector(".after").style.display = 'block';
         }
     };
 

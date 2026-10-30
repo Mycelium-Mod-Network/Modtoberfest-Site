@@ -76,10 +76,16 @@ const banned = await isBanned(user);
             <p>
                 Those who complete our challenge will be rewarded with a prize pack that includes awesome stickers designed by the sponsors of our event! We will also be planting a tree for each person who completes the event in the <a href = "/modtoberforest" class="font-brand text-primary">Modtoberforest</a>.
             </p>
-            {!banned && <Timer date = {Date.UTC(2026, 9, 1, 0, 0, 0) - (12 * 60 * 60 * 1000)}>
+            {!banned && <Timer start = {Date.UTC(2026, 9, 1, 0, 0, 0) - (12 * 60 * 60 * 1000)} end = {Date.UTC(2026, 10, 1, 12, 0, 0)}>
                 <p slot = "before">The event starts in</p>
+                <div slot= "during">
+                    <p class = "text-primary font-brand">
+                        The event is now open! Submit your pull requests and participate!
+                    </p>
+                    <p>The event will end in</p>
+                </div>
                 <p slot = "after" class = "text-primary font-brand">
-                    The event has started, you can now submit pull requests!
+                    The event has ended! Thanks for participating!
                 </p>
             </Timer>}
         </div>

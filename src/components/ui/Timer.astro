@@ -62,10 +62,7 @@ const {start, end} = Astro.props;
         document.querySelector(".minutes").innerText = minutes.toString().padStart(2, 0);
         document.querySelector(".seconds").innerText = seconds.toString().padStart(2, 0);
 
-        if (untilStart <= 0) {
-            document.querySelector(".before").style.display = 'none';
-            document.querySelector(".during").style.display = 'block';
-        } else if (untilEnd <= 0) {
+        if (untilEnd <= 0) {
             // Stop updating if the timer hits 0.
             clearInterval(updateCountdown);
 
@@ -73,6 +70,9 @@ const {start, end} = Astro.props;
             document.querySelector(".during").style.display = 'none';
             document.querySelector(".countdown").style.display = 'none';
             document.querySelector(".after").style.display = 'block';
+        } else if (untilStart <= 0) {
+            document.querySelector(".before").style.display = 'none';
+            document.querySelector(".during").style.display = 'block';
         }
     };
 

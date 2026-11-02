@@ -35,8 +35,7 @@ export async function POST({request, locals}: APIContext) {
     }))
 
     const foundRepos = userRepos.filter(repo => {
-        // github returns a number, we store it as a string, so we want the type ignoring check
-        return repo.id == repository_id
+        return String(repo.id) === repository_id
     })
 
     if(foundRepos.length === 0) {
